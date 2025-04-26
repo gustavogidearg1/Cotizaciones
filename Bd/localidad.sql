@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 26-04-2025 a las 18:48:36
+-- Tiempo de generación: 26-04-2025 a las 19:53:07
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -24,41 +24,48 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `users`
+-- Estructura de tabla para la tabla `localidad`
 --
 
-CREATE TABLE `users` (
+CREATE TABLE `localidad` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(255) NOT NULL,
-  `remember_token` varchar(100) DEFAULT NULL,
+  `localidad` varchar(255) NOT NULL,
+  `cp` varchar(10) NOT NULL,
+  `provincia_id` bigint(20) UNSIGNED NOT NULL,
+  `pais_id` bigint(20) UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `role_id` bigint(20) UNSIGNED NOT NULL
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `localidad`
+--
+
+INSERT INTO `localidad` (`id`, `localidad`, `cp`, `provincia_id`, `pais_id`, `created_at`, `updated_at`) VALUES
+(1, 'Monte Buey', '2589', 1, 1, '2025-04-26 17:52:31', NULL),
+(2, 'Irriville', '2587', 1, 1, '2025-04-26 17:52:31', NULL);
 
 --
 -- Índices para tablas volcadas
 --
 
 --
--- Indices de la tabla `users`
+-- Indices de la tabla `localidad`
 --
-ALTER TABLE `users`
+ALTER TABLE `localidad`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `users_email_unique` (`email`),
-  ADD KEY `users_role_id_foreign` (`role_id`);
+  ADD UNIQUE KEY `localidad_localidad_unique` (`localidad`),
+  ADD KEY `localidad_provincia_id_foreign` (`provincia_id`),
+  ADD KEY `localidad_pais_id_foreign` (`pais_id`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
 --
--- AUTO_INCREMENT de la tabla `users`
+-- AUTO_INCREMENT de la tabla `localidad`
 --
-ALTER TABLE `users`
+ALTER TABLE `localidad`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
@@ -66,10 +73,11 @@ ALTER TABLE `users`
 --
 
 --
--- Filtros para la tabla `users`
+-- Filtros para la tabla `localidad`
 --
-ALTER TABLE `users`
-  ADD CONSTRAINT `users_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`);
+ALTER TABLE `localidad`
+  ADD CONSTRAINT `localidad_pais_id_foreign` FOREIGN KEY (`pais_id`) REFERENCES `pais` (`id`),
+  ADD CONSTRAINT `localidad_provincia_id_foreign` FOREIGN KEY (`provincia_id`) REFERENCES `provincia` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

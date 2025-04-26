@@ -2,8 +2,8 @@
 
 @section('content')
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <style>
         /* Estilo base para las miniaturas */
@@ -85,14 +85,16 @@
         /* para imprimir sin margenes */
 
         @media print {
-        @page {
-            margin: 0; /* elimina márgenes de impresión */
-        }
+            @page {
+                margin: 0;
+                /* elimina márgenes de impresión */
+            }
 
-        body {
-            margin: 0; /* elimina márgenes del body también */
+            body {
+                margin: 0;
+                /* elimina márgenes del body también */
+            }
         }
-    }
     </style>
 
     <div class="container">
@@ -113,6 +115,11 @@
                 <div class="row">
                     <div class="col-md-6">
                         <p><strong>Cliente:</strong> {{ $pedido->cliente->nombre }}</p>
+                        <p><strong>Dirección:</strong> {{ $pedido->direccion }}</p>
+                        <p><strong>Localidad:</strong> {{ $pedido->localidad->nombre }}</p>
+                        <p><strong>Provincia:</strong> {{ $pedido->provincia->nombre }}</p>
+                        <p><strong>Teléfono:</strong> {{ $pedido->telefono }}</p>
+                        <p><strong>Email:</strong> {{ $pedido->email }}</p>
 
                         <p><strong>Fecha:</strong> {{ \Carbon\Carbon::parse($pedido->fecha)->format('d/m/Y') }}</p>
                         <p><strong>Fecha Necesidad:</strong>
@@ -326,40 +333,36 @@
                     });
                 });
             });
-
-
-
         </script>
 
-<script>
-    function printPedido() {
-        // Ocultar elementos que no se quieren imprimir
-        const header = document.querySelector('header'); // el layout de Laravel generalmente usa <header>
-        const nav = document.querySelector('nav');
-        const footer = document.querySelector('footer');
-        const buttons = document.querySelectorAll('.btn');
+        <script>
+            function printPedido() {
+                // Ocultar elementos que no se quieren imprimir
+                const header = document.querySelector('header'); // el layout de Laravel generalmente usa <header>
+                const nav = document.querySelector('nav');
+                const footer = document.querySelector('footer');
+                const buttons = document.querySelectorAll('.btn');
 
-        if (header) header.style.display = 'none';
-        if (nav) nav.style.display = 'none';
-        if (footer) footer.style.display = 'none';
-        buttons.forEach(btn => btn.style.display = 'none');
+                if (header) header.style.display = 'none';
+                if (nav) nav.style.display = 'none';
+                if (footer) footer.style.display = 'none';
+                buttons.forEach(btn => btn.style.display = 'none');
 
-        // Imprimir
-        window.print();
+                // Imprimir
+                window.print();
 
-        // Restaurar los elementos
-        setTimeout(() => {
-            if (header) header.style.display = '';
-            if (nav) nav.style.display = '';
-            if (footer) footer.style.display = '';
-            buttons.forEach(btn => btn.style.display = '');
-        }, 1000); // espera a que termine la impresión
-    }
-</script>
+                // Restaurar los elementos
+                setTimeout(() => {
+                    if (header) header.style.display = '';
+                    if (nav) nav.style.display = '';
+                    if (footer) footer.style.display = '';
+                    buttons.forEach(btn => btn.style.display = '');
+                }, 1000); // espera a que termine la impresión
+            }
+        </script>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     @endpush
 
 @endsection

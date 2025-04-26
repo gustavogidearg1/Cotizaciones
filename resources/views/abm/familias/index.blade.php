@@ -41,14 +41,15 @@
                 <td>{{ $familia->nombre }}</td>
                 <td>
                     @if($familia->imagen_principal)
-                        <img src="{{ $familia->imagen_principal }}" alt="Imagen principal" width="50">
+                    <img src="{{ asset('storage/' . $familia->imagen_principal) }}" alt="Imagen principal" width="50">
                     @else
                         Sin imagen
                     @endif
                 </td>
                 <td>
                     @if($familia->imagen_secundaria)
-                        <img src="{{ $familia->imagen_secundaria }}" alt="Imagen secundaria" width="50">
+                    <img src="{{ asset('storage/' . $familia->imagen_secundaria) }}" alt="Imagen principal" width="50">
+
                     @else
                         Sin imagen
                     @endif

@@ -10,7 +10,13 @@ class Provincia extends Model
     use HasFactory;
 
     protected $table = 'provincia';
-    protected $fillable = ['provincia', 'pais_id'];
+    protected $fillable = [
+        'provincia',
+        'pais_id',
+        // Agregar si falta:
+        'created_at',
+        'updated_at'
+    ];
 
     public function pais()
     {

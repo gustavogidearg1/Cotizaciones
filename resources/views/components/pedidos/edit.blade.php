@@ -16,19 +16,78 @@
     <div class="card-header">Datos del Pedido/ Cotizacion</div>
     <div class="card-body">
         <div class="row">
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label for="cliente_id">Cliente*</label>
-                    <select class="form-control" id="cliente_id" name="cliente_id" required>
-                        <option value="">Seleccione un cliente</option>
-                        @foreach($clientes as $cliente)
-                            <option value="{{ $cliente->id }}" {{ $pedido->cliente_id == $cliente->id ? 'selected' : '' }}>
-                                {{ $cliente->nombre }}
-                            </option>
-                        @endforeach
-                    </select>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label for="cliente">Nombre del Cliente*</label>
+                        <input type="text" class="form-control" id="cliente" name="cliente" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label for="direccion">Dirección*</label>
+                        <input type="text" class="form-control" id="direccion" name="direccion" required>
+                    </div>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        <label for="localidad_id">Localidad*</label>
+                        <select class="form-control" id="localidad_id" name="localidad_id" required>
+                            @foreach($localidades as $localidad)
+                                <option value="{{ $localidad->id }}">{{ $localidad->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        <label for="provincia_id">Provincia*</label>
+                        <select class="form-control" id="provincia_id" name="provincia_id" required>
+                            @foreach($provincias as $provincia)
+                                <option value="{{ $provincia->id }}">{{ $provincia->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        <label for="pais_id">País*</label>
+                        <select class="form-control" id="pais_id" name="pais_id">
+                            @foreach($paises as $pais)
+                                <option value="{{ $pais->id }}" {{ $pais->id == 1 ? 'selected' : '' }}>
+                                    {{ $pais->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        <label for="telefono">Teléfono*</label>
+                        <input type="text" class="form-control" id="telefono" name="telefono" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        <label for="email">Email*</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        <label for="contacto">Contacto</label>
+                        <input type="text" class="form-control" id="contacto" name="contacto">
+                    </div>
+                </div>
+            </div>
+
+
             <div class="col-md-6">
                 <div class="form-group mb-3">
                     <label for="tipo_pedido_id">Tipo de Pedido*</label>

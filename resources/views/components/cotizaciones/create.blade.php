@@ -99,7 +99,7 @@
                     <select class="form-control" name="productos[TEMPLATE_INDEX][moneda_id]" required>
                         <option value="">Seleccione moneda</option>
                         @foreach($monedas as $moneda)
-                            <option value="{{ $moneda->id }}">{{ $moneda->moneda }}</option>
+                            <option value="{{ $moneda->id }}"{{ $moneda->id == 1 ? 'selected' : '' }}>{{ $moneda->moneda }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -130,7 +130,7 @@
             <div class="col-md-12">
                 <div class="form-group">
                     <label>Detalle</label>
-                    <input type="text" class="form-control" name="productos[TEMPLATE_INDEX][detalle]" maxlength="100">
+                    <input type="text" class="form-control" name="productos[TEMPLATE_INDEX][detalle]" value="-" maxlength="100">
                 </div>
             </div>
         </div>

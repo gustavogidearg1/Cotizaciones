@@ -24,7 +24,7 @@
                     name="productos[{{ $index }}][moneda_id]" required>
                 <option value="">Seleccione moneda</option>
                 @foreach($monedas as $moneda)
-                    <option value="{{ $moneda->id }}"
+                    <option value="{{ $moneda->id }}"{{ $moneda->id == 1 ? 'selected' : '' }}
                         @if(isset($subCotizacion) && $subCotizacion->moneda_id == $moneda->id) selected @endif>
                         {{ $moneda->moneda }}
                     </option>

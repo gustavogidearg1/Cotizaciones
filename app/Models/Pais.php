@@ -10,10 +10,20 @@ class Pais extends Model
     use HasFactory;
 
     protected $table = 'pais';
-    protected $fillable = ['pais'];
+    protected $fillable = [
+        'pais',
+        // Agregar si falta:
+        'created_at',
+        'updated_at'
+    ];
 
     public function provincias()
     {
         return $this->hasMany(Provincia::class);
+    }
+
+    public function localidades()
+    {
+        return $this->hasMany(Localidad::class);
     }
 }

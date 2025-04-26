@@ -14,7 +14,8 @@ class Pedido extends Model
     protected $fillable = [
         'cliente_id', 'tipo_pedido_id', 'fecha', 'fecha_necesidad', 'forma_pago_id',
         'forma_entrega', 'plazo_entrega', 'solicitante', 'observacion',
-        'bonificacion', 'imagen', 'imagen_2', 'flete_id', 'user_id'
+        'bonificacion', 'imagen', 'imagen_2', 'flete_id', 'user_id',    'cliente', 'direccion', 'localidad_id', 'provincia_id', 'pais_id',
+        'telefono', 'email', 'contacto', 'categoria_id'
     ];
 
     protected $dates = [
@@ -24,9 +25,24 @@ class Pedido extends Model
         'updated_at' => 'datetime'
     ];
 
-    public function cliente()
+    public function localidad()
     {
-        return $this->belongsTo(Cliente::class);
+        return $this->belongsTo(Localidad::class);
+    }
+
+    public function provincia()
+    {
+        return $this->belongsTo(Provincia::class);
+    }
+
+    public function pais()
+    {
+        return $this->belongsTo(Pais::class);
+    }
+
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class);
     }
 
     public function formaPago()

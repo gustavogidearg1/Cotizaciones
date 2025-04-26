@@ -3,24 +3,28 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\Pais;
 use App\Models\Flete;
 use App\Models\Moneda;
 use App\Models\Pedido;
 use App\Models\Cliente;
 use App\Models\Producto;
+use App\Models\Categoria;
 use App\Models\FormaPago;
+use App\Models\Localidad;
+use App\Models\Provincia;
 use App\Models\SubPedido;
+use App\Mail\PedidoCreado;
 use App\Models\TipoPedido;
 use Illuminate\Http\Request;
-use App\Models\SubCotizacion;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Log;
 
 //correo electronico
-use App\Mail\PedidoCreado;
+use App\Models\SubCotizacion;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class PedidoController extends Controller
 {
@@ -63,9 +67,15 @@ class PedidoController extends Controller
         $monedas = Moneda::all();
         $tipoPedidos = TipoPedido::all();
         $fletes = Flete::all();
+        $localidades = Localidad::all();
+        $provincias = Provincia::with('pais')->get(); // Cargar relación país
+        $paises = Pais::all();
+        $categorias = Categoria::all();
 
         return view('components.pedidos.create', compact(
-            'clientes', 'formasPago', 'productos', 'monedas', 'tipoPedidos', 'fletes'
+            'clientes', 'formasPago', 'productos', 'monedas',
+            'tipoPedidos', 'fletes', 'localidades', 'provincias',
+            'paises', 'categorias'
         ));
     }
 
@@ -91,6 +101,15 @@ class PedidoController extends Controller
             'productos.*.cantidad' => 'required|integer|min:1',
             'productos.*.moneda_id' => 'required|exists:monedas,id',
             'productos.*.iva' => 'required|numeric|min:0|max:100',
+            'cliente' => 'required|string|max:255',
+            'direccion' => 'required|string|max:255',
+            'localidad_id' => 'required|exists:localidad,id',
+            'provincia_id' => 'required|exists:provincia,id',
+            'pais_id' => 'sometimes|exists:pais,id',
+            'telefono' => 'required|string|max:100',
+            'email' => 'required|email|max:255',
+            'contacto' => 'nullable|string|max:100',
+            'categoria_id' => 'sometimes|exists:categoria,id',
         ]);
 
         try {
@@ -108,6 +127,16 @@ class PedidoController extends Controller
                 'bonificacion' => $request->bonificacion,
                 'flete_id' => $request->flete_id,
                 'user_id' => Auth::id(),
+                'cliente' => $request->cliente,
+                'direccion' => $request->direccion,
+                'localidad_id' => $request->localidad_id,
+                'provincia_id' => $request->provincia_id,
+                'pais_id' => $request->pais_id ?? 1,
+                'telefono' => $request->telefono,
+                'email' => $request->email,
+                'contacto' => $request->contacto,
+                'categoria_id' => $request->categoria_id ?? 1,
+
             ];
 
             // Manejo de imágenes
@@ -192,7 +221,8 @@ class PedidoController extends Controller
             'formaPago',
             'user',
             'subPedidos.producto',
-            'subPedidos.moneda'
+            'subPedidos.moneda',
+            'localidad', 'provincia', 'pais', 'categoria'
         ]);
         return view('components.pedidos.show', compact('pedido'));
     }
@@ -237,6 +267,15 @@ class PedidoController extends Controller
             'productos.*.cantidad' => 'required|integer|min:1',
             'productos.*.moneda_id' => 'required|exists:monedas,id',
             'productos.*.iva' => 'required|numeric|min:0|max:100',
+            'cliente' => 'required|string|max:255',
+            'direccion' => 'required|string|max:255',
+            'localidad_id' => 'required|exists:localidad,id',
+            'provincia_id' => 'required|exists:provincia,id',
+            'pais_id' => 'sometimes|exists:pais,id',
+            'telefono' => 'required|string|max:100',
+            'email' => 'required|email|max:255',
+            'contacto' => 'nullable|string|max:100',
+            'categoria_id' => 'sometimes|exists:categoria,id',
         ]);
 
         $data = [
@@ -250,6 +289,15 @@ class PedidoController extends Controller
             'observacion' => $request->observacion,
             'bonificacion' => $request->bonificacion,
             'flete_id' => $request->flete_id,
+            'cliente' => $request->cliente,
+            'direccion' => $request->direccion,
+            'localidad_id' => $request->localidad_id,
+            'provincia_id' => $request->provincia_id,
+            'pais_id' => $request->pais_id ?? 1, // Valor por defecto
+            'telefono' => $request->telefono,
+            'email' => $request->email,
+            'contacto' => $request->contacto,
+            'categoria_id' => $request->categoria_id ?? 1,
         ];
 
         // Procesar imagen principal

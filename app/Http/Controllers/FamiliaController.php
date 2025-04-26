@@ -19,30 +19,33 @@ class FamiliaController extends Controller
         return view('abm.familias.create');
     }
 
+
+
+
     public function store(Request $request)
-{
-    $request->validate([
-        'nombre' => 'required|string|max:50',
-        'imagen_principal' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        'imagen_secundaria' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-    ]);
+    {
+        $request->validate([
+            'nombre' => 'required|string|max:50',
+            'imagen_principal' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'imagen_secundaria' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
-    $data = $request->only('nombre');
+        $data = $request->only('nombre');
 
-    if ($request->hasFile('imagen_principal')) {
-        $path = $request->file('imagen_principal')->store('img', 'public');
-        $data['imagen_principal'] = '/storage/' . $path;
+        if ($request->hasFile('imagen_principal')) {
+            $path = $request->file('imagen_principal')->store('img', 'public');
+            $data['imagen_principal'] = $path;
+        }
+
+        if ($request->hasFile('imagen_secundaria')) {
+            $path = $request->file('imagen_secundaria')->store('img', 'public');
+            $data['imagen_secundaria'] = $path;
+        }
+
+        Familia::create($data);
+
+        return redirect()->route('familias.index')->with('success', 'Familia creada correctamente.');
     }
-
-    if ($request->hasFile('imagen_secundaria')) {
-        $path = $request->file('imagen_secundaria')->store('img', 'public');
-        $data['imagen_secundaria'] = '/storage/' . $path;
-    }
-
-    Familia::create($data);
-
-    return redirect()->route('familias.index')->with('success', 'Familia creada correctamente.');
-}
 
     public function show(Familia $familia)
     {
@@ -55,65 +58,53 @@ class FamiliaController extends Controller
     }
 
     public function update(Request $request, Familia $familia)
-{
-    $request->validate([
-        'nombre' => 'required|string|max:50',
-        'imagen_principal' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        'imagen_secundaria' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-    ]);
+    {
+        $request->validate([
+            'nombre' => 'required|string|max:50',
+            'imagen_principal' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'imagen_secundaria' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
-    $data = $request->only('nombre');
+        $data = $request->only('nombre');
 
-    if ($request->has('remove_imagen_principal')) {
-        // Eliminar imagen actual
-        $oldImage = str_replace('/storage/', '', $familia->imagen_principal);
-        Storage::disk('public')->delete($oldImage);
-        $data['imagen_principal'] = null;
-    } elseif ($request->hasFile('imagen_principal')) {
-        // Eliminar imagen anterior
-        if ($familia->imagen_principal) {
-            $oldImage = str_replace('/storage/', '', $familia->imagen_principal);
-            Storage::disk('public')->delete($oldImage);
+        // Manejar imagen principal
+        if ($request->has('remove_imagen_principal')) {
+            Storage::disk('public')->delete($familia->imagen_principal);
+            $data['imagen_principal'] = null;
+        } elseif ($request->hasFile('imagen_principal')) {
+            if ($familia->imagen_principal) {
+                Storage::disk('public')->delete($familia->imagen_principal);
+            }
+            $path = $request->file('imagen_principal')->store('img', 'public');
+            $data['imagen_principal'] = $path;
         }
-        // Guardar nueva imagen
-        $path = $request->file('imagen_principal')->store('img', 'public');
-        $data['imagen_principal'] = '/storage/' . $path;
-    }
 
-    // Manejar imagen secundaria
-    if ($request->has('remove_imagen_secundaria')) {
-        // Eliminar imagen actual
-        $oldImage = str_replace('/storage/', '', $familia->imagen_secundaria);
-        Storage::disk('public')->delete($oldImage);
-        $data['imagen_secundaria'] = null;
-    } elseif ($request->hasFile('imagen_secundaria')) {
-        // Eliminar imagen anterior
-        if ($familia->imagen_secundaria) {
-            $oldImage = str_replace('/storage/', '', $familia->imagen_secundaria);
-            Storage::disk('public')->delete($oldImage);
+        // Manejar imagen secundaria
+        if ($request->has('remove_imagen_secundaria')) {
+            Storage::disk('public')->delete($familia->imagen_secundaria);
+            $data['imagen_secundaria'] = null;
+        } elseif ($request->hasFile('imagen_secundaria')) {
+            if ($familia->imagen_secundaria) {
+                Storage::disk('public')->delete($familia->imagen_secundaria);
+            }
+            $path = $request->file('imagen_secundaria')->store('img', 'public');
+            $data['imagen_secundaria'] = $path;
         }
-        // Guardar nueva imagen
-        $path = $request->file('imagen_secundaria')->store('img', 'public');
-        $data['imagen_secundaria'] = '/storage/' . $path;
+
+        $familia->update($data);
+
+        return redirect()->route('familias.index')->with('success', 'Familia actualizada correctamente.');
     }
-
-
-    $familia->update($data);
-
-    return redirect()->route('familias.index')->with('success', 'Familia actualizada correctamente.');
-}
 
 public function destroy(Familia $familia)
 {
     // Eliminar imágenes si existen
     if ($familia->imagen_principal) {
-        $imagePath = str_replace('/storage/', 'public/', $familia->imagen_principal);
-        Storage::delete($imagePath);
+        Storage::disk('public')->delete($familia->imagen_principal);
     }
 
     if ($familia->imagen_secundaria) {
-        $imagePath = str_replace('/storage/', 'public/', $familia->imagen_secundaria);
-        Storage::delete($imagePath);
+        Storage::disk('public')->delete($familia->imagen_secundaria);
     }
 
     $familia->delete();

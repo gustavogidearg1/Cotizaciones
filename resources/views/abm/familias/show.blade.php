@@ -12,7 +12,9 @@
                 <div class="col-md-6">
                     <h6>Imagen Principal</h6>
                     @if($familia->imagen_principal)
-                        <img src="{{ $familia->imagen_principal }}" alt="Imagen principal" class="img-fluid">
+                    <img src="{{ asset('storage/' . $familia->imagen_principal) }}" alt="Imagen principal" class="img-fluid">
+
+
                     @else
                         <p>No hay imagen principal</p>
                     @endif
@@ -20,7 +22,8 @@
                 <div class="col-md-6">
                     <h6>Imagen Secundaria</h6>
                     @if($familia->imagen_secundaria)
-                        <img src="{{ $familia->imagen_secundaria }}" alt="Imagen secundaria" class="img-fluid">
+                    <img src="{{ asset('storage/' . $familia->imagen_secundaria) }}" alt="Imagen secundaria" class="img-fluid">
+
                     @else
                         <p>No hay imagen secundaria</p>
                     @endif
