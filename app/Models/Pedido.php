@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Cliente;
+//use App\Models\Cliente;
 use App\Models\FormaPago;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,9 +12,10 @@ class Pedido extends Model
     use HasFactory;
 
     protected $fillable = [
-        'cliente_id', 'tipo_pedido_id', 'fecha', 'fecha_necesidad', 'forma_pago_id',
+        'tipo_pedido_id', 'fecha', 'fecha_necesidad', 'forma_pago_id',
         'forma_entrega', 'plazo_entrega', 'solicitante', 'observacion',
-        'bonificacion', 'imagen', 'imagen_2', 'flete_id', 'user_id',    'cliente', 'direccion', 'localidad_id', 'provincia_id', 'pais_id',
+        'bonificacion', 'imagen', 'imagen_2', 'flete_id', 'user_id',
+        'cliente', 'direccion', 'localidad_id', 'provincia_id', 'pais_id',
         'telefono', 'email', 'contacto', 'categoria_id'
     ];
 

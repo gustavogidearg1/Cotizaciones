@@ -114,7 +114,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <p><strong>Cliente:</strong> {{ $pedido->cliente->nombre }}</p>
+                        <p><strong>Cliente:</strong>{{ $pedido->cliente }}</p>
                         <p><strong>Dirección:</strong> {{ $pedido->direccion }}</p>
                         <p><strong>Localidad:</strong> {{ $pedido->localidad->nombre }}</p>
                         <p><strong>Provincia:</strong> {{ $pedido->provincia->nombre }}</p>

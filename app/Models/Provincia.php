@@ -20,11 +20,10 @@ class Provincia extends Model
 
     public function pais()
     {
-        return $this->belongsTo(Pais::class);
+        return $this->belongsTo(Pais::class, 'pais_id');
     }
-
     public function localidades()
     {
-        return $this->hasMany(Localidad::class);
+        return $this->hasMany(Localidad::class, 'provincia_id');
     }
 }

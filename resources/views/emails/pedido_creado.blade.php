@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nuevo Pedido Creado</title>
     <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; }
@@ -22,7 +23,7 @@
 
         <h3>Información del Pedido</h3>
         <p><strong>Número de Pedido:</strong> {{ $pedido->id }}</p>
-        <p><strong>Cliente:</strong> {{ $pedido->cliente->nombre }}</p>
+        <p><strong>Cliente:</strong> {{ $pedido->cliente }}</p>
         <p><strong>Fecha:</strong> {{ $pedido->fecha->format('d/m/Y H:i') }}</p>
         <p><strong>Fecha de Necesidad:</strong> {{ $pedido->fecha_necesidad->format('d/m/Y') }}</p>
         <p><strong>Solicitante:</strong> {{ $pedido->solicitante }}</p>
@@ -58,5 +59,11 @@
     <div class="footer">
         <p>Este es un correo automático, por favor no respondas a este mensaje.</p>
     </div>
+
+    <div class="footer">
+        <p>Este es un correo automático, por favor no respondas a este mensaje.</p>
+        <p>© {{ date('Y') }} {{ config('app.name') }}. Todos los derechos reservados.</p>
+    </div>
+
 </body>
 </html>

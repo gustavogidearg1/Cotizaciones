@@ -66,6 +66,7 @@ Route::middleware(['auth'])->group(function () {
         ->parameters(['cotizaciones' => 'cotizacion']);
 });
 
+
 Route::middleware(['auth'])->group(function () {
     Route::resource('pedidos', PedidoController::class);
     Route::resource('forma-pagos', FormaPagoController::class)->except(['show']);
@@ -74,8 +75,6 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/pedidos/last-price/{productoId}', [PedidoController::class, 'getLastPrice'])->name('pedidos.last-price');
 
 Route::get('/pedidos/{pedido}/pdf', [PedidoController::class, 'generarPDF'])->name('pedidos.pdf');
-
-Route::resource('pedidos', PedidoController::class);
 
 // RUTA DE PRUEBA PARA TESTEAR EL ENVÍO DE CORREOS (TEMPORAL)
 Route::get('/test-email', function() {
@@ -89,3 +88,8 @@ Route::get('/test-email', function() {
         return 'Error: '.$e->getMessage();
     }
 });
+
+
+Route::get('/productos-por-familia/{familia}', [PedidoController::class, 'productosPorFamilia']);
+
+Route::post('/pedidos', [PedidoController::class, 'store'])->name('pedidos.store');

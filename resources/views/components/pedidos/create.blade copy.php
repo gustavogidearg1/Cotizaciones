@@ -226,8 +226,8 @@
                 <i class="fas fa-save"></i> Guardar Pedido
             </button>
             <a href="{{ route('pedidos.index') }}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancelar
             </a>
-            <i class="fas fa-times"></i> Cancelar
         </div>
     </form>
 </div>
@@ -314,193 +314,160 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    $(document).ready(function() {
-        // Contador para índices de productos
-        let productoCounter = 0;
-        let familiaSeleccionada = null;
+$(document).ready(function() {
+    // Contador para índices de productos
+    let productoCounter = 0;
+    let familiaSeleccionada = null;
 
-        // Función para agregar un nuevo producto
-        function agregarProducto() {
-            const productos = $('#productos-familia-container').data('productos');
-            if (!productos || productos.length === 0) return;
+    // Función para agregar un nuevo producto
+    function agregarProducto() {
+        const productos = $('#productos-familia-container').data('productos');
+        if (!productos || productos.length === 0) return;
 
-            const template = $('#producto-template').html();
-            const html = template.replace(/TEMPLATE_INDEX/g, productoCounter);
-            const $newProduct = $(html);
+        const template = $('#producto-template').html();
+        const html = template.replace(/TEMPLATE_INDEX/g, productoCounter);
+        const $newProduct = $(html);
 
-            // Llenar el select con productos de la familia seleccionada
-            const $select = $newProduct.find('.producto-select');
-            $select.empty().append('<option value="">Seleccione un producto</option>');
+        // Llenar el select con productos de la familia seleccionada
+        const $select = $newProduct.find('.producto-select');
+        $select.empty().append('<option value="">Seleccione un producto</option>');
 
-            productos.forEach(producto => {
-                $select.append(`<option value="${producto.id}" data-precio="${producto.precio || 0}">
-                    ${producto.codigo} - ${producto.nombre}
-                </option>`);
-            });
-
-            $('#productos-familia-container').append($newProduct);
-            productoCounter++;
-
-            // Calcular subtotal inicial
-            calcularSubtotal($newProduct);
-        }
-
-        // Manejar clic en una familia
-        $(document).on('click', '.familia-item', function() {
-            const familiaId = $(this).data('familia-id');
-            familiaSeleccionada = familiaId;
-
-            // Limpiar contenedor de productos
-            $('#productos-familia-container').empty();
-            productoCounter = 0;
-
-            // Obtener productos de esta familia via AJAX
-            $.get('/productos-por-familia/' + familiaId, function(productos) {
-                // Mostrar contenedor de productos
-                $('#productos-container').show();
-
-                // Guardar los productos para usarlos luego
-                $('#productos-familia-container').data('productos', productos);
-
-                // Agregar automáticamente el primer producto
-                agregarProducto();
-            }).fail(function() {
-                alert('Error al cargar productos de la familia');
-            });
+        productos.forEach(producto => {
+            $select.append(`<option value="${producto.id}" data-precio="${producto.precio || 0}">
+                ${producto.codigo} - ${producto.nombre}
+            </option>`);
         });
 
-        // Agregar producto adicional
-        $('#agregar-producto').click(function() {
-            if (!familiaSeleccionada) {
-                alert('Primero seleccione una familia');
-                return;
-            }
+        $('#productos-familia-container').append($newProduct);
+        productoCounter++;
+
+        // Calcular subtotal inicial
+        calcularSubtotal($newProduct);
+    }
+
+    // Manejar clic en una familia
+    $(document).on('click', '.familia-item', function() {
+        const familiaId = $(this).data('familia-id');
+        familiaSeleccionada = familiaId;
+
+        // Limpiar contenedor de productos
+        $('#productos-familia-container').empty();
+        productoCounter = 0;
+
+        // Obtener productos de esta familia via AJAX
+        $.get('/productos-por-familia/' + familiaId, function(productos) {
+            // Mostrar contenedor de productos
+            $('#productos-container').show();
+
+            // Guardar los productos para usarlos luego
+            $('#productos-familia-container').data('productos', productos);
+
+            // Agregar automáticamente el primer producto
             agregarProducto();
-        });
-
-        // Función para calcular subtotal y total
-        function calcularSubtotal(productoItem) {
-            const precio = parseFloat(productoItem.find('.precio-input').val()) || 0;
-            const cantidad = parseInt(productoItem.find('.cantidad-input').val()) || 0;
-            const bonificacion = parseFloat($('#bonificacion').val()) || 0;
-            const iva = parseFloat(productoItem.find('.iva-input').val()) || 0;
-
-            const subtotal = precio * cantidad * (1 - (bonificacion / 100));
-            const total = subtotal * (1 + (iva / 100));
-
-            productoItem.find('.subtotal-input').val(subtotal.toFixed(2));
-            productoItem.find('.total-input').val(total.toFixed(2));
-        }
-
-        // Cuando se selecciona un producto, cargar su precio
-        $('#productos-container').on('change', '.producto-select', function() {
-            const productoId = $(this).val();
-            const productoItem = $(this).closest('.producto-item');
-
-            if (productoId) {
-                $.get(`/pedidos/last-price/${productoId}`, function(data) {
-                    // Establecer precio
-                    const precioInput = productoItem.find('.precio-input');
-                    precioInput.val(data.precio_bonificado || data.precio || 0);
-
-                    // Establecer moneda si existe
-                    if (data.moneda_id) {
-                        productoItem.find('.moneda-select').val(data.moneda_id);
-                    }
-
-                    // Disparar evento change para calcular subtotales
-                    precioInput.trigger('change');
-                }).fail(function() {
-                    console.error('Error al cargar precio y moneda');
-                });
-            }
-        });
-
-        // Eventos para cálculos
-        $('#productos-container').on('change', '.producto-select, .precio-input, .cantidad-input, .iva-input', function() {
-            calcularSubtotal($(this).closest('.producto-item'));
-        });
-
-        $('#bonificacion').on('change', function() {
-            $('.producto-item').each(function() {
-                calcularSubtotal($(this));
-            });
-        });
-
-        // Eliminar producto
-        $('#productos-container').on('click', '.btn-eliminar-producto', function() {
-            $(this).closest('.producto-item').remove();
-            // No permitir eliminar el último producto
-            if ($('.producto-item').length === 0 && familiaSeleccionada) {
-                agregarProducto();
-            }
-        });
-
-        // Validación y envío del formulario
-        $('#pedido-form').submit(function(e) {
-            e.preventDefault(); // Prevenir envío normal para validar
-
-            // Validar que hay al menos un producto
-            if ($('.producto-item').length === 0) {
-                alert('Debe agregar al menos un producto');
-                return false;
-            }
-
-            // Recolectar datos de productos
-            let productosData = [];
-            $('.producto-item').each(function(index) {
-                let producto = {
-                    producto_id: $(this).find('.producto-select').val(),
-                    precio: parseFloat($(this).find('.precio-input').val()) || 0,
-                    cantidad: parseInt($(this).find('.cantidad-input').val()) || 1,
-                    moneda_id: $(this).find('.moneda-select').val(),
-                    iva: parseFloat($(this).find('.iva-input').val()) || 10.5,
-                    detalle: $(this).find('input[name*="detalle"]').val() || null
-                };
-
-                // Validar que el producto tenga todos los campos requeridos
-                if (!producto.producto_id || !producto.moneda_id) {
-                    alert(`El producto en la posición ${index + 1} no está completo`);
-                    return false;
-                }
-
-                productosData.push(producto);
-            });
-
-            console.log('Datos a enviar:', {
-                productos: productosData,
-                otrosDatos: {
-                    cliente: $('#cliente').val(),
-                    localidad_id: $('#localidad_id').val(),
-                    provincia_id: $('#provincia_id').val(),
-                    // Agrega otros campos que necesites verificar
-                }
-            });
-
-            // Preguntar si deseas continuar con el envío
-            if (confirm('¿Los datos en consola son correctos? ¿Deseas continuar con el envío?')) {
-                // Eliminar inputs antiguos si existen
-                $('input[name^="productos["]').remove();
-
-                // Crear inputs para cada producto
-                productosData.forEach((producto, index) => {
-                    for (let key in producto) {
-                        if (producto.hasOwnProperty(key)) {
-                            $('<input>').attr({
-                                type: 'hidden',
-                                name: `productos[${index}][${key}]`,
-                                value: producto[key]
-                            }).appendTo('#pedido-form');
-                        }
-                    }
-                });
-
-                // Continuar con el envío del formulario
-                this.submit();
-            }
-
-
+        }).fail(function() {
+            alert('Error al cargar productos de la familia');
         });
     });
-    </script>
+
+    // Agregar producto adicional
+    $('#agregar-producto').click(function() {
+        if (!familiaSeleccionada) {
+            alert('Primero seleccione una familia');
+            return;
+        }
+        agregarProducto();
+    });
+
+    // Función para calcular subtotal y total
+    function calcularSubtotal(productoItem) {
+        const precio = parseFloat(productoItem.find('.precio-input').val()) || 0;
+        const cantidad = parseInt(productoItem.find('.cantidad-input').val()) || 0;
+        const bonificacion = parseFloat($('#bonificacion').val()) || 0;
+        const iva = parseFloat(productoItem.find('.iva-input').val()) || 0;
+
+        const subtotal = precio * cantidad * (1 - (bonificacion / 100));
+        const total = subtotal * (1 + (iva / 100));
+
+        productoItem.find('.subtotal-input').val(subtotal.toFixed(2));
+        productoItem.find('.total-input').val(total.toFixed(2));
+    }
+
+        // Cuando se selecciona un producto, cargar su precio
+        $('#productos-container').on('change', '.select-producto', function() {
+        const selectedOption = $(this).find('option:selected');
+        const precio = selectedOption.data('precio') || 0;
+        $(this).closest('.producto-item').find('.precio-input').val(precio).trigger('change');
+    });
+
+    // Eventos para cálculos
+    $('#productos-container').on('change', '.producto-select, .precio-input, .cantidad-input, .iva-input', function() {
+        calcularSubtotal($(this).closest('.producto-item'));
+    });
+
+    $('#bonificacion').on('change', function() {
+        $('.producto-item').each(function() {
+            calcularSubtotal($(this));
+        });
+    });
+
+    // Cuando se selecciona un producto, cargar su precio
+    $('#productos-container').on('change', '.producto-select', function() {
+    const productoId = $(this).val();
+    const productoItem = $(this).closest('.producto-item');
+
+    if (productoId) {
+        $.get(`/pedidos/last-price/${productoId}`, function(data) {
+            // Establecer precio
+            const precioInput = productoItem.find('.precio-input');
+            precioInput.val(data.precio_bonificado || data.precio || 0);
+
+            // Establecer moneda si existe
+            if (data.moneda_id) {
+                productoItem.find('.moneda-select').val(data.moneda_id);
+            }
+
+            // Disparar evento change para calcular subtotales
+            precioInput.trigger('change');
+        }).fail(function() {
+            console.error('Error al cargar precio y moneda');
+        });
+    }
+});
+
+    // Eliminar producto
+    $('#productos-container').on('click', '.btn-eliminar-producto', function() {
+        $(this).closest('.producto-item').remove();
+        // No permitir eliminar el último producto
+        if ($('.producto-item').length === 0 && familiaSeleccionada) {
+            agregarProducto();
+        }
+    });
+
+    // Validación del formulario
+    $('#pedido-form').submit(function(e) {
+        if ($('.producto-item').length === 0) {
+            e.preventDefault();
+            alert('Debe agregar al menos un producto');
+            return false;
+        }
+    });
+
+    // En tu archivo JavaScript de create/edit
+$('#productos-container').on('change', '.select-producto', function() {
+    const productoId = $(this).val();
+    const productoItem = $(this).closest('.producto-item');
+
+    if (productoId) {
+        $.get(`/pedidos/last-price/${productoId}`, function(data) {
+            productoItem.find('.precio-input').val(data.precio_bonificado).trigger('change');
+        });
+    }
+});
+
+});
+
+
+
+
+</script>
 @endsection

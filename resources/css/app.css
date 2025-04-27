@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.familia-item {
+    transition: transform 0.3s;
+}
+
+.familia-item:hover {
+    transform: scale(1.05);
+}
+
+.familia-item img {
+    max-height: 100px;
+    object-fit: contain;
+}

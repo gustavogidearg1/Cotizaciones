@@ -14,11 +14,11 @@ class Localidad extends Model
 
     public function provincia()
     {
-        return $this->belongsTo(Provincia::class);
+        return $this->belongsTo(Provincia::class, 'provincia_id');
     }
 
     public function pais()
     {
-        return $this->belongsTo(Pais::class);
+        return $this->belongsTo(Pais::class, 'pais_id');
     }
 }

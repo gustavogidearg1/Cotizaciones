@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 18-04-2025 a las 13:00:18
+-- Tiempo de generación: 27-04-2025 a las 15:09:51
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -32,10 +32,12 @@ CREATE TABLE `sub_pedidos` (
   `producto_id` bigint(20) UNSIGNED NOT NULL,
   `precio` decimal(12,2) NOT NULL,
   `subbonificacion` decimal(5,2) NOT NULL,
+  `iva` decimal(5,2) NOT NULL DEFAULT 21.00,
   `cantidad` int(11) NOT NULL,
   `moneda_id` bigint(20) UNSIGNED NOT NULL,
   `sub_fecha_entrega` date NOT NULL,
   `subtotal` decimal(12,2) NOT NULL,
+  `total` decimal(12,2) NOT NULL,
   `detalle` text DEFAULT NULL,
   `pedido_id` bigint(20) UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -46,8 +48,8 @@ CREATE TABLE `sub_pedidos` (
 -- Volcado de datos para la tabla `sub_pedidos`
 --
 
-INSERT INTO `sub_pedidos` (`id`, `producto_id`, `precio`, `subbonificacion`, `cantidad`, `moneda_id`, `sub_fecha_entrega`, `subtotal`, `detalle`, `pedido_id`, `created_at`, `updated_at`) VALUES
-(1, 1, 9.00, 0.00, 1, 1, '2025-05-01', 9.00, NULL, 1, '2025-04-18 02:12:02', '2025-04-18 02:12:02');
+INSERT INTO `sub_pedidos` (`id`, `producto_id`, `precio`, `subbonificacion`, `iva`, `cantidad`, `moneda_id`, `sub_fecha_entrega`, `subtotal`, `total`, `detalle`, `pedido_id`, `created_at`, `updated_at`) VALUES
+(1, 1, 10000.00, 0.00, 10.50, 1, 1, '2025-05-11', 10000.00, 11050.00, NULL, 24, '2025-04-27 15:35:22', '2025-04-27 15:35:22');
 
 --
 -- Índices para tablas volcadas

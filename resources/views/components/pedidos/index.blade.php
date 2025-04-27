@@ -54,7 +54,7 @@
                         <tr>
                             <td>{{ $pedido->id }}</td>
                             <td class="text-nowrap">{{ \Carbon\Carbon::parse($pedido->fecha)->format('d/m/Y') }}</td>
-                            <td>{{ $pedido->cliente->nombre }}</td>
+                            <td>{{ $pedido->cliente }}</td>
 
                             <td class="text-nowrap">{{ \Carbon\Carbon::parse($pedido->fecha_necesidad)->format('d/m/Y') }}</td>
                             <td>{{ $pedido->solicitante }}</td>
