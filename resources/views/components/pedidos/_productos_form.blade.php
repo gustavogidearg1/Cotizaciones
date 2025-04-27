@@ -16,6 +16,24 @@
             </select>
         </div>
     </div>
+
+    <div class="col-md-2">
+        <div class="form-group">
+            <label>color*</label>
+            <select class="form-control" name="productos[{{ $index }}][color_id]" required>
+                <option value="">Seleccione color</option>
+                @foreach($colores as $color)
+                    <option value="{{ $color->id }}"
+                        @isset($subPedido)
+                            {{ $subPedido->color_id == $color->id ? 'selected' : '' }}
+                        @endisset>
+                        {{ $color->nombre }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+
     <div class="col-md-2">
         <div class="form-group">
             <label>Moneda*</label>

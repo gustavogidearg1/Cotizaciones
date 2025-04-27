@@ -16,6 +16,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PaisController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TipoController;
+use App\Http\Controllers\ColorController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\UnidadController;
 use App\Http\Controllers\ClienteController;
@@ -93,3 +94,6 @@ Route::get('/test-email', function() {
 Route::get('/productos-por-familia/{familia}', [PedidoController::class, 'productosPorFamilia']);
 
 Route::post('/pedidos', [PedidoController::class, 'store'])->name('pedidos.store');
+
+//Route::get('/pedidos/{pedido}', [PedidoController::class, 'show']);
+

@@ -223,11 +223,11 @@
 
         <div class="form-group">
             <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save"></i> Guardar Pedido
+                <i class="fas fa-save"></i> Guardar Cotización
             </button>
             <a href="{{ route('pedidos.index') }}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancelar
             </a>
-            <i class="fas fa-times"></i> Cancelar
         </div>
     </form>
 </div>
@@ -252,6 +252,20 @@
                     </select>
                 </div>
             </div>
+
+            <div class="col-md-3">
+                <div class="form-group mb-3">
+                    <label>Color</label>
+                    <select class="form-control color-select" name="productos[TEMPLATE_INDEX][color_id]">
+                        <option value="">Seleccione un color</option>
+                        @foreach($colores as $color)
+                            <option value="{{ $color->id }}">{{ $color->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+
             <div class="col-md-2">
                 <div class="form-group">
                     <label>Moneda*</label>

@@ -18,15 +18,18 @@
         <div class="row">
             <div class="row">
                 <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label for="cliente">Nombre del Cliente*</label>
-                        <input type="text" class="form-control" id="cliente" name="cliente" required>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="cliente">Forma de Entrega*</label>
+                            <input type="text" class="form-control" id="cliente" name="cliente"
+                                   value="{{ $pedido->cliente }}" required>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group mb-3">
                         <label for="direccion">Dirección*</label>
-                        <input type="text" class="form-control" id="direccion" name="direccion" required>
+                        <input type="text" class="form-control" id="direccion" name="direccion" value="{{ $pedido->direccion }}" required>
                     </div>
                 </div>
             </div>
@@ -47,7 +50,7 @@
                         <label for="provincia_id">Provincia*</label>
                         <select class="form-control" id="provincia_id" name="provincia_id" required>
                             @foreach($provincias as $provincia)
-                                <option value="{{ $provincia->id }}">{{ $provincia->nombre }}</option>
+                                <option value="{{ $provincia->id }}">{{ $provincia->provincia }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -58,7 +61,7 @@
                         <select class="form-control" id="pais_id" name="pais_id">
                             @foreach($paises as $pais)
                                 <option value="{{ $pais->id }}" {{ $pais->id == 1 ? 'selected' : '' }}>
-                                    {{ $pais->nombre }}
+                                    {{ $pais->pais }}
                                 </option>
                             @endforeach
                         </select>
@@ -70,19 +73,19 @@
                 <div class="col-md-4">
                     <div class="form-group mb-3">
                         <label for="telefono">Teléfono*</label>
-                        <input type="text" class="form-control" id="telefono" name="telefono" required>
+                        <input type="text" class="form-control" id="telefono" name="telefono" value="{{ $pedido->telefono }}" required>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group mb-3">
                         <label for="email">Email*</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ $pedido->email }}" required>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group mb-3">
                         <label for="contacto">Contacto</label>
-                        <input type="text" class="form-control" id="contacto" name="contacto">
+                        <input type="text" class="form-control" id="contacto" name="contacto" value="{{ $pedido->contacto }}">
                     </div>
                 </div>
             </div>
@@ -297,6 +300,19 @@
                             </select>
                         </div>
                     </div>
+
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Color*</label>
+                            <select name="productos[${newIndex}][color_id]" class="form-control" required>
+                                <option value="">Seleccione color</option>
+                                @foreach($colores as $color)
+                                    <option value="{{ $color->id }}">{{ $color->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>Moneda*</label>
@@ -308,6 +324,8 @@
                             </select>
                         </div>
                     </div>
+
+
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>Precio*</label>

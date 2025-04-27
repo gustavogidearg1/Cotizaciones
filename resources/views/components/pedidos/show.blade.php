@@ -187,6 +187,7 @@
                     <div class="row">
                         <div class="col-md-8">
                             <h4>{{ $subPedido->producto->nombre }}</h4>
+
                             <p><strong>Código:</strong> {{ $subPedido->producto->codigo }}</p>
                         </div>
 
@@ -194,7 +195,7 @@
 
                         <div class="col-md-4">
                             <div class="row">
-
+                                <h4>{{ $subPedido->color->nombre }}</h4>
                                 @if ($subPedido->producto->img)
                                     <div class="col-3 mb-2">
                                         <a href="#" class="image-preview" data-bs-toggle="modal"

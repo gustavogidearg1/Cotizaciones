@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 27-04-2025 a las 23:57:53
+-- Tiempo de generación: 27-04-2025 a las 15:51:33
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -24,42 +24,45 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `tipos`
+-- Estructura de tabla para la tabla `colores`
 --
 
-CREATE TABLE `tipos` (
+CREATE TABLE `colores` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `nombre` varchar(50) NOT NULL,
+  `descripcion` varchar(50) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `tipos`
+-- Volcado de datos para la tabla `colores`
 --
 
-INSERT INTO `tipos` (`id`, `nombre`, `created_at`, `updated_at`) VALUES
-(1, 'Implemento', '2025-04-26 16:51:32', NULL),
-(2, 'Accesorio', '2025-04-27 21:56:16', NULL);
+INSERT INTO `colores` (`id`, `nombre`, `descripcion`, `created_at`, `updated_at`) VALUES
+(1, 'Amarillo Comofra', '#FF9900', '2025-04-27 13:41:01', NULL),
+(2, 'Verde VJD', 'MCF230', '2025-04-27 13:41:01', NULL);
 
 --
 -- Índices para tablas volcadas
 --
 
 --
--- Indices de la tabla `tipos`
+-- Indices de la tabla `colores`
 --
-ALTER TABLE `tipos`
-  ADD PRIMARY KEY (`id`);
+ALTER TABLE `colores`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `colores_nombre_unique` (`nombre`),
+  ADD UNIQUE KEY `colores_descripcion_unique` (`descripcion`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
 --
--- AUTO_INCREMENT de la tabla `tipos`
+-- AUTO_INCREMENT de la tabla `colores`
 --
-ALTER TABLE `tipos`
+ALTER TABLE `colores`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 

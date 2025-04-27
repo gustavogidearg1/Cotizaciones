@@ -75,4 +75,8 @@ class Pedido extends Model
     {
         return $this->subPedidos->sum('total');
     }
+
+
+
+
 }

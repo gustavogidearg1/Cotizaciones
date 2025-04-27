@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 27-04-2025 a las 14:33:37
+-- Tiempo de generación: 27-04-2025 a las 15:50:06
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -52,8 +52,16 @@ CREATE TABLE `pedidos` (
   `telefono` varchar(100) NOT NULL,
   `email` varchar(255) NOT NULL,
   `contacto` varchar(100) DEFAULT NULL,
-  `categoria_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1
+  `categoria_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `color_id` bigint(20) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `pedidos`
+--
+
+INSERT INTO `pedidos` (`id`, `tipo_pedido_id`, `fecha`, `fecha_necesidad`, `forma_pago_id`, `forma_entrega`, `plazo_entrega`, `solicitante`, `observacion`, `imagen`, `imagen_2`, `flete_id`, `bonificacion`, `user_id`, `created_at`, `updated_at`, `cliente`, `direccion`, `localidad_id`, `provincia_id`, `pais_id`, `telefono`, `email`, `contacto`, `categoria_id`, `color_id`) VALUES
+(24, 1, '2025-04-27', '2025-05-11', 1, 'Una Forma de Entrega', 'Un Plazo de Entrega', 'Un solicitante', NULL, '/storage/pedidos/MwO8tuD0iTK5WtJNzDeTP1WiLgjp20X7e796ig00.png', NULL, 1, 0.00, 3, '2025-04-27 15:35:22', '2025-04-27 15:35:22', 'Gustavo Godoy', 'General Paz 745', 1, 1, 1, '03534191741', 'gustavog@live.com.ar', NULL, 1, NULL);
 
 --
 -- Índices para tablas volcadas
@@ -71,7 +79,8 @@ ALTER TABLE `pedidos`
   ADD KEY `pedidos_localidad_id_foreign` (`localidad_id`),
   ADD KEY `pedidos_provincia_id_foreign` (`provincia_id`),
   ADD KEY `pedidos_pais_id_foreign` (`pais_id`),
-  ADD KEY `pedidos_categoria_id_foreign` (`categoria_id`);
+  ADD KEY `pedidos_categoria_id_foreign` (`categoria_id`),
+  ADD KEY `pedidos_color_id_foreign` (`color_id`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -81,7 +90,7 @@ ALTER TABLE `pedidos`
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- Restricciones para tablas volcadas
@@ -92,6 +101,7 @@ ALTER TABLE `pedidos`
 --
 ALTER TABLE `pedidos`
   ADD CONSTRAINT `pedidos_categoria_id_foreign` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`id`),
+  ADD CONSTRAINT `pedidos_color_id_foreign` FOREIGN KEY (`color_id`) REFERENCES `colores` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `pedidos_flete_id_foreign` FOREIGN KEY (`flete_id`) REFERENCES `fletes` (`id`),
   ADD CONSTRAINT `pedidos_forma_pago_id_foreign` FOREIGN KEY (`forma_pago_id`) REFERENCES `forma_pagos` (`id`),
   ADD CONSTRAINT `pedidos_localidad_id_foreign` FOREIGN KEY (`localidad_id`) REFERENCES `localidad` (`id`),

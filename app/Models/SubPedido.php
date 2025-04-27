@@ -9,9 +9,11 @@ class SubPedido extends Model
 {
     use HasFactory;
 
+
+
     protected $fillable = [
         'producto_id', 'precio', 'subbonificacion', 'iva', 'cantidad',
-        'moneda_id', 'sub_fecha_entrega', 'subtotal', 'total', 'detalle', 'pedido_id'
+        'moneda_id', 'sub_fecha_entrega', 'subtotal', 'total', 'detalle', 'pedido_id','color_id'
     ];
 
     protected $dates = ['sub_fecha_entrega'];
@@ -38,5 +40,12 @@ class SubPedido extends Model
             $subPedido->subtotal = $subtotal;
             $subPedido->total = $subtotal * (1 + ($subPedido->iva / 100));
         });
+    }
+
+    public function color()
+    {
+        return $this->belongsTo(Color::class)->withDefault([
+            'nombre' => 'Color no especificado'
+        ]);
     }
 }
