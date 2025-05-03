@@ -40,7 +40,7 @@ class PedidoController extends Controller
 
     public function index(Request $request)
     {
-        $query = Pedido::with(['user'])
+        $query = Pedido::with(['user', 'subPedidos.producto'])
             ->orderBy('fecha', 'desc');
 
         if ($request->has('search')) {
@@ -177,7 +177,7 @@ class PedidoController extends Controller
                 $data['imagen_2'] = '/storage/' . $path;
             }
 
-            // Log::info('Creando pedido con datos:', $data);
+            // Crear el pedido primero
             $pedido = Pedido::create($data);
 
 
@@ -199,7 +199,7 @@ class PedidoController extends Controller
                     'total' => $total,
                     'detalle' => $producto['detalle'] ?? null,
                     'pedido_id' => $pedido->id,
-                    'color_id' => $request['color_id'] ?? null,
+                    'color_id' => $producto['color_id'] ?? null,
 
                 ];
 
@@ -240,8 +240,7 @@ class PedidoController extends Controller
             return redirect()->route('pedidos.show', $pedido->id)
                 ->with('success', 'Pedido creado correctamente.');
         } catch (\Exception $e) {
-            //Log::error('Error al crear pedido: ' . $e->getMessage());
-            //Log::error('Trace:', ['exception' => $e]);
+
             return back()->withInput()->with('error', 'Error al crear el pedido: ' . $e->getMessage());
         }
     }
@@ -491,12 +490,27 @@ class PedidoController extends Controller
 
     public function productosPorFamilia(Familia $familia)
     {
+        // Verificar si la familia existe
+        if (!$familia) {
+            return response()->json(['error' => 'Familia no encontrada'], 404);
+        }
+
         $productos = Producto::where('familia_id', $familia->id)
             ->where('activo', 1)
-            ->where('tipo_id', 1)
-            //->select('id', 'codigo', 'nombre', 'precio') // Incluir precio base
+            ->select([
+                'id',
+                'codigo',
+                'nombre',
+                'um_id',
+                'familia_id',
+                'detalle',
+                'img'
+            ])
+            ->with(['unidad', 'familia']) // Cargar relaciones necesarias
             ->get();
 
         return response()->json($productos);
     }
+
+
 }

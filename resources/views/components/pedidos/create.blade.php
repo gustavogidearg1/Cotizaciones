@@ -1,5 +1,18 @@
 @extends('layouts.app')
 
+<style>
+
+.familia-item {
+    transition: all 0.3s ease;
+}
+.familia-item:hover {
+    transform: scale(1.05);
+}
+.border-primary {
+    border: 2px solid #0d6efd !important;
+}
+
+</style>
 
 @section('content')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -19,13 +32,13 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group mb-3">
-                                <label for="cliente">Nombre del Cliente*</label>
+                                <label for="cliente">Nombre del Cliente<strong style="color: red;">*</strong></label>
                                 <input type="text" class="form-control" id="cliente" name="cliente" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group mb-3">
-                                <label for="direccion">Dirección*</label>
+                                <label for="direccion">Dirección<strong style="color: red;">*</strong></label>
                                 <input type="text" class="form-control" id="direccion" name="direccion" required>
                             </div>
                         </div>
@@ -34,7 +47,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group mb-3">
-                                <label for="localidad_id">Localidad*</label>
+                                <label for="localidad_id">Localidad<strong style="color: red;">*</strong></label>
                                 <select class="form-control" id="localidad_id" name="localidad_id" required>
                                     @foreach($localidades as $localidad)
                                         <option value="{{ $localidad->id }}">{{ $localidad->nombre }}</option>
@@ -44,7 +57,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group mb-3">
-                                <label for="provincia_id">Provincia*</label>
+                                <label for="provincia_id">Provincia<strong style="color: red;">*</strong></label>
                                 <select class="form-control" id="provincia_id" name="provincia_id" required>
                                     @foreach($provincias as $provincia)
                                         <option value="{{ $provincia->id }}">{{ $provincia->provincia }}</option>
@@ -54,7 +67,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group mb-3">
-                                <label for="pais_id">País*</label>
+                                <label for="pais_id">País<strong style="color: red;">*</strong></label>
                                 <select class="form-control" id="pais_id" name="pais_id">
                                     @foreach($paises as $pais)
                                         <option value="{{ $pais->id }}" {{ $pais->id == 1 ? 'selected' : '' }}>
@@ -69,13 +82,13 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group mb-3">
-                                <label for="telefono">Teléfono*</label>
+                                <label for="telefono">Teléfono<strong style="color: red;">*</strong></label>
                                 <input type="text" class="form-control" id="telefono" name="telefono" required>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group mb-3">
-                                <label for="email">Email*</label>
+                                <label for="email">Email<strong style="color: red;">*</strong></label>
                                 <input type="email" class="form-control" id="email" name="email" required>
                             </div>
                         </div>
@@ -89,7 +102,7 @@
 
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="tipo_pedido_id">Tipo de Pedido*</label>
+                            <label for="tipo_pedido_id">Tipo de Pedido<strong style="color: red;">*</strong></label>
                             <select class="form-control" id="tipo_pedido_id" name="tipo_pedido_id" required>
                                 <option value="">Seleccione un tipo</option>
                                 @foreach($tipoPedidos as $tipo)
@@ -103,7 +116,7 @@
 
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="fecha_necesidad">Fecha de Necesidad*</label>
+                            <label for="fecha_necesidad">Fecha de Necesidad<strong style="color: red;">*</strong></label>
                             <input type="date" class="form-control" id="fecha_necesidad" name="fecha_necesidad"
                                    value="{{ \Carbon\Carbon::now()->addWeeks(2)->format('Y-m-d') }}" required>
                         </div>
@@ -113,7 +126,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="forma_pago_id">Forma de Pago*</label>
+                            <label for="forma_pago_id">Forma de Pago<strong style="color: red;">*</strong></label>
                             <select class="form-control" id="forma_pago_id" name="forma_pago_id" required>
                                 <option value="">Seleccione forma de pago</option>
                                 @foreach($formasPago as $formaPago)
@@ -124,34 +137,37 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="forma_entrega">Forma de Entrega*</label>
+                            <label for="forma_entrega">Forma de Entrega<strong style="color: red;">*</strong></label>
                             <input type="text" class="form-control" id="forma_entrega" name="forma_entrega" required>
                         </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label for="plazo_entrega">Plazo de Entrega</label>
-                        <input type="text" class="form-control" id="plazo_entrega" name="plazo_entrega" maxlength="100">
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="solicitante">Solicitante*</label>
-                            <input type="text" class="form-control" id="solicitante" name="solicitante" required>
+                            <label for="plazo_entrega">Plazo de Entrega</label>
+                            <input type="text" class="form-control" id="plazo_entrega" name="plazo_entrega" maxlength="100">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="bonificacion">Bonificación (%)*</label>
+                            <label for="solicitante">Solicitante<strong style="color: red;">*</strong></label>
+                            <input type="text" class="form-control" id="solicitante" name="solicitante" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="bonificacion">Bonificación (%)<strong style="color: red;">*</strong></label>
                             <input type="number" step="0.01" min="0" max="100" class="form-control"
                                    id="bonificacion" name="bonificacion" value="0" required>
                         </div>
                     </div>
-                </div>
+
 
                 <div class="col-md-6">
                     <div class="form-group mb-3">
@@ -164,6 +180,7 @@
                         </select>
                     </div>
                 </div>
+            </div>
 
                 <div class="form-group mb-3">
                     <label for="observacion">Observaciones</label>
@@ -190,136 +207,189 @@
             </div>
         </div>
 
-        <!-- Productos -->
-        <div class="card mb-4">
-            <div class="card-header">Productos</div>
-            <div class="card-body">
-                <!-- Mostrar familias primero -->
-                <div class="row mb-4" id="familias-container">
-                    @foreach($familias as $familia)
-                        @if($familia->imagen_principal)
-                            <div class="col-md-2 mb-3 familia-item" data-familia-id="{{ $familia->id }}" style="cursor: pointer;">
-                                <img src="{{ asset('storage/' . $familia->imagen_principal) }}"
-                                     alt="{{ $familia->nombre }}"
-                                     class="img-fluid img-thumbnail">
-                                <p class="text-center mt-2">{{ $familia->nombre }}</p>
-                            </div>
-                        @endif
-                    @endforeach
-                </div>
-
-                <!-- Contenedor para productos (inicialmente oculto) -->
-                <div id="productos-container" style="display: none;">
-                    <div id="productos-familia-container">
-                        <!-- Productos de la familia seleccionada aparecerán aquí automáticamente -->
+<!-- Sección de Productos Implementos -->
+<div class="card mb-4">
+    <div class="card-header">Productos</div>
+    <div class="card-body">
+        <div class="row mb-4 familias-container" data-seccion="implementos">
+            @foreach($familias->whereBetween('id', [1, 7]) as $familia)
+                @if($familia->imagen_principal)
+                    <div class="col-md-2 mb-3 familia-item" data-familia-id="{{ $familia->id }}" style="cursor: pointer;">
+                        <img src="{{ asset('storage/' . $familia->imagen_principal) }}"
+                             alt="{{ $familia->nombre }}"
+                             class="img-fluid img-thumbnail">
+                        <p class="text-center mt-2">{{ $familia->nombre }}</p>
                     </div>
-
-                    <button type="button" class="btn btn-secondary mt-3" id="agregar-producto">
-                        <i class="fas fa-plus"></i> Agregar Producto
-                    </button>
-                </div>
-            </div>
+                @endif
+            @endforeach
         </div>
 
-        <div class="form-group">
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save"></i> Guardar Cotización
+        <div id="productos-implementos-container" class="productos-container" style="display: none;">
+            <div class="productos-familia-container"></div>
+            <button type="button" class="btn btn-secondary mt-3 agregar-producto" data-seccion="implementos">
+                <i class="fas fa-plus"></i> Agregar Producto
             </button>
-            <a href="{{ route('pedidos.index') }}" class="btn btn-secondary">
-                <i class="fas fa-times"></i> Cancelar
-            </a>
-        </div>
-    </form>
-</div>
-
-<!-- Template para productos (oculto) -->
-<template id="producto-template">
-    <div class="producto-item mb-3 p-3 border rounded">
-        <button type="button" class="btn btn-danger btn-sm mb-2 btn-eliminar-producto">
-            <i class="fas fa-trash"></i> Eliminar
-        </button>
-        <div class="row">
-            <div class="col-md-5">
-                <div class="form-group">
-                    <label>Producto*</label>
-                    <select class="form-control producto-select" name="productos[TEMPLATE_INDEX][producto_id]" required>
-                        <option value="">Seleccione un producto</option>
-                        @foreach($productos as $producto)
-                            <option value="{{ $producto->id }}" data-precio="{{ $producto->precio ?? 0 }}">
-                                {{ $producto->codigo }} - {{ $producto->nombre }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="form-group mb-3">
-                    <label>Color</label>
-                    <select class="form-control color-select" name="productos[TEMPLATE_INDEX][color_id]">
-                        <option value="">Seleccione un color</option>
-                        @foreach($colores as $color)
-                            <option value="{{ $color->id }}">{{ $color->nombre }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Moneda*</label>
-                    <select class="form-control moneda-select" name="productos[TEMPLATE_INDEX][moneda_id]" required>
-                        <option value="">Seleccione moneda</option>
-                        @foreach($monedas as $moneda)
-                            <option value="{{ $moneda->id }}">{{ $moneda->moneda }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Precio*</label>
-                    <input type="number" step="0.01" min="0" class="form-control precio-input"
-                           name="productos[TEMPLATE_INDEX][precio]" value="0.00" required>
-                </div>
-            </div>
-            <div class="col-md-1">
-                <div class="form-group">
-                    <label>Cantidad*</label>
-                    <input type="number" min="1" class="form-control cantidad-input"
-                           name="productos[TEMPLATE_INDEX][cantidad]" value="1" required>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>IVA (%)*</label>
-                    <input type="number" step="0.01" min="0" max="100" class="form-control iva-input"
-                           name="productos[TEMPLATE_INDEX][iva]" value="10.50" required>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Subtotal</label>
-                    <input type="text" class="form-control subtotal-input" readonly>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Total</label>
-                    <input type="text" class="form-control total-input" readonly>
-                </div>
-            </div>
-        </div>
-        <div class="row mt-2">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label>Detalle</label>
-                    <input type="text" class="form-control" name="productos[TEMPLATE_INDEX][detalle]" maxlength="255">
-                </div>
-            </div>
         </div>
     </div>
+</div>
+
+<!-- Fin Sección de Productos Implementos -->
+
+<!-- Sección de Neumáticos y Ruedas -->
+<div class="card mb-4">
+    <div class="card-header">Neumáticos y Ruedas</div>
+    <div class="card-body">
+        <div class="row mb-4 familias-container" data-seccion="neumaticos">
+            @foreach($familias->whereBetween('id', [9, 10]) as $familia)
+                @if($familia->imagen_principal)
+                    <div class="col-md-2 mb-3 familia-item" data-familia-id="{{ $familia->id }}" style="cursor: pointer;">
+                        <img src="{{ asset('storage/' . $familia->imagen_principal) }}"
+                             alt="{{ $familia->nombre }}"
+                             class="img-fluid img-thumbnail">
+                        <p class="text-center mt-2">{{ $familia->nombre }}</p>
+                    </div>
+                @endif
+            @endforeach
+        </div>
+
+        <div id="productos-neumaticos-container" class="productos-container" style="display: none;">
+            <div class="productos-familia-container"></div>
+            <button type="button" class="btn btn-secondary mt-3 agregar-producto" data-seccion="neumaticos">
+                <i class="fas fa-plus"></i> Agregar Producto
+            </button>
+        </div>
+    </div>
+</div>
+<!--Fin Sección de Neumáticos Ruedas -->
+
+
+<!-- Sección de Balanza, cámaras y otros -->
+<div class="card mb-4">
+    <div class="card-header">Balanza, cámaras y otros</div>
+    <div class="card-body">
+        <div class="row mb-4 familias-container" data-seccion="balanza">
+            @foreach($familias->whereBetween('id', [11, 12]) as $familia)
+                @if($familia->imagen_principal)
+                    <div class="col-md-2 mb-3 familia-item" data-familia-id="{{ $familia->id }}" style="cursor: pointer;">
+                        <img src="{{ asset('storage/' . $familia->imagen_principal) }}"
+                             alt="{{ $familia->nombre }}"
+                             class="img-fluid img-thumbnail">
+                        <p class="text-center mt-2">{{ $familia->nombre }}</p>
+                    </div>
+                @endif
+            @endforeach
+        </div>
+
+        <div id="productos-balanza-container" class="productos-container" style="display: none;">
+            <div class="productos-familia-container"></div>
+            <button type="button" class="btn btn-secondary mt-3 agregar-producto" data-seccion="balanza">
+                <i class="fas fa-plus"></i> Agregar Producto
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Fin Sección de Balanza, cámaras y otros -->
+
+<!-- Botones de acción -->
+<div class="form-group mb-4">
+    <button type="submit" class="btn btn-primary">
+        <i class="fas fa-save"></i> Guardar Cotización
+    </button>
+    <a href="{{ route('pedidos.index') }}" class="btn btn-secondary">
+        <i class="fas fa-times"></i> Cancelar
+    </a>
+</div>
+</form>
+</div>
+
+<!-- Template único para productos (oculto) -->
+<template id="producto-template">
+<div class="producto-item mb-3 p-3 border rounded">
+<button type="button" class="btn btn-danger btn-sm mb-2 btn-eliminar-producto">
+    <i class="fas fa-trash"></i> Eliminar
+</button>
+<div class="row">
+    <div class="col-md-5">
+        <div class="form-group">
+            <label>Producto*</label>
+            <select class="form-control producto-select" name="productos[TEMPLATE_INDEX][producto_id]" required>
+                <option value="">Seleccione un producto</option>
+                @foreach($productos as $producto)
+                    <option value="{{ $producto->id }}" data-precio="{{ $producto->precio ?? 0 }}">
+                        {{ $producto->codigo }} - {{ $producto->nombre }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="form-group mb-3">
+            <label>Color</label>
+            <select class="form-control color-select" name="productos[TEMPLATE_INDEX][color_id]">
+                <option value="">Seleccione un color</option>
+                @foreach($colores as $color)
+                    <option value="{{ $color->id }}">{{ $color->nombre }}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="form-group">
+            <label>Moneda*</label>
+            <select class="form-control moneda-select" name="productos[TEMPLATE_INDEX][moneda_id]" required>
+                <option value="">Seleccione moneda</option>
+                @foreach($monedas as $moneda)
+                    <option value="{{ $moneda->id }}">{{ $moneda->moneda }}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label>Precio*</label>
+            <input type="number" step="0.01" min="0" class="form-control precio-input"
+                   name="productos[TEMPLATE_INDEX][precio]" value="0.00" required>
+        </div>
+    </div>
+    <div class="col-md-1">
+        <div class="form-group">
+            <label>Cantidad*</label>
+            <input type="number" min="1" class="form-control cantidad-input"
+                   name="productos[TEMPLATE_INDEX][cantidad]" value="1" required>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label>IVA (%)*</label>
+            <input type="number" step="0.01" min="0" max="100" class="form-control iva-input"
+                   name="productos[TEMPLATE_INDEX][iva]" value="10.50" required>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label>Subtotal</label>
+            <input type="text" class="form-control subtotal-input" readonly>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label>Total</label>
+            <input type="text" class="form-control total-input" readonly>
+        </div>
+    </div>
+</div>
+<div class="row mt-2">
+    <div class="col-md-12">
+        <div class="form-group">
+            <label>Detalle</label>
+            <input type="text" class="form-control" name="productos[TEMPLATE_INDEX][detalle]" maxlength="255">
+        </div>
+    </div>
+</div>
+</div>
 </template>
 
 @endsection
@@ -327,194 +397,304 @@
 @section('scripts')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-    $(document).ready(function() {
-        // Contador para índices de productos
-        let productoCounter = 0;
-        let familiaSeleccionada = null;
+  $(document).ready(function() {
+    // Contador para índices de productos por sección
+    let productoCounters = {
+        implementos: 0,
+        neumaticos: 0,
+        balanza: 0
+    };
 
-        // Función para agregar un nuevo producto
-        function agregarProducto() {
-            const productos = $('#productos-familia-container').data('productos');
-            if (!productos || productos.length === 0) return;
+    const familiasSinColor = [9, 10, 11, 12]; // IDs de familias que no llevan color
 
-            const template = $('#producto-template').html();
-            const html = template.replace(/TEMPLATE_INDEX/g, productoCounter);
-            const $newProduct = $(html);
+    // Objeto para almacenar la familia seleccionada por sección
+    let familiasSeleccionadas = {
+        implementos: null,
+        neumaticos: null,
+        balanza: null
+    };
 
-            // Llenar el select con productos de la familia seleccionada
-            const $select = $newProduct.find('.producto-select');
-            $select.empty().append('<option value="">Seleccione un producto</option>');
+    // Objeto para almacenar productos por familia
+    let productosPorFamilia = {
+        implementos: [],
+        neumaticos: [],
+        balanza: []
+    };
 
-            productos.forEach(producto => {
-                $select.append(`<option value="${producto.id}" data-precio="${producto.precio || 0}">
-                    ${producto.codigo} - ${producto.nombre}
-                </option>`);
-            });
+    // Función para calcular subtotal y total
+    function calcularSubtotal(productoItem) {
+        const precio = parseFloat(productoItem.find('.precio-input').val()) || 0;
+        const cantidad = parseInt(productoItem.find('.cantidad-input').val()) || 0;
+        const bonificacion = parseFloat($('#bonificacion').val()) || 0;
+        const iva = parseFloat(productoItem.find('.iva-input').val()) || 0;
 
-            $('#productos-familia-container').append($newProduct);
-            productoCounter++;
+        const subtotal = precio * cantidad * (1 - (bonificacion / 100));
+        const total = subtotal * (1 + (iva / 100));
 
-            // Calcular subtotal inicial
-            calcularSubtotal($newProduct);
+        productoItem.find('.subtotal-input').val(subtotal.toFixed(2));
+        productoItem.find('.total-input').val(total.toFixed(2));
+    }
+
+    // Función para agregar un nuevo producto
+    function agregarProducto(seccion) {
+        const contenedor = $(`#productos-${seccion}-container .productos-familia-container`);
+        const familiaId = familiasSeleccionadas[seccion];
+
+
+        if (!familiaId) {
+            alert('Primero seleccione una familia haciendo clic en una imagen de familia');
+            return;
         }
 
-        // Manejar clic en una familia
-        $(document).on('click', '.familia-item', function() {
-            const familiaId = $(this).data('familia-id');
-            familiaSeleccionada = familiaId;
+        const productos = productosPorFamilia[seccion];
 
-            // Limpiar contenedor de productos
-            $('#productos-familia-container').empty();
-            productoCounter = 0;
-
-            // Obtener productos de esta familia via AJAX
-            $.get('/productos-por-familia/' + familiaId, function(productos) {
-                // Mostrar contenedor de productos
-                $('#productos-container').show();
-
-                // Guardar los productos para usarlos luego
-                $('#productos-familia-container').data('productos', productos);
-
-                // Agregar automáticamente el primer producto
-                agregarProducto();
-            }).fail(function() {
-                alert('Error al cargar productos de la familia');
-            });
-        });
-
-        // Agregar producto adicional
-        $('#agregar-producto').click(function() {
-            if (!familiaSeleccionada) {
-                alert('Primero seleccione una familia');
-                return;
-            }
-            agregarProducto();
-        });
-
-        // Función para calcular subtotal y total
-        function calcularSubtotal(productoItem) {
-            const precio = parseFloat(productoItem.find('.precio-input').val()) || 0;
-            const cantidad = parseInt(productoItem.find('.cantidad-input').val()) || 0;
-            const bonificacion = parseFloat($('#bonificacion').val()) || 0;
-            const iva = parseFloat(productoItem.find('.iva-input').val()) || 0;
-
-            const subtotal = precio * cantidad * (1 - (bonificacion / 100));
-            const total = subtotal * (1 + (iva / 100));
-
-            productoItem.find('.subtotal-input').val(subtotal.toFixed(2));
-            productoItem.find('.total-input').val(total.toFixed(2));
+        if (!productos || productos.length === 0) {
+            alert('No hay productos disponibles para esta familia');
+            return;
         }
 
-        // Cuando se selecciona un producto, cargar su precio
-        $('#productos-container').on('change', '.producto-select', function() {
-            const productoId = $(this).val();
-            const productoItem = $(this).closest('.producto-item');
+        const template = $('#producto-template').html();
+        const html = template.replace(/TEMPLATE_INDEX/g, `${seccion}_${productoCounters[seccion]}`);
+        const $newProduct = $(html);
 
-            if (productoId) {
-                $.get(`/pedidos/last-price/${productoId}`, function(data) {
-                    // Establecer precio
-                    const precioInput = productoItem.find('.precio-input');
-                    precioInput.val(data.precio_bonificado || data.precio || 0);
+        // Llenar el select con productos de la familia seleccionada
+        const $select = $newProduct.find('.producto-select');
+        $select.empty().append('<option value="">Seleccione un producto</option>');
 
-                    // Establecer moneda si existe
-                    if (data.moneda_id) {
-                        productoItem.find('.moneda-select').val(data.moneda_id);
+        productos.forEach(producto => {
+            $select.append(`<option value="${producto.id}">
+                ${producto.codigo} - ${producto.nombre}
+            </option>`);
+        });
+
+        contenedor.append($newProduct);
+        productoCounters[seccion]++;
+        calcularSubtotal($newProduct);
+    }
+
+    // Manejar clic en una familia
+    $(document).on('click', '.familia-item', function() {
+        const familiaId = $(this).data('familia-id');
+        const seccion = $(this).closest('.familias-container').data('seccion');
+
+        // Marcar visualmente la familia seleccionada
+        $(this).closest('.familias-container').find('.familia-item').removeClass('border-primary');
+        $(this).addClass('border border-primary');
+
+        // Si ya está seleccionada esta familia, no hacer nada
+        if (familiasSeleccionadas[seccion] === familiaId) {
+            return;
+        }
+
+        familiasSeleccionadas[seccion] = familiaId;
+
+        // Mostrar contenedor de productos de esta sección (si estaba oculto)
+        $(`#productos-${seccion}-container`).show().find('.productos-familia-container').empty();
+        productoCounters[seccion] = 0;
+
+        // Obtener productos de esta familia via AJAX
+        $.get('/productos-por-familia/' + familiaId)
+            .done(function(productos) {
+                productosPorFamilia[seccion] = productos;
+                agregarProducto(seccion);
+            })
+            .fail(function(error) {
+                console.error('Error al cargar productos:', error);
+                alert('Error al cargar productos. Por favor intente nuevamente.');
+            });
+    });
+
+    // Agregar producto adicional
+    $(document).on('click', '.agregar-producto', function() {
+        const seccion = $(this).data('seccion');
+        agregarProducto(seccion);
+    });
+
+    // Cuando se selecciona un producto, cargar su precio histórico
+    $(document).on('change', '.producto-select', function() {
+        const productoId = $(this).val();
+        const productoItem = $(this).closest('.producto-item');
+
+        // Resetear valores
+        productoItem.find('.precio-input').val(0);
+        productoItem.find('.moneda-select').val('');
+
+        if (productoId) {
+            // Obtener último precio desde sub_pedidos
+            $.get(`/pedidos/last-price/${productoId}`)
+                .done(function(data) {
+                    if(data.precio) {
+                        productoItem.find('.precio-input').val(data.precio).trigger('change');
                     }
-
-                    // Disparar evento change para calcular subtotales
-                    precioInput.trigger('change');
-                }).fail(function() {
-                    console.error('Error al cargar precio y moneda');
-                });
-            }
-        });
-
-        // Eventos para cálculos
-        $('#productos-container').on('change', '.producto-select, .precio-input, .cantidad-input, .iva-input', function() {
-            calcularSubtotal($(this).closest('.producto-item'));
-        });
-
-        $('#bonificacion').on('change', function() {
-            $('.producto-item').each(function() {
-                calcularSubtotal($(this));
-            });
-        });
-
-        // Eliminar producto
-        $('#productos-container').on('click', '.btn-eliminar-producto', function() {
-            $(this).closest('.producto-item').remove();
-            // No permitir eliminar el último producto
-            if ($('.producto-item').length === 0 && familiaSeleccionada) {
-                agregarProducto();
-            }
-        });
-
-        // Validación y envío del formulario
-        $('#pedido-form').submit(function(e) {
-            e.preventDefault(); // Prevenir envío normal para validar
-
-            // Validar que hay al menos un producto
-            if ($('.producto-item').length === 0) {
-                alert('Debe agregar al menos un producto');
-                return false;
-            }
-
-            // Recolectar datos de productos
-            let productosData = [];
-            $('.producto-item').each(function(index) {
-                let producto = {
-                    producto_id: $(this).find('.producto-select').val(),
-                    precio: parseFloat($(this).find('.precio-input').val()) || 0,
-                    cantidad: parseInt($(this).find('.cantidad-input').val()) || 1,
-                    moneda_id: $(this).find('.moneda-select').val(),
-                    iva: parseFloat($(this).find('.iva-input').val()) || 10.5,
-                    detalle: $(this).find('input[name*="detalle"]').val() || null
-                };
-
-                // Validar que el producto tenga todos los campos requeridos
-                if (!producto.producto_id || !producto.moneda_id) {
-                    alert(`El producto en la posición ${index + 1} no está completo`);
-                    return false;
-                }
-
-                productosData.push(producto);
-            });
-
-            console.log('Datos a enviar:', {
-                productos: productosData,
-                otrosDatos: {
-                    cliente: $('#cliente').val(),
-                    localidad_id: $('#localidad_id').val(),
-                    provincia_id: $('#provincia_id').val(),
-                    // Agrega otros campos que necesites verificar
-                }
-            });
-
-            // Preguntar si deseas continuar con el envío
-            if (confirm('¿Los datos en consola son correctos? ¿Deseas continuar con el envío?')) {
-                // Eliminar inputs antiguos si existen
-                $('input[name^="productos["]').remove();
-
-                // Crear inputs para cada producto
-                productosData.forEach((producto, index) => {
-                    for (let key in producto) {
-                        if (producto.hasOwnProperty(key)) {
-                            $('<input>').attr({
-                                type: 'hidden',
-                                name: `productos[${index}][${key}]`,
-                                value: producto[key]
-                            }).appendTo('#pedido-form');
-                        }
+                    if(data.moneda_id) {
+                        productoItem.find('.moneda-select').val(data.moneda_id).trigger('change');
                     }
+                })
+                .fail(function() {
+                    console.log('No se encontró precio histórico para este producto');
                 });
+        }
+    });
 
-                // Continuar con el envío del formulario
-                this.submit();
-            }
+    // Eventos para cálculos
+    $(document).on('change', '.producto-select, .precio-input, .cantidad-input, .iva-input, .moneda-select', function() {
+        calcularSubtotal($(this).closest('.producto-item'));
+    });
 
-
+    $('#bonificacion').on('change', function() {
+        $('.producto-item').each(function() {
+            calcularSubtotal($(this));
         });
     });
+
+    // Eliminar producto
+    $(document).on('click', '.btn-eliminar-producto', function() {
+        const productoItem = $(this).closest('.producto-item');
+        const seccion = productoItem.closest('.productos-container').attr('id').replace('productos-', '').replace('-container', '');
+
+        productoItem.remove();
+
+        // Verificar si quedan productos en la sección
+        if ($(`#productos-${seccion}-container .producto-item`).length === 0 && familiasSeleccionadas[seccion]) {
+            agregarProducto(seccion);
+        }
+    });
+
+    // Validación y envío del formulario
+    $('#pedido-form').submit(function(e) {
+    e.preventDefault();
+
+    // Validar campos obligatorios del formulario principal
+    const camposRequeridos = ['#cliente', '#direccion', '#localidad_id', '#telefono', '#email', '#tipo_pedido_id', '#fecha_necesidad', '#forma_pago_id', '#forma_entrega', '#solicitante'];
+    let formularioValido = true;
+
+    camposRequeridos.forEach(selector => {
+        if (!$(selector).val()) {
+            alert(`El campo ${$(selector).attr('id')} es obligatorio`);
+            formularioValido = false;
+            $(selector).focus();
+            return false;
+        }
+    });
+
+    if (!formularioValido) return false;
+
+    // Validar que hay al menos un producto
+    if ($('.producto-item').length === 0) {
+        alert('Debe agregar al menos un producto. Seleccione una familia y agregue productos.');
+        return false;
+    }
+
+    // Validar que todos los productos tengan los campos requeridos
+    let productosValidos = true;
+    $('.producto-item').each(function(index) {
+        const productoSelect = $(this).find('.producto-select').val();
+        const monedaSelect = $(this).find('.moneda-select').val();
+        const precio = parseFloat($(this).find('.precio-input').val()) || 0;
+
+        if (!productoSelect) {
+            alert(`El producto en la posición ${index + 1} no tiene producto seleccionado`);
+            productosValidos = false;
+            return false;
+        }
+
+        if (!monedaSelect) {
+            alert(`El producto en la posición ${index + 1} no tiene moneda seleccionada`);
+            productosValidos = false;
+            return false;
+        }
+
+        if (precio <= 0) {
+            alert(`El producto en la posición ${index + 1} debe tener un precio válido`);
+            productosValidos = false;
+            return false;
+        }
+    });
+
+    if (!productosValidos) {
+        return false;
+    }
+
+    // Recolectar datos del formulario principal
+    const formData = {
+        cliente: $('#cliente').val(),
+        direccion: $('#direccion').val(),
+        localidad_id: $('#localidad_id').val(),
+        provincia_id: $('#provincia_id').val(),
+        pais_id: $('#pais_id').val(),
+        telefono: $('#telefono').val(),
+        email: $('#email').val(),
+        contacto: $('#contacto').val(),
+        tipo_pedido_id: $('#tipo_pedido_id').val(),
+        fecha_necesidad: $('#fecha_necesidad').val(),
+        forma_pago_id: $('#forma_pago_id').val(),
+        forma_entrega: $('#forma_entrega').val(),
+        plazo_entrega: $('#plazo_entrega').val(),
+        solicitante: $('#solicitante').val(),
+        bonificacion: $('#bonificacion').val(),
+        flete_id: $('#flete_id').val(),
+        observacion: $('#observacion').val()
+    };
+
+    // Recolectar datos de productos
+    let productosData = [];
+$('.producto-item').each(function(index) {
+    let producto = {
+        producto_id: $(this).find('.producto-select').val(),
+        precio: parseFloat($(this).find('.precio-input').val()) || 0,
+        cantidad: parseInt($(this).find('.cantidad-input').val()) || 1,
+        moneda_id: $(this).find('.moneda-select').val(),
+        iva: parseFloat($(this).find('.iva-input').val()) || 10.5,
+        detalle: $(this).find('input[name*="detalle"]').val() || null,
+        color_id: $(this).find('.color-select').val() || null // Asegurar que el color se envía con cada producto
+    };
+    productosData.push(producto);
+});
+
+    // Mostrar datos en el modal
+    $('#debugFormData').text(JSON.stringify(formData, null, 2));
+    $('#debugProductsData').text(JSON.stringify(productosData, null, 2));
+
+    // Mostrar el modal
+    const debugModal = new bootstrap.Modal(document.getElementById('debugModal'));
+    debugModal.show()
+
+    // Configurar el botón de confirmación
+    $('#confirmSubmit').off('click').on('click', function() {
+    // Ocultar el modal
+    debugModal.hide();
+
+
+    // Continuar con el envío del formulario
+    document.getElementById('pedido-form').submit();
+});
+
+});
+});
     </script>
+
+    <!-- Modal para ver datos del formulario -->
+<div class="modal fade" id="debugModal" tabindex="-1" aria-labelledby="debugModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="debugModalLabel">Datos del Pedido</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6>Datos principales:</h6>
+                <pre id="debugFormData"></pre>
+                <h6>Productos:</h6>
+                <pre id="debugProductsData"></pre>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="confirmSubmit">Confirmar envío</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection

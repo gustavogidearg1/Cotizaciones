@@ -73,7 +73,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('forma-pagos', FormaPagoController::class)->except(['show']);
 });
 
-Route::get('/pedidos/last-price/{productoId}', [PedidoController::class, 'getLastPrice'])->name('pedidos.last-price');
+Route::get('/pedidos/last-price/{producto}', [PedidoController::class, 'getLastPrice']);
 
 Route::get('/pedidos/{pedido}/pdf', [PedidoController::class, 'generarPDF'])->name('pedidos.pdf');
 

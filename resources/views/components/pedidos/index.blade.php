@@ -2,6 +2,13 @@
 
 @section('content')
 
+<style>
+    .badge.ms-1 {
+    margin-left: 0.25rem;
+    font-size: 0.75em;
+}
+</style>
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
@@ -43,8 +50,7 @@
                             <th class="text-nowrap">ID</th>
                             <th class="text-nowrap">Fecha</th>
                             <th>Cliente</th>
-                            <th class="text-nowrap">Entrega</th>
-                            <th>Solicitante</th>
+                            <th>Producto</th>
                             <th>Usuario</th>
                             <th class="text-nowrap text-end">Acciones</th>
                         </tr>
@@ -55,12 +61,19 @@
                             <td>{{ $pedido->id }}</td>
                             <td class="text-nowrap">{{ \Carbon\Carbon::parse($pedido->fecha)->format('d/m/Y') }}</td>
                             <td>{{ $pedido->cliente }}</td>
-
-                            <td class="text-nowrap">{{ \Carbon\Carbon::parse($pedido->fecha_necesidad)->format('d/m/Y') }}</td>
-                            <td>{{ $pedido->solicitante }}</td>
+                                  <td>
+                                @if($pedido->subPedidos->isNotEmpty())
+                                    {{ $pedido->subPedidos->first()->producto->nombre }}
+                                    @if($pedido->subPedidos->count() > 1)
+                                        <span class="badge bg-secondary ms-1">+{{ $pedido->subPedidos->count() - 1 }} más</span>
+                                    @endif
+                                @else
+                                    N/A
+                                @endif
+                            </td>
                             <td>{{ $pedido->user->name }}</td>
-
                             <td>
+                                <!-- ... tus botones de acciones ... -->
                                 <div class="d-flex justify-content-end gap-2">
                                     <a href="{{ route('pedidos.show', $pedido->id) }}"
                                        class="btn btn-sm btn-outline-info"
@@ -83,6 +96,7 @@
                                         </button>
                                     </form>
                                 </div>
+
                             </td>
                         </tr>
                         @endforeach
