@@ -12,6 +12,73 @@
     border: 2px solid #0d6efd !important;
 }
 
+/* Estilos para el modal de confirmación */
+#debugModal .modal-xl {
+    max-width: 90%;
+}
+
+#debugModal .card {
+    border: 1px solid #dee2e6;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+#debugModal .card-header {
+    padding: 0.75rem 1.25rem;
+    font-weight: 600;
+}
+
+#debugModal .table {
+    margin-bottom: 0;
+    font-size: 0.875rem;
+}
+
+#debugModal .table th {
+    background-color: #f8f9fa;
+    white-space: nowrap;
+}
+
+#debugModal pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    border: 1px solid #dee2e6;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Mejora para las tablas de datos */
+#debugFormTable td {
+    padding: 0.5rem;
+    vertical-align: top;
+}
+
+#debugFormTable tr td:first-child {
+    font-weight: 600;
+    color: #495057;
+    white-space: nowrap;
+}
+
+#debugProductsTable tr:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #debugModal .modal-xl {
+        max-width: 95%;
+    }
+
+    #debugModal .row {
+        flex-direction: column;
+    }
+
+    #debugModal .col-md-6 {
+        width: 100%;
+    }
+}
+
 </style>
 
 @section('content')
@@ -207,6 +274,7 @@
             </div>
         </div>
 
+        <h2><strong>Implemento</strong></h2>
 <!-- Sección de Productos Implementos -->
 <div class="card mb-4">
     <div class="card-header">Productos</div>
@@ -234,7 +302,7 @@
 </div>
 
 <!-- Fin Sección de Productos Implementos -->
-
+<h2><strong>Accesorios</strong></h2>
 <!-- Sección de Neumáticos y Ruedas -->
 <div class="card mb-4">
     <div class="card-header">Neumáticos y Ruedas</div>
@@ -654,47 +722,113 @@ $('.producto-item').each(function(index) {
 });
 
     // Mostrar datos en el modal
-    $('#debugFormData').text(JSON.stringify(formData, null, 2));
-    $('#debugProductsData').text(JSON.stringify(productosData, null, 2));
+// Mostrar datos en el modal
+$('#debugFormData').text(JSON.stringify(formData, null, 2));
 
-    // Mostrar el modal
-    const debugModal = new bootstrap.Modal(document.getElementById('debugModal'));
-    debugModal.show()
+// Formatea los productos como tabla
+let productsHtml = '';
+productosData.forEach(producto => {
+    const productoObj = $('.producto-select option[value="' + producto.producto_id + '"]').text();
+    const total = producto.precio * producto.cantidad * (1 - (formData.bonificacion / 100)) * (1 + (producto.iva / 100));
 
-    // Configurar el botón de confirmación
-    $('#confirmSubmit').off('click').on('click', function() {
-    // Ocultar el modal
+    productsHtml += `
+        <tr>
+            <td>${productoObj}</td>
+            <td>${producto.cantidad}</td>
+            <td>$${producto.precio.toFixed(2)}</td>
+            <td>$${total.toFixed(2)}</td>
+        </tr>`;
+});
+
+$('#debugProductsTable tbody').html(productsHtml);
+
+// Formatea los datos principales como tabla
+let formDataHtml = '';
+for (const key in formData) {
+    if (formData[key]) {
+        formDataHtml += `
+            <tr>
+                <td>${key.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</td>
+                <td>${formData[key]}</td>
+            </tr>`;
+    }
+}
+$('#debugFormTable').html(formDataHtml);
+
+// Mostrar el modal
+const debugModal = new bootstrap.Modal(document.getElementById('debugModal'));
+debugModal.show();
+
+// Configurar el botón de confirmación
+$('#confirmSubmit').off('click').on('click', function () {
     debugModal.hide();
-
-
-    // Continuar con el envío del formulario
-    document.getElementById('pedido-form').submit();
+    $('#pedido-form').unbind('submit').submit();
 });
 
 });
 });
     </script>
 
-    <!-- Modal para ver datos del formulario -->
+<!-- Modal para ver datos del formulario -->
 <div class="modal fade" id="debugModal" tabindex="-1" aria-labelledby="debugModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="debugModalLabel">Datos del Pedido</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h6>Datos principales:</h6>
-                <pre id="debugFormData"></pre>
-                <h6>Productos:</h6>
-                <pre id="debugProductsData"></pre>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="confirmSubmit">Confirmar envío</button>
-            </div>
+    <div class="modal-dialog modal-lg"> <!-- Cambiado de modal-xl a modal-lg para que no sea tan ancho -->
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="debugModalLabel">
+            <i class="fas fa-check-circle me-2"></i>Confirmación de Pedido
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <div class="modal-body">
+          <!-- UNA SOLA COLUMNA -->
+          <div class="card mb-4">
+            <div class="card-header bg-light">
+              <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Datos Principales</h6>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-sm table-striped mb-0" id="debugFormTable">
+                  <!-- Los datos se insertarán aquí via JS -->
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header bg-light">
+              <h6 class="mb-0"><i class="fas fa-boxes me-2"></i>Productos Seleccionados</h6>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-sm mb-0" id="debugProductsTable">
+                  <thead>
+                    <tr>
+                      <th>Producto</th>
+                      <th>Cantidad</th>
+                      <th>Precio</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Los datos se insertarán aquí via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times me-2"></i>Cancelar
+          </button>
+          <button type="button" class="btn btn-primary" id="confirmSubmit">
+            <i class="fas fa-check me-2"></i>Confirmar Pedido
+          </button>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
+
 
 @endsection

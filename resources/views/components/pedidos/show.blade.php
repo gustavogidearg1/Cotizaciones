@@ -179,7 +179,7 @@
         </div>
     </div>
 
-    <h3>Productos</h3>
+    <h3><strong>Productos</strong> </h3>
     @if ($pedido->subPedidos->count() > 0)
         @foreach ($pedido->subPedidos as $subPedido)
             <div class="card mb-3">

@@ -209,27 +209,23 @@ class PedidoController extends Controller
 
             // Envío de correo electrónico
             try {
-                //Log::info('Intentando enviar correo a gustavog@live.com.ar');
+
 
                 $pedidoConRelaciones = $pedido->load(['subPedidos.producto']);
-                //Log::debug('Datos del pedido para el correo:', $pedidoConRelaciones->toArray());
+
 
                 $emailsCC = [
                     'grgodoy1984@gmail.com',
                 ];
 
-                Mail::to('gustavog@live.com.ar')
+                Mail::to($pedido->email)
                     ->cc($emailsCC)
                     ->send(new PedidoCreado($pedidoConRelaciones));
-
-                //Log::info('Correo enviado exitosamente');
 
                 if (!view()->exists('emails.pedido_creado')) {
                     //Log::error('Error: Vista de correo no encontrada');
                 }
             } catch (\Exception $e) {
-                // Log::error('Error al enviar correo: ' . $e->getMessage());
-                //Log::error('Trace completo:', ['exception' => $e]);
 
                 // Aunque falle el correo, continuamos con la redirección
                 return redirect()->route('pedidos.show', $pedido->id)

@@ -29,13 +29,29 @@
                         </div>
                     </div>
 
+
                     <div class="mt-4">
+                        <h4 class="text-success">{{ __('Pedidos!') }}</h4>
+                        <a href="{{ route('pedidos.index') }}" class="btn btn-primary me-2">
+                            <i class="bi bi-file-earmark-text"></i> Ver Pedidos
+                        </a>
+                        <a href="{{ route('pedidos.create') }}" class="btn btn-outline-primary">
+                            <i class="bi bi-plus-circle"></i> Nuevos Pedidos
+                        </a>
+                    </div>
+
+
+
+                    <div class="mt-4">
+                        @if(auth()->user()->role_id == 1)
+                        <h4 class="text-success">{{ __('Cotizaciones!') }}</h4>
                         <a href="{{ route('cotizaciones.index') }}" class="btn btn-primary me-2">
                             <i class="bi bi-file-earmark-text"></i> Ver Cotizaciones
                         </a>
                         <a href="{{ route('cotizaciones.create') }}" class="btn btn-outline-primary">
                             <i class="bi bi-plus-circle"></i> Nueva Cotización
                         </a>
+                        @endif
                     </div>
                 </div>
             </div>
