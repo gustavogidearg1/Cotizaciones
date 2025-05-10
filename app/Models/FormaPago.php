@@ -9,6 +9,11 @@ class FormaPago extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nombre', 'descripcion'];
+   protected $fillable = ['nombre', 'descripcion', 'diferencia', 'activo'];
+
+       protected $casts = [
+        'activo' => 'boolean',
+        'diferencia' => 'decimal:2'
+    ];
 }
 

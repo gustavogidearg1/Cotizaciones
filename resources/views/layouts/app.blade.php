@@ -115,32 +115,62 @@
                     <!-- Menú izquierdo (opcional) -->
                     <ul class="navbar-nav me-auto">
                         @auth
-                            @if(auth()->user()->role_id == 1)
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('productos.index') }}">
-                                        <i class="bi bi-box-seam"></i> Productos
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('cliente.index') }}">
-                                        <i class="bi bi-people"></i> Clientes
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('cotizaciones.index') }}">
-                                        <i class="bi bi-file-earmark-text"></i> Cotizaciones
-                                    </a>
-                                </li>
+                        @if(auth()->user()->role_id == 1)
 
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('pedidos.index') }}">
-                                        <i class="bi bi-file-earmark-text"></i> Pedidos
-                                    </a>
-                                </li>
+                                                    <!-- Menú desplegable ABM -->
+                                                    <li class="nav-item dropdown">
+                                                        <a class="nav-link dropdown-toggle" href="#" id="navbarABM" role="button"
+                                                           data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <i class="bi bi-gear"></i> ABM
+                                                        </a>
+                                                        <ul class="dropdown-menu" aria-labelledby="navbarABM">
+                                                            <li>
+                                                                <a class="dropdown-item" href="{{ route('users.index') }}">
+                                                                    <i class="bi bi-people"></i> Usuarios
+                                                                </a>
+                                                            </li>
+
+                                                                                                                        <li>
+                                                                <a class="dropdown-item" href="{{ route('forma-pagos.index') }}">
+                                                                    <i class="bi-credit-card"></i> Forma de Pago
+                                                                </a>
+                                                            </li>
+
+                                                            <!-- Puedes agregar más items aquí -->
+                                                            <li>
+                                                                <a class="dropdown-item" href="{{ route('colores.index') }}">
+                                                                    <i class="bi bi-palette"></i> Colores
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="dropdown-item" href="{{ route('familias.index') }}">
+                                                                    <i class="bi bi-collection"></i> Familias
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('productos.index') }}">
+                                    <i class="bi bi-box-seam"></i> Productos
+                                </a>
+                            </li>
 
 
-                            @endif
-                        @endauth
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('cotizaciones.index') }}">
+                                    <i class="bi bi-file-earmark-text"></i> Cotizaciones
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('pedidos.index') }}">
+                                    <i class="bi bi-file-earmark-text"></i> Pedidos
+                                </a>
+                            </li>
+                        @endif
+                    @endauth
                     </ul>
 
                     <!-- Menú derecho -->

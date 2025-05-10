@@ -69,7 +69,7 @@
         <a href="{{ route('cotizaciones.edit', $cotizacion->id) }}" class="btn btn-warning">Editar</a>
         <a href="{{ route('cotizaciones.index') }}" class="btn btn-secondary">Volver</a>
         <a href="#" onclick="printPedido()" class="btn btn-info">
-            <i class="bi bi-printer"></i> Imprimir Pedido
+            <i class="bi bi-printer"></i> Imprimir Listado
         </a>
     </div>
 </div>

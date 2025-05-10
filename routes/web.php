@@ -2,20 +2,11 @@
 
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-// routes/web.php
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PaisController;
-use App\Http\Controllers\RoleController;
+//use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TipoController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\UnidadController;
@@ -30,22 +21,21 @@ use App\Http\Controllers\CotizacionController;
 use Illuminate\Support\Facades\Auth; // <-- Añade esta línea
 
 
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+// routes/web.php
+
+
 // Rutas protegidas por roles
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard');
-    });
-
-    Route::post('/users/{user}/assign-role', [RoleController::class, 'assignRole'])
-        ->name('users.assign-role');
+Route::middleware(['auth', 'can:admin'])->group(function () {
+    Route::resource('users', UserController::class)->except(['show']);
 });
-
-Route::middleware(['auth', 'role:editor'])->group(function () {
-    Route::get('/editor/dashboard', function () {
-        return view('editor.dashboard');
-    });
-});
-
 
 Route::middleware('auth')->group(function () {
     Route::resource('productos', ProductoController::class);
@@ -70,7 +60,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('pedidos', PedidoController::class);
-    Route::resource('forma-pagos', FormaPagoController::class)->except(['show']);
+    Route::resource('forma-pagos', FormaPagoController::class);
 });
 
 Route::get('/pedidos/last-price/{producto}', [PedidoController::class, 'getLastPrice']);
@@ -95,5 +85,12 @@ Route::get('/productos-por-familia/{familia}', [PedidoController::class, 'produc
 
 Route::post('/pedidos', [PedidoController::class, 'store'])->name('pedidos.store');
 
-//Route::get('/pedidos/{pedido}', [PedidoController::class, 'show']);
+// Agrega esto con las demás rutas de recursos
+Route::get('users/{user}', [UserController::class, 'show'])
+    ->middleware('auth')
+    ->name('users.show');
 
+    // Rutas protegidas para administradores (role_id = 1)
+    Route::middleware(['auth', 'can:admin'])->group(function () {
+        Route::resource('colores', ColorController::class);
+    });

@@ -15,12 +15,12 @@ class ColorController extends Controller
     public function index()
     {
         $colores = Color::orderBy('nombre')->paginate(10);
-        return view('components.colores.index', compact('colores'));
+        return view('abm.colores.index', compact('colores'));
     }
 
     public function create()
     {
-        return view('components.colores.create');
+        return view('abm.colores.create');
     }
 
     public function store(Request $request)
@@ -38,12 +38,12 @@ class ColorController extends Controller
 
     public function show(Color $color)
     {
-        return view('components.colores.show', compact('color'));
+        return view('abm.colores.show', compact('color'));
     }
 
     public function edit(Color $color)
     {
-        return view('components.colores.edit', compact('color'));
+        return view('abm.colores.edit', compact('color'));
     }
 
     public function update(Request $request, Color $color)

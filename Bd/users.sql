@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 26-04-2025 a las 18:48:36
+-- Tiempo de generación: 04-05-2025 a las 23:10:51
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -40,6 +40,14 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
+-- Volcado de datos para la tabla `users`
+--
+
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `role_id`) VALUES
+(3, 'Gustavo Godoy', 'gustavog@live.com.ar', NULL, '$2y$12$XNeKY3UaXegT4LaGxhhOM.kNgJJNDJhGFDo8iQhulVQCT7mzZorsm', NULL, '2025-04-26 19:50:17', '2025-04-26 19:50:17', 1),
+(4, 'Godoy Gustavo', 'grgodoy1984@gmail.com', NULL, '$2y$12$z8qEGLYZQbXAmoPCXo5MF.AoqAsuPMEtLwPiXWKSfQF2G7Fkbp93C', NULL, '2025-05-03 17:41:55', '2025-05-03 17:41:55', 3);
+
+--
 -- Índices para tablas volcadas
 --
 
@@ -59,7 +67,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Restricciones para tablas volcadas

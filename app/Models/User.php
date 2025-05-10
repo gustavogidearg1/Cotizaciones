@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Role;
 
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
         'name',
@@ -36,7 +37,7 @@ class User extends Authenticatable
 
     public function role(): BelongsTo
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(Role::class, 'role_id');
     }
 
     // Métodos de verificación de roles
@@ -47,12 +48,12 @@ class User extends Authenticatable
 
     public function isEditor(): bool
     {
-        return $this->role_id === Role::EDITOR;
+        return $this->role_id === Role::Editor;
     }
 
     public function isGuest(): bool
     {
-        return $this->role_id === Role::GUEST;
+        return $this->role_id === Role::Invitado;
     }
 
     // Método para verificar múltiples roles

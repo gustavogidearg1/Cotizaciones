@@ -12,14 +12,14 @@ class CheckRole
     public function handle(Request $request, Closure $next, string $role): Response
     {
         $roleId = match ($role) {
-            'admin' => Role::ADMIN,
-            'editor' => Role::EDITOR,
-            'guest' => Role::GUEST,
+            'admin' => Role::Administrador,
+            'editor' => Role::Editor,
+            'guest' => Role::Invitado,
             default => null,
         };
 
         if (!$request->user() || $request->user()->role_id !== $roleId) {
-            abort(403);
+            abort(403, 'No tienes permisos para acceder a esta página');
         }
 
         return $next($request);

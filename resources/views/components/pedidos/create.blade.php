@@ -280,7 +280,7 @@
     <div class="card-header">Productos</div>
     <div class="card-body">
         <div class="row mb-4 familias-container" data-seccion="implementos">
-            @foreach($familias->whereBetween('id', [1, 7]) as $familia)
+            @foreach($familias->whereBetween('id', [1, 6]) as $familia)
                 @if($familia->imagen_principal)
                     <div class="col-md-2 mb-3 familia-item" data-familia-id="{{ $familia->id }}" style="cursor: pointer;">
                         <img src="{{ asset('storage/' . $familia->imagen_principal) }}"
@@ -302,13 +302,13 @@
 </div>
 
 <!-- Fin Sección de Productos Implementos -->
-<h2><strong>Accesorios</strong></h2>
+<h2><strong>Componentes</strong></h2>
 <!-- Sección de Neumáticos y Ruedas -->
 <div class="card mb-4">
-    <div class="card-header">Neumáticos y Ruedas</div>
+    <div class="card-header">Componentes</div>
     <div class="card-body">
         <div class="row mb-4 familias-container" data-seccion="neumaticos">
-            @foreach($familias->whereBetween('id', [9, 10]) as $familia)
+            @foreach($familias->whereBetween('id', [7]) as $familia)
                 @if($familia->imagen_principal)
                     <div class="col-md-2 mb-3 familia-item" data-familia-id="{{ $familia->id }}" style="cursor: pointer;">
                         <img src="{{ asset('storage/' . $familia->imagen_principal) }}"
@@ -333,10 +333,11 @@
 
 <!-- Sección de Balanza, cámaras y otros -->
 <div class="card mb-4">
-    <div class="card-header">Balanza, cámaras y otros</div>
+    <h2><strong>Accesorios</strong></h2>
+    <div class="card-header">Neumaticos, Ruedas y Accesorios</div>
     <div class="card-body">
         <div class="row mb-4 familias-container" data-seccion="balanza">
-            @foreach($familias->whereBetween('id', [11, 12]) as $familia)
+            @foreach($familias->whereBetween('id', [8]) as $familia)
                 @if($familia->imagen_principal)
                     <div class="col-md-2 mb-3 familia-item" data-familia-id="{{ $familia->id }}" style="cursor: pointer;">
                         <img src="{{ asset('storage/' . $familia->imagen_principal) }}"
@@ -475,7 +476,7 @@
         balanza: 0
     };
 
-    const familiasSinColor = [9, 10, 11, 12]; // IDs de familias que no llevan color
+    const familiasSinColor = [7,8]; // IDs de familias que no llevan color
 
     // Objeto para almacenar la familia seleccionada por sección
     let familiasSeleccionadas = {

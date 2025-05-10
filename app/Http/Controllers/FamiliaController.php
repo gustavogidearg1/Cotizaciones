@@ -33,12 +33,12 @@ class FamiliaController extends Controller
         $data = $request->only('nombre');
 
         if ($request->hasFile('imagen_principal')) {
-            $path = $request->file('imagen_principal')->store('img', 'public');
+            $path = $request->file('imagen_principal')->store('images', 'public');
             $data['imagen_principal'] = $path;
         }
 
         if ($request->hasFile('imagen_secundaria')) {
-            $path = $request->file('imagen_secundaria')->store('img', 'public');
+            $path = $request->file('imagen_secundaria')->store('images', 'public');
             $data['imagen_secundaria'] = $path;
         }
 
@@ -75,7 +75,7 @@ class FamiliaController extends Controller
             if ($familia->imagen_principal) {
                 Storage::disk('public')->delete($familia->imagen_principal);
             }
-            $path = $request->file('imagen_principal')->store('img', 'public');
+            $path = $request->file('imagen_principal')->store('images', 'public');
             $data['imagen_principal'] = $path;
         }
 
@@ -87,7 +87,7 @@ class FamiliaController extends Controller
             if ($familia->imagen_secundaria) {
                 Storage::disk('public')->delete($familia->imagen_secundaria);
             }
-            $path = $request->file('imagen_secundaria')->store('img', 'public');
+            $path = $request->file('imagen_secundaria')->store('images', 'public');
             $data['imagen_secundaria'] = $path;
         }
 
