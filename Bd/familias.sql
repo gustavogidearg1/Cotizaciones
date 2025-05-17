@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-05-2025 a las 17:20:15
+-- Tiempo de generación: 17-05-2025 a las 21:14:54
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -41,12 +41,12 @@ CREATE TABLE `familias` (
 --
 
 INSERT INTO `familias` (`id`, `nombre`, `imagen_principal`, `imagen_secundaria`, `created_at`, `updated_at`) VALUES
-(1, 'Auto descargable', 'images/i0TrXDa0r7nIVK1dvY183C0JKcIkxhYytLhq8sN4.png', NULL, NULL, '2025-05-11 18:18:43'),
-(2, 'Fertilizante', 'images/guTiS0EXo0kHJDWVJbhS83SJ7iKKvZTmlNaR6ykz.png', NULL, NULL, '2025-05-11 18:18:56'),
-(3, 'Batea Volcadora', 'images/9O0jNjJbIch9cHIy4cmf5YKKi1OEGc1G9CEkiaBL.png', NULL, NULL, '2025-05-11 18:19:06'),
-(4, 'Mixer Hotizontal', 'images/LXnhFdfKTNTL2uWtR0FQwsPaRYgexReiN9VkNxTp.png', NULL, NULL, '2025-05-11 18:19:14'),
-(5, 'Mixer Vertical', 'images/seRsZha0aLgTSrPS2jdDmJYd4eVoi3X6ArBgUZon.png', NULL, NULL, '2025-05-11 18:19:23'),
-(6, 'Acoplado Chicos', 'images/F1bRlTPqvxhEk4DZDGYVGTn6tq0Q0m2SKImoOeni.png', NULL, NULL, '2025-05-11 18:19:32');
+(1, 'Auto descargable', 'images/i0TrXDa0r7nIVK1dvY183C0JKcIkxhYytLhq8sN4.png', NULL, NULL, '2025-05-11 21:18:43'),
+(2, 'Fertilizante', 'images/guTiS0EXo0kHJDWVJbhS83SJ7iKKvZTmlNaR6ykz.png', NULL, NULL, '2025-05-11 21:18:56'),
+(3, 'Batea Volcadora', 'images/9O0jNjJbIch9cHIy4cmf5YKKi1OEGc1G9CEkiaBL.png', NULL, NULL, '2025-05-11 21:19:06'),
+(4, 'Mixer Hotizontal', 'images/LXnhFdfKTNTL2uWtR0FQwsPaRYgexReiN9VkNxTp.png', NULL, NULL, '2025-05-11 21:19:14'),
+(5, 'Mixer Vertical', 'images/seRsZha0aLgTSrPS2jdDmJYd4eVoi3X6ArBgUZon.png', NULL, NULL, '2025-05-11 21:19:23'),
+(6, 'Acoplado Chicos', 'images/F1bRlTPqvxhEk4DZDGYVGTn6tq0Q0m2SKImoOeni.png', NULL, NULL, '2025-05-11 21:19:32');
 
 --
 -- Índices para tablas volcadas

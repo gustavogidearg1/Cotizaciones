@@ -152,17 +152,22 @@ public function store(Request $request)
 
         // Subpedidos
         foreach ($request->productos as $producto) {
+
+                $productoDB = Producto::find($producto['producto_id']);
+
+                $esAccesorio = $productoDB && $productoDB->familia_id == 8;
+
             SubPedido::create([
-                'producto_id' => $producto['producto_id'],
-                'precio' => $producto['precio'],
-                'cantidad' => $producto['cantidad'],
-                'moneda_id' => $producto['moneda_id'],
-                'iva' => $producto['iva'],
-                'detalle' => $producto['detalle'] ?? null,
-                'color_id' => $producto['color_id'] ?? null,
-                'subbonificacion' => $pedido->bonificacion,
-                'sub_fecha_entrega' => $pedido->fecha_necesidad,
-                'pedido_id' => $pedido->id,
+        'producto_id' => $producto['producto_id'],
+        'precio' => $producto['precio'],
+        'cantidad' => $producto['cantidad'],
+        'moneda_id' => $producto['moneda_id'],
+        'iva' => $producto['iva'],
+        'detalle' => $producto['detalle'] ?? null,
+        'color_id' => $producto['color_id'] ?? null,
+        'subbonificacion' => $esAccesorio ? 0 : $pedido->bonificacion,
+        'sub_fecha_entrega' => $pedido->fecha_necesidad,
+        'pedido_id' => $pedido->id,
             ]);
         }
 

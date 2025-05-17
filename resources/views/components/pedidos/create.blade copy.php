@@ -369,15 +369,15 @@
         </form>
 
         <!-- Spinner grande centrado en toda la pantalla -->
-        <div id="spinner"
-            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                <div id="spinner"
+                   style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
 background-color: rgba(255, 255, 255, 0.8); z-index: 9999; flex-direction: column;
 justify-content: center; align-items: center;">
-            <div class="spinner-border text-primary" role="status" style="width: 5rem; height: 5rem;">
-                <span class="visually-hidden">Cargando...</span>
-            </div>
-            <p class="mt-3 fs-4">Enviando pedido, por favor espere...</p>
-        </div>
+                    <div class="spinner-border text-primary" role="status" style="width: 5rem; height: 5rem;">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="mt-3 fs-4">Enviando pedido, por favor espere...</p>
+                </div>
 
     </div>
 
@@ -388,7 +388,7 @@ justify-content: center; align-items: center;">
                 <i class="fas fa-trash"></i> Eliminar
             </button>
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-5">
                     <div class="form-group">
                         <label>Producto*</label>
                         <select class="form-control producto-select" name="productos[TEMPLATE_INDEX][producto_id]"
@@ -403,7 +403,7 @@ justify-content: center; align-items: center;">
                     </div>
                 </div>
 
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <div class="form-group mb-3">
                         <label>Color</label>
                         <select class="form-control color-select" name="productos[TEMPLATE_INDEX][color_id]">
@@ -426,15 +426,6 @@ justify-content: center; align-items: center;">
                         </select>
                     </div>
                 </div>
-
-                <div class="col-md-1">
-                    <div class="form-group">
-                        <label>Cantidad*</label>
-                        <input type="number" min="1" class="form-control cantidad-input"
-                            name="productos[TEMPLATE_INDEX][cantidad]" value="1" required>
-                    </div>
-                </div>
-
                 <div class="col-md-2">
                     <div class="form-group">
                         <label>Precio*</label>
@@ -442,38 +433,26 @@ justify-content: center; align-items: center;">
                             name="productos[TEMPLATE_INDEX][precio]" value="0.00" required>
                     </div>
                 </div>
-
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <div class="form-group">
-                        <label>Descuento (%)</label>
-                        <input type="text" class="form-control descuento-porcentaje" readonly value="0.00">
+                        <label>Cantidad*</label>
+                        <input type="number" min="1" class="form-control cantidad-input"
+                            name="productos[TEMPLATE_INDEX][cantidad]" value="1" required>
                     </div>
                 </div>
-
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>IVA (%)*</label>
+                        <input type="number" step="0.01" min="0" max="100"
+                            class="form-control iva-input" name="productos[TEMPLATE_INDEX][iva]" value="10.50" required>
+                    </div>
+                </div>
                 <div class="col-md-2">
                     <div class="form-group">
                         <label>Subtotal</label>
                         <input type="text" class="form-control subtotal-input" readonly>
                     </div>
                 </div>
-
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label>IVA (%) *</label>
-                        <input type="number" step="0.01" min="0" max="100"
-                            class="form-control iva-input" name="productos[TEMPLATE_INDEX][iva]" value="10.50" required>
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label>Importe IVA</label>
-                        <input type="text" class="form-control iva-monto-input" readonly>
-                    </div>
-                </div>
-
-
-
                 <div class="col-md-2">
                     <div class="form-group">
                         <label>Total</label>
@@ -481,7 +460,6 @@ justify-content: center; align-items: center;">
                     </div>
                 </div>
             </div>
-
             <div class="row mt-2">
                 <div class="col-md-12">
                     <div class="form-group">
@@ -526,34 +504,17 @@ justify-content: center; align-items: center;">
 
             // Función para calcular subtotal y total
             function calcularSubtotal(productoItem) {
-     const seccion = productoItem.closest('.productos-container').attr('id');
-    const aplicaBonificacion = !seccion.includes('balanza');
+                const precio = parseFloat(productoItem.find('.precio-input').val()) || 0;
+                const cantidad = parseInt(productoItem.find('.cantidad-input').val()) || 0;
+                const bonificacion = parseFloat($('#bonificacion').val()) || 0;
+                const iva = parseFloat(productoItem.find('.iva-input').val()) || 0;
 
-    const precio = parseFloat(productoItem.find('.precio-input').val()) || 0;
-    const cantidad = parseInt(productoItem.find('.cantidad-input').val()) || 0;
-    const bonificacion = aplicaBonificacion ? (parseFloat($('#bonificacion').val()) || 0) : 0;
-    const iva = parseFloat(productoItem.find('.iva-input').val()) || 0;
+                const subtotal = precio * cantidad * (1 - (bonificacion / 100));
+                const total = subtotal * (1 + (iva / 100));
 
-    const subtotal = precio * cantidad * (1 - (bonificacion / 100));
-    const ivaMonto = subtotal * (iva / 100);
-    const total = subtotal + ivaMonto;
-
-    productoItem.find('.subtotal-input').val(subtotal.toFixed(2));
-    productoItem.find('.iva-monto-input').val(ivaMonto.toFixed(2));
-    productoItem.find('.total-input').val(total.toFixed(2));
-    productoItem.find('.descuento-porcentaje').val(bonificacion.toFixed(2));
+                productoItem.find('.subtotal-input').val(subtotal.toFixed(2));
+                productoItem.find('.total-input').val(total.toFixed(2));
             }
-
-            $(document).on('input change', '.precio-input, .cantidad-input, .iva-input', function() {
-                calcularSubtotal($(this).closest('.producto-item'));
-            });
-
-            $('#bonificacion').on('change input', function() {
-                $('.producto-item').each(function() {
-                    calcularSubtotal($(this));
-                });
-            });
-
 
             // Función para agregar un nuevo producto
             function agregarProducto(seccion) {
@@ -723,7 +684,7 @@ justify-content: center; align-items: center;">
                     if (!productoSelect) {
                         alert(
                             `El producto en la posición ${index + 1} no tiene producto seleccionado`
-                        );
+                            );
                         productosValidos = false;
                         return false;
                     }
@@ -731,7 +692,7 @@ justify-content: center; align-items: center;">
                     if (!monedaSelect) {
                         alert(
                             `El producto en la posición ${index + 1} no tiene moneda seleccionada`
-                        );
+                            );
                         productosValidos = false;
                         return false;
                     }
@@ -739,7 +700,7 @@ justify-content: center; align-items: center;">
                     if (precio <= 0) {
                         alert(
                             `El producto en la posición ${index + 1} debe tener un precio válido`
-                        );
+                            );
                         productosValidos = false;
                         return false;
                     }
@@ -833,7 +794,6 @@ justify-content: center; align-items: center;">
                 });
 
             });
-
         });
     </script>
 

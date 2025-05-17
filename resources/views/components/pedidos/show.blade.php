@@ -107,7 +107,8 @@
                         </a>
                     </div>
                     <div class="col-6 text-end">
-                        <h2 class="mb-0">{{ $pedido->TipoPedido->nombre }} #{{ $pedido->id }}</h2>
+                        <h2 class="mb-0">{{ $pedido->tipoPedido->nombre }} #{{ $pedido->id }}/ {{ $pedido->user_id }}</h2>
+
                     </div>
                 </div>
             </div>

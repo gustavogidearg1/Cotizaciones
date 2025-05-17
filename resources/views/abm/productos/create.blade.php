@@ -34,26 +34,52 @@
             <textarea class="form-control" id="detalle" name="detalle" rows="3"></textarea>
         </div>
 
-        <div class="form-group">
-            <label for="img">Imagen Principal</label>
-            <input type="file" class="form-control" id="img" name="img" accept="image/*">
-            <small class="form-text text-muted">Formatos aceptados: jpeg, png, jpg, gif. Tamaño máximo: 2MB</small>
-        </div>
+        {{-- Este bloque va al inicio del formulario --}}
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <strong>Se encontraron errores:</strong>
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
-        <div class="form-group">
-            <label for="img_1">Imagen 2</label>
-            <input type="file" class="form-control" id="img_1" name="img_1" accept="image/*">
-        </div>
+{{-- Luego los campos de imagen --}}
+<div class="form-group">
+    <label for="img">Imagen Principal</label>
+    <input type="file" class="form-control" id="img" name="img" accept="image/*">
+    <small class="form-text text-muted">Formatos aceptados: jpeg, png, jpg, gif. Tamaño máximo: 2MB</small>
+    @error('img')
+        <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+</div>
 
-        <div class="form-group">
-            <label for="img_2">Imagen 3</label>
-            <input type="file" class="form-control" id="img_2" name="img_2" accept="image/*">
-        </div>
+<div class="form-group">
+    <label for="img_1">Imagen 2</label>
+    <input type="file" class="form-control" id="img_1" name="img_1" accept="image/*">
+    @error('img_1')
+        <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+</div>
 
-        <div class="form-group">
-            <label for="img_3">Imagen 4</label>
-            <input type="file" class="form-control" id="img_3" name="img_3" accept="image/*">
-        </div>
+<div class="form-group">
+    <label for="img_2">Imagen 3</label>
+    <input type="file" class="form-control" id="img_2" name="img_2" accept="image/*">
+    @error('img_2')
+        <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+</div>
+
+<div class="form-group">
+    <label for="img_3">Imagen 4</label>
+    <input type="file" class="form-control" id="img_3" name="img_3" accept="image/*">
+    @error('img_3')
+        <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+</div>
+
 
         <div class="form-group">
             <label for="familia_id">Familia</label>

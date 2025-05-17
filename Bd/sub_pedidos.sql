@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 17-05-2025 a las 17:12:40
+-- Tiempo de generación: 17-05-2025 a las 18:39:52
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -50,7 +50,16 @@ CREATE TABLE `sub_pedidos` (
 --
 
 INSERT INTO `sub_pedidos` (`id`, `producto_id`, `precio`, `subbonificacion`, `iva`, `cantidad`, `moneda_id`, `sub_fecha_entrega`, `subtotal`, `total`, `detalle`, `pedido_id`, `color_id`, `created_at`, `updated_at`) VALUES
-(1, 3, 10000.00, 0.00, 21.00, 1, 1, '2025-05-13', 0.00, 0.00, NULL, 1, 1, '2025-05-14 02:51:26', NULL);
+(1, 3, 10000.00, 0.00, 21.00, 1, 1, '2025-05-13', 0.00, 0.00, NULL, 1, 1, '2025-05-14 02:51:26', NULL),
+(2, 3, 100000.00, 0.00, 10.50, 1, 1, '2025-05-31', 100000.00, 110500.00, NULL, 4, 1, '2025-05-17 18:16:54', '2025-05-17 18:16:54'),
+(3, 3, 100000.00, 0.00, 10.50, 1, 1, '2025-05-31', 100000.00, 110500.00, NULL, 5, 1, '2025-05-17 18:27:34', '2025-05-17 18:27:34'),
+(4, 3, 100000.00, 0.00, 10.50, 1, 1, '2025-05-31', 100000.00, 110500.00, NULL, 6, 1, '2025-05-17 18:41:52', '2025-05-17 18:41:52'),
+(5, 3, 100000.00, 0.00, 10.50, 1, 1, '2025-05-31', 100000.00, 110500.00, NULL, 7, NULL, '2025-05-17 18:51:39', '2025-05-17 18:51:39'),
+(6, 3, 100000.00, 0.00, 10.50, 1, 1, '2025-05-31', 100000.00, 110500.00, NULL, 8, 1, '2025-05-17 19:00:47', '2025-05-17 19:00:47'),
+(7, 3, 100000.00, 0.00, 10.50, 1, 1, '2025-05-31', 100000.00, 110500.00, NULL, 9, 1, '2025-05-17 19:11:44', '2025-05-17 19:11:44'),
+(8, 3, 100000.00, 0.00, 10.50, 1, 1, '2025-05-31', 100000.00, 110500.00, NULL, 10, 1, '2025-05-17 19:18:54', '2025-05-17 19:18:54'),
+(9, 3, 100000.00, 0.00, 10.50, 1, 1, '2025-05-31', 100000.00, 110500.00, NULL, 11, NULL, '2025-05-17 19:37:46', '2025-05-17 19:37:46'),
+(10, 3, 100000.00, 0.00, 10.50, 1, 1, '2025-05-31', 100000.00, 110500.00, NULL, 12, NULL, '2025-05-17 19:39:00', '2025-05-17 19:39:00');
 
 --
 -- Índices para tablas volcadas
@@ -65,6 +74,16 @@ ALTER TABLE `sub_pedidos`
   ADD KEY `sub_pedidos_moneda_id_foreign` (`moneda_id`),
   ADD KEY `sub_pedidos_pedido_id_foreign` (`pedido_id`),
   ADD KEY `sub_pedidos_color_id_foreign` (`color_id`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `sub_pedidos`
+--
+ALTER TABLE `sub_pedidos`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
