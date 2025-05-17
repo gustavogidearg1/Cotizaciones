@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 15-04-2025 a las 01:30:38
+-- Tiempo de generación: 11-05-2025 a las 17:18:13
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -43,8 +43,7 @@ CREATE TABLE `cotizaciones` (
 --
 
 INSERT INTO `cotizaciones` (`id`, `cotizacion`, `descripcion`, `vencimiento`, `observacion`, `user_id`, `created_at`, `updated_at`) VALUES
-(1, 'Lista 2', 'descripcion', '2025-05-13', NULL, 1, '2025-04-14 01:28:44', '2025-04-14 01:28:44'),
-(2, 'Lista 3', 'descripcion', '2025-05-13', 'nada', 1, '2025-04-14 02:01:42', '2025-04-14 02:01:42');
+(1, 'Lista 2', 'descripcion', '2025-06-11', NULL, 3, '2025-05-11 18:18:01', '2025-05-11 18:18:01');
 
 --
 -- Índices para tablas volcadas
@@ -66,7 +65,7 @@ ALTER TABLE `cotizaciones`
 -- AUTO_INCREMENT de la tabla `cotizaciones`
 --
 ALTER TABLE `cotizaciones`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Restricciones para tablas volcadas

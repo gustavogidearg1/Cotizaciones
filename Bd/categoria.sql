@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 10-05-2025 a las 21:15:52
+-- Tiempo de generación: 11-05-2025 a las 17:10:20
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -24,60 +24,45 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `localidad`
+-- Estructura de tabla para la tabla `categoria`
 --
 
-CREATE TABLE `localidad` (
+CREATE TABLE `categoria` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `nombre` varchar(255) NOT NULL,
-  `cp` varchar(10) NOT NULL,
-  `provincia_id` bigint(20) UNSIGNED NOT NULL,
-  `pais_id` bigint(20) UNSIGNED NOT NULL,
+  `categoria` varchar(100) NOT NULL,
+  `descripcion` varchar(100) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `localidad`
+-- Volcado de datos para la tabla `categoria`
 --
 
-INSERT INTO `localidad` (`id`, `nombre`, `cp`, `provincia_id`, `pais_id`, `created_at`, `updated_at`) VALUES
-(1, 'Monte Buey', '2589', 1, 1, '2025-05-08 16:00:20', NULL),
-(2, 'Irriville', '2587', 1, 1, '2025-05-08 16:00:20', NULL);
+INSERT INTO `categoria` (`id`, `categoria`, `descripcion`, `created_at`, `updated_at`) VALUES
+(1, 'Categoria 1', '', '2025-05-11 15:09:59', NULL),
+(2, 'Categoria 2', '', '2025-05-11 15:09:59', NULL);
 
 --
 -- Índices para tablas volcadas
 --
 
 --
--- Indices de la tabla `localidad`
+-- Indices de la tabla `categoria`
 --
-ALTER TABLE `localidad`
+ALTER TABLE `categoria`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `localidad_localidad_unique` (`nombre`),
-  ADD KEY `localidad_provincia_id_foreign` (`provincia_id`),
-  ADD KEY `localidad_pais_id_foreign` (`pais_id`);
+  ADD UNIQUE KEY `categoria_categoria_unique` (`categoria`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
 --
--- AUTO_INCREMENT de la tabla `localidad`
+-- AUTO_INCREMENT de la tabla `categoria`
 --
-ALTER TABLE `localidad`
+ALTER TABLE `categoria`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- Restricciones para tablas volcadas
---
-
---
--- Filtros para la tabla `localidad`
---
-ALTER TABLE `localidad`
-  ADD CONSTRAINT `localidad_pais_id_foreign` FOREIGN KEY (`pais_id`) REFERENCES `pais` (`id`),
-  ADD CONSTRAINT `localidad_provincia_id_foreign` FOREIGN KEY (`provincia_id`) REFERENCES `provincia` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

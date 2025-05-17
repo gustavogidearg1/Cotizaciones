@@ -75,10 +75,7 @@
                 <th>Forma de Pago</th>
                 <td>{{ $pedido->formaPago->nombre }}</td>
             </tr>
-            <tr>
-                <th>Forma de Entrega</th>
-                <td>{{ $pedido->forma_entrega }}</td>
-            </tr>
+
             <tr>
                 <th>Bonificación</th>
                 <td>{{ $pedido->bonificacion }}%</td>

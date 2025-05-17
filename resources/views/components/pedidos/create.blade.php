@@ -183,7 +183,7 @@
 
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="fecha_necesidad">Fecha de Necesidad<strong style="color: red;">*</strong></label>
+                            <label for="fecha_necesidad">Fecha necesidad a partir de la <strong style="color: red;">orden de compra *</strong></label>
                             <input type="date" class="form-control" id="fecha_necesidad" name="fecha_necesidad"
                                    value="{{ \Carbon\Carbon::now()->addWeeks(2)->format('Y-m-d') }}" required>
                         </div>
@@ -202,34 +202,20 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label for="forma_entrega">Forma de Entrega<strong style="color: red;">*</strong></label>
-                            <input type="text" class="form-control" id="forma_entrega" name="forma_entrega" required>
-                        </div>
-                    </div>
+<div class="col-md-6">
+    <div class="form-group mb-3">
+        <label for="forma_entrega">Forma de Entrega<strong style="color: red;">*</strong></label>
+        <input type="text" class="form-control" id="forma_entrega" name="forma_entrega" value="Ex-works (EXW) - Retiro desde planta" required>
+    </div>
+</div>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label for="plazo_entrega">Plazo de Entrega</label>
-                            <input type="text" class="form-control" id="plazo_entrega" name="plazo_entrega" maxlength="100">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label for="solicitante">Solicitante<strong style="color: red;">*</strong></label>
-                            <input type="text" class="form-control" id="solicitante" name="solicitante" required>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="row">
 
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="bonificacion">Bonificación (%)<strong style="color: red;">*</strong></label>
+                            <label for="bonificacion">Descuento (%)<strong style="color: red;">*</strong></label>
                             <input type="number" step="0.01" min="0" max="100" class="form-control"
                                    id="bonificacion" name="bonificacion" value="0" required>
                         </div>
@@ -636,7 +622,7 @@
     e.preventDefault();
 
     // Validar campos obligatorios del formulario principal
-    const camposRequeridos = ['#cliente', '#direccion', '#localidad_id', '#telefono', '#email', '#tipo_pedido_id', '#fecha_necesidad', '#forma_pago_id', '#forma_entrega', '#solicitante'];
+    const camposRequeridos = ['#cliente', '#direccion', '#localidad_id', '#telefono', '#email', '#tipo_pedido_id', '#fecha_necesidad', '#forma_pago_id', '#forma_entrega'];
     let formularioValido = true;
 
     camposRequeridos.forEach(selector => {
@@ -700,8 +686,6 @@
         fecha_necesidad: $('#fecha_necesidad').val(),
         forma_pago_id: $('#forma_pago_id').val(),
         forma_entrega: $('#forma_entrega').val(),
-        plazo_entrega: $('#plazo_entrega').val(),
-        solicitante: $('#solicitante').val(),
         bonificacion: $('#bonificacion').val(),
         flete_id: $('#flete_id').val(),
         observacion: $('#observacion').val()
@@ -711,13 +695,13 @@
     let productosData = [];
 $('.producto-item').each(function(index) {
     let producto = {
-        producto_id: $(this).find('.producto-select').val(),
-        precio: parseFloat($(this).find('.precio-input').val()) || 0,
-        cantidad: parseInt($(this).find('.cantidad-input').val()) || 1,
-        moneda_id: $(this).find('.moneda-select').val(),
-        iva: parseFloat($(this).find('.iva-input').val()) || 10.5,
-        detalle: $(this).find('input[name*="detalle"]').val() || null,
-        color_id: $(this).find('.color-select').val() || null // Asegurar que el color se envía con cada producto
+    producto_id: $(this).find('.producto-select').val(),
+    precio: parseFloat($(this).find('.precio-input').val()) || 0,
+    cantidad: parseInt($(this).find('.cantidad-input').val()) || 1,
+    moneda_id: $(this).find('.moneda-select').val(),
+    iva: parseFloat($(this).find('.iva-input').val()) || 10.5,
+    detalle: $(this).find('input[name*="detalle"]').val() || null,
+    color_id: $(this).find('.color-select').val() || null
     };
     productosData.push(producto);
 });

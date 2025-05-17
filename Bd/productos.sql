@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 29-04-2025 a las 09:47:43
+-- Tiempo de generación: 11-05-2025 a las 17:17:31
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -50,10 +50,7 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`id`, `codigo`, `nombre`, `um_id`, `detalle`, `img`, `img_1`, `img_2`, `img_3`, `familia_id`, `activo`, `tipo_id`, `user_id`, `created_at`, `updated_at`) VALUES
-(1, 2200, 'Tolva Auto descargable de 30.000 lts', 1, NULL, '/storage/img/M1AebfGTWaJypFZSPsphtVeXMEnCoS3dosSKFp0c.png', NULL, NULL, NULL, 1, 1, 1, 3, '2025-04-26 19:58:53', '2025-04-26 19:58:53'),
-(2, 5500, 'ATF Fertilizante 26', 1, NULL, '/storage/img/FA7dAWKkgHAgn3TPVP7VCcWxacOvhO1yH575uQKD.png', NULL, NULL, NULL, 3, 1, 1, 3, '2025-04-26 22:13:46', '2025-04-26 22:13:46'),
-(3, 1999050, 'Balanza Magris', 1, NULL, '/storage/img/4xfowGahrqtgBkf5ZF8TDdziCvZnxSB9OpoGfHnf.png', NULL, NULL, NULL, 12, 1, 2, 3, '2025-04-28 00:57:17', '2025-04-29 03:22:07'),
-(4, 19995555, 'Neumatico', 1, NULL, '/storage/img/bUByi0N72GdjFMqbHafDKI2yPy7ZysDKIl81riaU.png', NULL, NULL, NULL, 9, 1, 2, 3, '2025-04-29 02:54:40', '2025-04-29 03:22:40');
+(3, 2200, 'Auto descargable', 1, NULL, '/storage/img/F6NsIj1ntjqe5cqNahrtr5YcdpNZksvtDxvKrVQY.png', NULL, NULL, NULL, 1, 1, 1, 3, '2025-05-11 18:16:49', '2025-05-11 18:16:49');
 
 --
 -- Índices para tablas volcadas
@@ -79,7 +76,7 @@ ALTER TABLE `productos`
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Restricciones para tablas volcadas

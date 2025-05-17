@@ -108,7 +108,6 @@
                         <p><strong>Fecha Necesidad:</strong> {{ \Carbon\Carbon::parse($pedido->fecha_necesidad)->format('d/m/Y') }}</p>
                         <p><strong>Forma de Pago:</strong> {{ $pedido->formaPago->nombre }}</p>
                         <p><strong>Forma de Entrega:</strong> {{ $pedido->forma_entrega }}</p>
-                        <p><strong>Solicitante:</strong> {{ $pedido->solicitante }}</p>
                         <p><strong>Bonificación:</strong> {{ $pedido->bonificacion }}%</p>
                         <p><strong>Creado por:</strong> {{ $pedido->user->name }}</p>
                     </div>

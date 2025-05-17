@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 10-05-2025 a las 21:34:58
+-- Tiempo de generación: 11-05-2025 a las 17:12:02
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -24,34 +24,31 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `forma_pagos`
+-- Estructura de tabla para la tabla `unidades`
 --
 
-CREATE TABLE `forma_pagos` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) NOT NULL,
-  `descripcion` text DEFAULT NULL,
-  `diferencia` decimal(5,2) NOT NULL DEFAULT 0.00,
-  `activo` tinyint(1) NOT NULL DEFAULT 1,
+CREATE TABLE `unidades` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `nombre` varchar(50) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `forma_pagos`
+-- Volcado de datos para la tabla `unidades`
 --
 
-INSERT INTO `forma_pagos` VALUES (1,'Contado',NULL,0.00,1,'2025-05-08 18:58:21',NULL),(2,'En 12 cuotas',NULL,10.00,1,'2025-05-08 18:58:21',NULL);
+INSERT INTO `unidades` (`id`, `nombre`, `created_at`, `updated_at`) VALUES
+(1, 'Unidad', '2025-05-11 15:11:09', NULL);
 
 --
 -- Índices para tablas volcadas
 --
 
 --
--- Indices de la tabla `forma_pagos`
+-- Indices de la tabla `unidades`
 --
-ALTER TABLE `forma_pagos`
+ALTER TABLE `unidades`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -59,10 +56,10 @@ ALTER TABLE `forma_pagos`
 --
 
 --
--- AUTO_INCREMENT de la tabla `forma_pagos`
+-- AUTO_INCREMENT de la tabla `unidades`
 --
-ALTER TABLE `forma_pagos`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+ALTER TABLE `unidades`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

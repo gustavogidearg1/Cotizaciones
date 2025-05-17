@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 27-04-2025 a las 15:50:51
+-- Tiempo de generación: 17-05-2025 a las 17:12:40
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -40,6 +40,7 @@ CREATE TABLE `sub_pedidos` (
   `total` decimal(12,2) NOT NULL,
   `detalle` text DEFAULT NULL,
   `pedido_id` bigint(20) UNSIGNED NOT NULL,
+  `color_id` bigint(20) UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -48,8 +49,8 @@ CREATE TABLE `sub_pedidos` (
 -- Volcado de datos para la tabla `sub_pedidos`
 --
 
-INSERT INTO `sub_pedidos` (`id`, `producto_id`, `precio`, `subbonificacion`, `iva`, `cantidad`, `moneda_id`, `sub_fecha_entrega`, `subtotal`, `total`, `detalle`, `pedido_id`, `created_at`, `updated_at`) VALUES
-(1, 1, 10000.00, 0.00, 10.50, 1, 1, '2025-05-11', 10000.00, 11050.00, NULL, 24, '2025-04-27 15:35:22', '2025-04-27 15:35:22');
+INSERT INTO `sub_pedidos` (`id`, `producto_id`, `precio`, `subbonificacion`, `iva`, `cantidad`, `moneda_id`, `sub_fecha_entrega`, `subtotal`, `total`, `detalle`, `pedido_id`, `color_id`, `created_at`, `updated_at`) VALUES
+(1, 3, 10000.00, 0.00, 21.00, 1, 1, '2025-05-13', 0.00, 0.00, NULL, 1, 1, '2025-05-14 02:51:26', NULL);
 
 --
 -- Índices para tablas volcadas
@@ -62,29 +63,8 @@ ALTER TABLE `sub_pedidos`
   ADD PRIMARY KEY (`id`),
   ADD KEY `sub_pedidos_producto_id_foreign` (`producto_id`),
   ADD KEY `sub_pedidos_moneda_id_foreign` (`moneda_id`),
-  ADD KEY `sub_pedidos_pedido_id_foreign` (`pedido_id`);
-
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `sub_pedidos`
---
-ALTER TABLE `sub_pedidos`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- Restricciones para tablas volcadas
---
-
---
--- Filtros para la tabla `sub_pedidos`
---
-ALTER TABLE `sub_pedidos`
-  ADD CONSTRAINT `sub_pedidos_moneda_id_foreign` FOREIGN KEY (`moneda_id`) REFERENCES `monedas` (`id`),
-  ADD CONSTRAINT `sub_pedidos_pedido_id_foreign` FOREIGN KEY (`pedido_id`) REFERENCES `pedidos` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `sub_pedidos_producto_id_foreign` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`);
+  ADD KEY `sub_pedidos_pedido_id_foreign` (`pedido_id`),
+  ADD KEY `sub_pedidos_color_id_foreign` (`color_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

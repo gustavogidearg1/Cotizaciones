@@ -11,13 +11,13 @@ class Pedido extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'tipo_pedido_id', 'fecha', 'fecha_necesidad', 'forma_pago_id',
-        'forma_entrega', 'plazo_entrega', 'solicitante', 'observacion',
-        'bonificacion', 'imagen', 'imagen_2', 'flete_id', 'user_id',
-        'cliente', 'direccion', 'localidad_id', 'provincia_id', 'pais_id',
-        'telefono', 'email', 'contacto', 'categoria_id'
-    ];
+protected $fillable = [
+    'tipo_pedido_id', 'fecha', 'fecha_necesidad', 'forma_pago_id',
+    'forma_entrega', 'observacion', 'bonificacion', 'imagen',
+    'imagen_2', 'flete_id', 'user_id', 'cliente', 'direccion',
+    'localidad_id', 'provincia_id', 'pais_id', 'telefono', 'email',
+    'contacto', 'categoria_id', 'color_id'
+];
 
     protected $dates = [
         'fecha' => 'date',
@@ -75,8 +75,5 @@ class Pedido extends Model
     {
         return $this->subPedidos->sum('total');
     }
-
-
-
 
 }

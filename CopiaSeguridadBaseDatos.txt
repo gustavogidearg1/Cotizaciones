@@ -1,0 +1,5 @@
+Hizo la copia de seguridad? donde esta ubicada?
+
+PS C:\xampp-1\htdocs\Comofra-2> C:\xampp-1\mysql\bin\mysqldump.exe -u root -p bd_cotizacion > backup_bd_cotizacion.sql
+Enter password: 
+PS C:\xampp-1\htdocs\Comofra-2> 

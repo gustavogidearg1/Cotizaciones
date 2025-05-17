@@ -137,23 +137,8 @@
                            value="{{ $pedido->forma_entrega }}" required>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label for="plazo_entrega">Plazo de Entrega</label>
-                    <input type="text" class="form-control" id="plazo_entrega" name="plazo_entrega"
-                           value="{{ $pedido->plazo_entrega }}" maxlength="100">
-                </div>
-            </div>
-        </div>
 
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label for="solicitante">Solicitante*</label>
-                    <input type="text" class="form-control" id="solicitante" name="solicitante"
-                           value="{{ $pedido->solicitante }}" required>
-                </div>
-            </div>
+
             <div class="col-md-6">
                 <div class="form-group mb-3">
                     <label for="bonificacion">Bonificación (%)*</label>

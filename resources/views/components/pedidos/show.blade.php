@@ -129,8 +129,7 @@
                     </div>
                     <div class="col-md-6">
                         <p><strong>Forma de Entrega:</strong> {{ $pedido->forma_entrega }}</p>
-                        <p><strong>Solicitante:</strong> {{ $pedido->solicitante }}</p>
-                        <p><strong>Bonificación:</strong> {{ $pedido->bonificacion }}%</p>
+                        <p><strong>Descuento (%):</strong> {{ $pedido->bonificacion }}%</p>
                         <p><strong>Creado por:</strong> {{ $pedido->user->name }}</p>
                     </div>
 
@@ -240,7 +239,7 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Precio Unitario</th>
-                                    <th>Bonificación</th>
+                                    <th>Descuento (%)</th>
                                     <th>Precio Bonificado</th>
                                     <th>Cantidad</th>
                                     <th>Subtotal</th>
