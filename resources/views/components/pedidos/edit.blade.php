@@ -295,7 +295,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Producto*</label>
-                            <select name="productos[${newIndex}][producto_id]" class="form-control select-producto" required>
+                            <select name="subpedidos[${newIndex}][producto_id]" class="form-control select-producto" required>
                                 <option value="">Seleccione producto</option>
                                 @foreach ($productos as $producto)
                                     <option value="{{ $producto->id }}" data-precio="{{ $producto->precio ?? 0 }}">
@@ -309,7 +309,7 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>Color*</label>
-                            <select name="productos[${newIndex}][color_id]" class="form-control" required>
+                            <select name="subpedidos[${newIndex}][color_id]" class="form-control" >
                                 <option value="">Seleccione color</option>
                                 @foreach ($colores as $color)
                                     <option value="{{ $color->id }}">{{ $color->nombre }}</option>
@@ -321,7 +321,7 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>Moneda*</label>
-                            <select name="productos[${newIndex}][moneda_id]" class="form-control" required>
+                            <select name="subpedidos[${newIndex}][moneda_id]" class="form-control" required>
                                 <option value="">Seleccione moneda</option>
                                 @foreach ($monedas as $moneda)
                                     <option value="{{ $moneda->id }}">{{ $moneda->moneda }}</option>
@@ -335,21 +335,21 @@
                         <div class="form-group">
                             <label>Precio*</label>
                             <input type="number" step="0.01" min="0" class="form-control precio-input"
-                                   name="productos[${newIndex}][precio]" value="0" required>
+                                   name="subpedidos[${newIndex}][precio]" value="0" required>
                         </div>
                     </div>
                     <div class="col-md-1">
                         <div class="form-group">
                             <label>Cantidad*</label>
                             <input type="number" min="1" class="form-control cantidad-input"
-                                   name="productos[${newIndex}][cantidad]" value="1" required>
+                                   name="subpedidos[${newIndex}][cantidad]" value="1" required>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>IVA (%)*</label>
                             <input type="number" step="0.01" min="0" max="100" class="form-control iva-input"
-                                   name="productos[${newIndex}][iva]" value="21" required>
+                                   name="subpedidos[${newIndex}][iva]" value="21" required>
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -370,7 +370,7 @@
                         <div class="form-group">
                             <label>Detalle</label>
                             <input type="text" class="form-control"
-                                   name="productos[${newIndex}][detalle]" maxlength="255">
+                                   name="subpedidos[${newIndex}][detalle]" maxlength="255">
                         </div>
                     </div>
                 </div>

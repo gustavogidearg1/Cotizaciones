@@ -526,22 +526,22 @@ justify-content: center; align-items: center;">
 
             // Función para calcular subtotal y total
             function calcularSubtotal(productoItem) {
-     const seccion = productoItem.closest('.productos-container').attr('id');
-    const aplicaBonificacion = !seccion.includes('balanza');
+                const seccion = productoItem.closest('.productos-container').attr('id');
+                const aplicaBonificacion = !seccion.includes('balanza');
 
-    const precio = parseFloat(productoItem.find('.precio-input').val()) || 0;
-    const cantidad = parseInt(productoItem.find('.cantidad-input').val()) || 0;
-    const bonificacion = aplicaBonificacion ? (parseFloat($('#bonificacion').val()) || 0) : 0;
-    const iva = parseFloat(productoItem.find('.iva-input').val()) || 0;
+                const precio = parseFloat(productoItem.find('.precio-input').val()) || 0;
+                const cantidad = parseInt(productoItem.find('.cantidad-input').val()) || 0;
+                const bonificacion = aplicaBonificacion ? (parseFloat($('#bonificacion').val()) || 0) : 0;
+                const iva = parseFloat(productoItem.find('.iva-input').val()) || 0;
 
-    const subtotal = precio * cantidad * (1 - (bonificacion / 100));
-    const ivaMonto = subtotal * (iva / 100);
-    const total = subtotal + ivaMonto;
+                const subtotal = precio * cantidad * (1 - (bonificacion / 100));
+                const ivaMonto = subtotal * (iva / 100);
+                const total = subtotal + ivaMonto;
 
-    productoItem.find('.subtotal-input').val(subtotal.toFixed(2));
-    productoItem.find('.iva-monto-input').val(ivaMonto.toFixed(2));
-    productoItem.find('.total-input').val(total.toFixed(2));
-    productoItem.find('.descuento-porcentaje').val(bonificacion.toFixed(2));
+                productoItem.find('.subtotal-input').val(subtotal.toFixed(2));
+                productoItem.find('.iva-monto-input').val(ivaMonto.toFixed(2));
+                productoItem.find('.total-input').val(total.toFixed(2));
+                productoItem.find('.descuento-porcentaje').val(bonificacion.toFixed(2));
             }
 
             $(document).on('input change', '.precio-input, .cantidad-input, .iva-input', function() {
@@ -753,20 +753,21 @@ justify-content: center; align-items: center;">
                 const formData = {
                     cliente: $('#cliente').val(),
                     direccion: $('#direccion').val(),
-                    localidad_id: $('#localidad_id').val(),
-                    provincia_id: $('#provincia_id').val(),
-                    pais_id: $('#pais_id').val(),
+                    localidad: $('#localidad_id option:selected').text(),
+                    provincia: $('#provincia_id option:selected').text(),
+                    pais: $('#pais_id option:selected').text(),
                     telefono: $('#telefono').val(),
                     email: $('#email').val(),
                     contacto: $('#contacto').val(),
-                    tipo_pedido_id: $('#tipo_pedido_id').val(),
+                    tipo_pedido: $('#tipo_pedido_id option:selected').text(),
                     fecha_necesidad: $('#fecha_necesidad').val(),
-                    forma_pago_id: $('#forma_pago_id').val(),
+                    forma_pago: $('#forma_pago_id option:selected').text(),
                     forma_entrega: $('#forma_entrega').val(),
                     bonificacion: $('#bonificacion').val(),
-                    flete_id: $('#flete_id').val(),
+                    flete_id: $('#flete_id option:selected').text() || 'Sin flete',
                     observacion: $('#observacion').val()
                 };
+
 
                 // Recolectar datos de productos
                 let productosData = [];
@@ -784,22 +785,33 @@ justify-content: center; align-items: center;">
                 });
 
                 // Mostrar datos en el modal
-                // Mostrar datos en el modal
                 $('#debugFormData').text(JSON.stringify(formData, null, 2));
 
                 // Formatea los productos como tabla
                 let productsHtml = '';
-                productosData.forEach(producto => {
-                    const productoObj = $('.producto-select option[value="' + producto.producto_id +
-                        '"]').text();
-                    const total = producto.precio * producto.cantidad * (1 - (formData
-                        .bonificacion / 100)) * (1 + (producto.iva / 100));
+                productosData.forEach((producto, index) => {
+                    const productoItem = $('.producto-item').eq(index);
+
+                    const productoNombre = productoItem.find('.producto-select option:selected')
+                        .text();
+                    const color = productoItem.find('.color-select').val() ? productoItem.find('.color-select option:selected').text() : '';
+                    const moneda = productoItem.find('.moneda-select option:selected').text();
+                    const descuento = $('#bonificacion').val();
+                    const subtotal = producto.precio * producto.cantidad * (1 - (descuento / 100));
+                    const ivaMonto = subtotal * (producto.iva / 100);
+                    const total = subtotal + ivaMonto;
 
                     productsHtml += `
         <tr>
-            <td>${productoObj}</td>
+            <td>${productoNombre}</td>
+            <td>${color}</td>
+            <td>${moneda}</td>
             <td>${producto.cantidad}</td>
             <td>$${producto.precio.toFixed(2)}</td>
+            <td>${descuento}%</td>
+            <td>$${subtotal.toFixed(2)}</td>
+            <td>${producto.iva}%</td>
+            <td>$${ivaMonto.toFixed(2)}</td>
             <td>$${total.toFixed(2)}</td>
         </tr>`;
                 });
@@ -873,8 +885,14 @@ justify-content: center; align-items: center;">
                                     <thead>
                                         <tr>
                                             <th>Producto</th>
+                                            <th>Color</th>
+                                            <th>Moneda</th>
                                             <th>Cantidad</th>
                                             <th>Precio</th>
+                                            <th>Descuento (%)</th>
+                                            <th>Subtotal</th>
+                                            <th>IVA (%)</th>
+                                            <th>Importe IVA</th>
                                             <th>Total</th>
                                         </tr>
                                     </thead>

@@ -33,7 +33,7 @@ class ProductoController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-'codigo' => 'required|numeric|unique:productos',
+        'codigo' => 'required|numeric|unique:productos',
         'nombre' => 'required|string|max:255|unique:productos',
         'um_id' => 'required|exists:unidades,id',
         'detalle' => 'nullable|string',
