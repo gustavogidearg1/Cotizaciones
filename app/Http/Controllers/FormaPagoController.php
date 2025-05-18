@@ -28,7 +28,7 @@ class FormaPagoController extends Controller
         $validated = $request->validate([
             'nombre' => 'required|string|max:100|unique:forma_pagos',
             'descripcion' => 'nullable|string',
-            'diferencia' => 'required|numeric|min:0|max:100',
+            'diferencia' => 'required|numeric',
             'activo' => 'required|boolean',
         ]);
 
@@ -53,7 +53,7 @@ class FormaPagoController extends Controller
         $validated = $request->validate([
             'nombre' => 'required|string|max:100|unique:forma_pagos,nombre,'.$formaPago->id,
             'descripcion' => 'nullable|string',
-            'diferencia' => 'required|numeric|min:0|max:100',
+            'diferencia' => 'required|numeric',
             'activo' => 'required|boolean',
         ]);
 

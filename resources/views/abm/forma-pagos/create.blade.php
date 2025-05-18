@@ -29,7 +29,7 @@
                             <label for="diferencia" class="col-md-4 col-form-label text-md-right">Diferencia (%)</label>
 
                             <div class="col-md-6">
-                                <input id="diferencia" type="number" step="0.01" min="0" max="100" class="form-control @error('diferencia') is-invalid @enderror" name="diferencia" value="{{ old('diferencia', 0) }}" required>
+                                <input id="diferencia" type="number" step="0.01" class="form-control @error('diferencia') is-invalid @enderror" name="diferencia" value="{{ old('diferencia', 0) }}" required>
 
                                 @error('diferencia')
                                     <span class="invalid-feedback" role="alert">

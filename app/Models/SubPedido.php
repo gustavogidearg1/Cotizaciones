@@ -20,8 +20,9 @@ class SubPedido extends Model
         'subtotal',
         'total',
         'detalle',
-        'pedido_id', // Asegúrate que está en fillable
-        'color_id'
+        'pedido_id',
+        'color_id',
+        'diferencia'
     ];
 
     protected $dates = ['sub_fecha_entrega'];

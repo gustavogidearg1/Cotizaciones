@@ -192,7 +192,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group mb-3">
                                 <label for="forma_pago_id">Forma de Pago<strong style="color: red;">*</strong></label>
                                 <select class="form-control" id="forma_pago_id" name="forma_pago_id" required>
@@ -203,7 +203,19 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-6">
+
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="diferencia">Diferencia (%)</label>
+                                <input type="number" step="0.01" class="form-control" id="diferencia"
+                                    name="diferencia" value="{{ old('diferencia', $pedido->diferencia ?? 0) }}">
+                                <small class="text-muted">Este campo solo se aplica a productos de tipo Implemento o
+                                    Componente.</small>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-4">
                             <div class="form-group mb-3">
                                 <label for="forma_entrega">Forma de Entrega<strong style="color: red;">*</strong></label>
                                 <input type="text" class="form-control" id="forma_entrega" name="forma_entrega"
@@ -211,6 +223,8 @@
                             </div>
                         </div>
                     </div>
+
+
 
 
                     <div class="row">
@@ -222,6 +236,8 @@
                                     id="bonificacion" name="bonificacion" value="0" required>
                             </div>
                         </div>
+
+
 
 
                         <div class="col-md-6">
@@ -526,22 +542,31 @@ justify-content: center; align-items: center;">
 
             // Función para calcular subtotal y total
             function calcularSubtotal(productoItem) {
-                const seccion = productoItem.closest('.productos-container').attr('id');
-                const aplicaBonificacion = !seccion.includes('balanza');
+                const precio = parseFloat($(productoItem).find('.precio-input').val()) || 0;
+                const cantidad = parseInt($(productoItem).find('.cantidad-input').val()) || 0;
+                const bonificacion = parseFloat($('#bonificacion').val()) || 0;
+                const diferencia = parseFloat($('#diferencia').val()) || 0;
+                const iva = parseFloat($(productoItem).find('.iva-input').val()) || 0;
 
-                const precio = parseFloat(productoItem.find('.precio-input').val()) || 0;
-                const cantidad = parseInt(productoItem.find('.cantidad-input').val()) || 0;
-                const bonificacion = aplicaBonificacion ? (parseFloat($('#bonificacion').val()) || 0) : 0;
-                const iva = parseFloat(productoItem.find('.iva-input').val()) || 0;
+                const selectProducto = $(productoItem).find('.select-producto');
+                const productoId = parseInt(selectProducto.val());
 
-                const subtotal = precio * cantidad * (1 - (bonificacion / 100));
-                const ivaMonto = subtotal * (iva / 100);
-                const total = subtotal + ivaMonto;
+                let esAccesorio = false;
+                @foreach ($productos as $producto)
+                    if (productoId === {{ $producto->id }}) {
+                        esAccesorio = {{ $producto->familia_id }} === 8;
+                    }
+                @endforeach
 
-                productoItem.find('.subtotal-input').val(subtotal.toFixed(2));
-                productoItem.find('.iva-monto-input').val(ivaMonto.toFixed(2));
-                productoItem.find('.total-input').val(total.toFixed(2));
-                productoItem.find('.descuento-porcentaje').val(bonificacion.toFixed(2));
+                const aplicarBonificacion = esAccesorio ? 0 : bonificacion;
+                const aplicarDiferencia = esAccesorio ? 0 : diferencia;
+
+                const precioFinal = precio * (1 + aplicarDiferencia / 100);
+                const subtotal = precioFinal * cantidad * (1 - aplicarBonificacion / 100);
+                const total = subtotal * (1 + iva / 100);
+
+                $(productoItem).find('.subtotal-input').val(subtotal.toFixed(2));
+                $(productoItem).find('.total-input').val(total.toFixed(2));
             }
 
             $(document).on('input change', '.precio-input, .cantidad-input, .iva-input', function() {
@@ -794,7 +819,8 @@ justify-content: center; align-items: center;">
 
                     const productoNombre = productoItem.find('.producto-select option:selected')
                         .text();
-                    const color = productoItem.find('.color-select').val() ? productoItem.find('.color-select option:selected').text() : '';
+                    const color = productoItem.find('.color-select').val() ? productoItem.find(
+                        '.color-select option:selected').text() : '';
                     const moneda = productoItem.find('.moneda-select option:selected').text();
                     const descuento = $('#bonificacion').val();
                     const subtotal = producto.precio * producto.cantidad * (1 - (descuento / 100));
@@ -845,6 +871,18 @@ justify-content: center; align-items: center;">
                 });
 
             });
+
+            $('#forma_pago_id').on('change', function () {
+    const formaPagoId = $(this).val();
+
+    if (formaPagoId) {
+        $.get(`/forma-pago/${formaPagoId}/diferencia`, function (data) {
+            if (data.diferencia !== undefined) {
+                $('#diferencia').val(data.diferencia).trigger('input');
+            }
+        });
+    }
+});
 
         });
     </script>

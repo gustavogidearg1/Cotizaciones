@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 10-05-2025 a las 21:34:58
+-- Tiempo de generación: 18-05-2025 a las 15:37:47
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -28,21 +28,22 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `forma_pagos` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) UNSIGNED NOT NULL,
   `nombre` varchar(100) NOT NULL,
   `descripcion` text DEFAULT NULL,
   `diferencia` decimal(5,2) NOT NULL DEFAULT 0.00,
   `activo` tinyint(1) NOT NULL DEFAULT 1,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `forma_pagos`
 --
 
-INSERT INTO `forma_pagos` VALUES (1,'Contado',NULL,0.00,1,'2025-05-08 18:58:21',NULL),(2,'En 12 cuotas',NULL,10.00,1,'2025-05-08 18:58:21',NULL);
+INSERT INTO `forma_pagos` (`id`, `nombre`, `descripcion`, `diferencia`, `activo`, `created_at`, `updated_at`) VALUES
+(1, 'Contado', NULL, 0.00, 1, '2025-05-08 21:58:21', NULL),
+(2, 'En 12 cuotas', NULL, 10.00, 1, '2025-05-08 21:58:21', NULL);
 
 --
 -- Índices para tablas volcadas

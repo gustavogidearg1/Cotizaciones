@@ -94,3 +94,7 @@ Route::get('users/{user}', [UserController::class, 'show'])
     Route::middleware(['auth', 'can:admin'])->group(function () {
         Route::resource('colores', ColorController::class);
     });
+
+    Route::get('/forma-pago/{id}/diferencia', [PedidoController::class, 'getDiferencia']);
+
+
