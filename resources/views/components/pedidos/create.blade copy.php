@@ -532,13 +532,6 @@ justify-content: center; align-items: center;">
             };
 
             const familiasSinColor = [7, 8]; // IDs de familias que no llevan color
-            const familiasAccesorios = [8];
-
-            const familiaPorProducto = {
-                @foreach ($productos as $producto)
-                    {{ $producto->id }}: {{ $producto->familia_id }},
-                @endforeach
-            };
 
             // Objeto para almacenar la familia seleccionada por sección
             let familiasSeleccionadas = {
@@ -556,35 +549,36 @@ justify-content: center; align-items: center;">
 
             // Función para calcular subtotal y total
             function calcularSubtotal(productoItem) {
+    const precio = parseFloat($(productoItem).find('.precio-input').val()) || 0;
+    const cantidad = parseInt($(productoItem).find('.cantidad-input').val()) || 0;
+    const bonificacion = parseFloat($('#bonificacion').val()) || 0;
+    const diferencia = parseFloat($('#diferencia').val()) || 0;
+    const iva = parseFloat($(productoItem).find('.iva-input').val()) || 0;
 
-                const selectProducto = $(productoItem).find('.producto-select');
-                const productoId = parseInt(selectProducto.val());
+    const selectProducto = $(productoItem).find('.select-producto');
+    const productoId = parseInt(selectProducto.val());
 
-                if (!productoId) return; // ⛔ No calcular si no hay producto
+    let esAccesorio = false;
+    @foreach ($productos as $producto)
+        if (productoId === {{ $producto->id }}) {
+            esAccesorio = {{ $producto->familia_id }} === 8;
+        }
+    @endforeach
 
-                const familiaId = familiaPorProducto[productoId];
-                const esAccesorio = familiasAccesorios.includes(familiaId);
+    const aplicarBonificacion = esAccesorio ? 0 : bonificacion;
+    const aplicarDiferencia = esAccesorio ? 0 : diferencia;
 
-                const precio = parseFloat($(productoItem).find('.precio-input').val()) || 0;
-                const cantidad = parseInt($(productoItem).find('.cantidad-input').val()) || 0;
-                const bonificacion = parseFloat($('#bonificacion').val()) || 0;
-                const diferencia = parseFloat($('#diferencia').val()) || 0;
-                const iva = parseFloat($(productoItem).find('.iva-input').val()) || 0;
+    const precioFinal = precio * (1 + aplicarDiferencia / 100);
+    const subtotal = precioFinal * cantidad * (1 - aplicarBonificacion / 100);
+    const ivaMonto = subtotal * iva / 100;
+    const total = subtotal + ivaMonto;
 
-                const aplicarBonificacion = esAccesorio ? 0 : bonificacion;
-                const aplicarDiferencia = esAccesorio ? 0 : diferencia;
-
-                const precioFinal = precio * (1 + aplicarDiferencia / 100);
-                const subtotal = precioFinal * cantidad * (1 - aplicarBonificacion / 100);
-                const ivaMonto = subtotal * iva / 100;
-                const total = subtotal + ivaMonto;
-
-                $(productoItem).find('.descuento-porcentaje').val(aplicarBonificacion.toFixed(2));
-                $(productoItem).find('.subtotal-input').val(subtotal.toFixed(2));
-                $(productoItem).find('.iva-monto-input').val(ivaMonto.toFixed(2));
-                $(productoItem).find('.total-input').val(total.toFixed(2));
-                $(productoItem).find('.diferencia-pago-input').val(aplicarDiferencia.toFixed(2));
-            }
+    $(productoItem).find('.descuento-porcentaje').val(aplicarBonificacion.toFixed(2));
+    $(productoItem).find('.subtotal-input').val(subtotal.toFixed(2));
+    $(productoItem).find('.iva-monto-input').val(ivaMonto.toFixed(2));
+    $(productoItem).find('.total-input').val(total.toFixed(2));
+    $(productoItem).find('.diferencia-pago-input').val(aplicarDiferencia.toFixed(2));
+}
 
             $(document).on('input change', '.precio-input, .cantidad-input, .iva-input', function() {
                 calcularSubtotal($(this).closest('.producto-item'));
@@ -677,30 +671,27 @@ justify-content: center; align-items: center;">
                 const productoId = $(this).val();
                 const productoItem = $(this).closest('.producto-item');
 
+                // Resetear valores
                 productoItem.find('.precio-input').val(0);
                 productoItem.find('.moneda-select').val('');
 
                 if (productoId) {
+                    // Obtener último precio desde sub_pedidos
                     $.get(`/pedidos/last-price/${productoId}`)
                         .done(function(data) {
                             if (data.precio) {
-                                productoItem.find('.precio-input').val(data.precio);
+                                productoItem.find('.precio-input').val(data.precio).trigger('change');
                             }
                             if (data.moneda_id) {
-                                productoItem.find('.moneda-select').val(data.moneda_id);
+                                productoItem.find('.moneda-select').val(data.moneda_id).trigger(
+                                    'change');
                             }
-                            // 🟢 Calcular subtotal luego de setear los datos
-                            calcularSubtotal(productoItem);
                         })
                         .fail(function() {
                             console.log('No se encontró precio histórico para este producto');
-                            calcularSubtotal(productoItem); // 🔁 Igual recalculamos
                         });
-                } else {
-                    calcularSubtotal(productoItem); // 🔁 Si el producto se deseleccionó
                 }
             });
-
 
             // Eventos para cálculos
             $(document).on('change', '.producto-select, .precio-input, .cantidad-input, .iva-input, .moneda-select',
@@ -834,7 +825,6 @@ justify-content: center; align-items: center;">
 
                 // Formatea los productos como tabla
                 let productsHtml = '';
-                let esAccesorio = false;
                 productosData.forEach((producto, index) => {
                     const productoItem = $('.producto-item').eq(index);
 
@@ -843,19 +833,13 @@ justify-content: center; align-items: center;">
                     const color = productoItem.find('.color-select').val() ? productoItem.find(
                         '.color-select option:selected').text() : '';
                     const moneda = productoItem.find('.moneda-select option:selected').text();
-
-                    const productoId = parseInt(producto.producto_id);
-                    const familiaId = familiaPorProducto[productoId];
-                    const esAccesorio = familiasAccesorios.includes(familiaId);
-
-                    const descuento = esAccesorio ? 0 : parseFloat(productoItem.find(
-                        '.descuento-porcentaje').val()) || 0;
-                    const diferenciaPago = esAccesorio ? 0 : parseFloat(productoItem.find(
-                        '.diferencia-pago-input').val()) || 0;
-
+                    const descuentoStr = productoItem.find('.descuento-porcentaje').val(); // por ejemplo "10.00"
+                    const descuento = parseFloat(descuentoStr) || 0;
+                    const diferenciaPago = productoItem.find('.diferencia-pago-input').val();
                     const subtotal = producto.precio * producto.cantidad * (1 - descuento / 100);
                     const ivaMonto = subtotal * (producto.iva / 100);
                     const total = subtotal + ivaMonto;
+
 
                     productsHtml += `
         <tr>
@@ -864,8 +848,8 @@ justify-content: center; align-items: center;">
             <td>${moneda}</td>
             <td>${producto.cantidad}</td>
             <td>$${producto.precio.toFixed(2)}</td>
-            <td>${esAccesorio ? '0 (sin descuento)' : descuento.toFixed(2) + '%'}</td>
-            <td>${esAccesorio ? '0 (sin diferencia)' : diferenciaPago + '%'}</td>
+            <td>${descuento.toFixed(2)}%</td>
+            <td>${diferenciaPago}%</td>
             <td>$${subtotal.toFixed(2)}</td>
             <td>${producto.iva}%</td>
             <td>$${ivaMonto.toFixed(2)}</td>

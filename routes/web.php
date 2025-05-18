@@ -1,24 +1,26 @@
 <?php
 
+use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\ColorController;
+use App\Http\Controllers\CotizacionController;
+//use App\Http\Controllers\RoleController;
+use App\Http\Controllers\FamiliaController;
+use App\Http\Controllers\FormaPagoController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LocalidadController;
+use App\Http\Controllers\PaisController;
+use App\Http\Controllers\PedidoController;
+use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\ProvinciaController;
+use App\Http\Controllers\TipoController;
+use App\Http\Controllers\UnidadController;
+use App\Http\Controllers\UserController;
+use App\Models\Pedido;
+use Illuminate\Support\Facades\Auth; // <-- Añade esta línea
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\PaisController;
-//use App\Http\Controllers\RoleController;
-use App\Http\Controllers\TipoController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\ColorController;
-use App\Http\Controllers\PedidoController;
-use App\Http\Controllers\UnidadController;
-use App\Http\Controllers\ClienteController;
-use App\Http\Controllers\FamiliaController;
-use App\Http\Controllers\ProductoController;
-use App\Http\Controllers\CategoriaController;
-use App\Http\Controllers\FormaPagoController;
-use App\Http\Controllers\LocalidadController;
-use App\Http\Controllers\ProvinciaController;
-use App\Http\Controllers\CotizacionController;
-use Illuminate\Support\Facades\Auth; // <-- Añade esta línea
+
 
 
 Route::get('/', function () {
@@ -97,4 +99,17 @@ Route::get('users/{user}', [UserController::class, 'show'])
 
     Route::get('/forma-pago/{id}/diferencia', [PedidoController::class, 'getDiferencia']);
 
+Route::get('/test-vista-email/{id}', function ($id) {
+    $pedido = Pedido::with([
+        'formaPago',
+        'user',
+        'subPedidos.producto',
+        'subPedidos.moneda',
+        'subPedidos.color',
+        'localidad',
+        'provincia',
+        'pais'
+    ])->findOrFail($id);
 
+    return view('emails.pedido_creado', compact('pedido'));
+});

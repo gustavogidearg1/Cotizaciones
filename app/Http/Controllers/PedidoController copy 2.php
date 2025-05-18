@@ -275,40 +275,36 @@ public function store(Request $request)
     }
 
    public function update(Request $request, Pedido $pedido)
-{
-    $request->validate([
-               'cliente' => 'required|string|max:255',
-        'direccion' => 'required|string|max:255',
-        'localidad_id' => 'required|exists:localidad,id',
-        'provincia_id' => 'required|exists:provincia,id',
-        'pais_id' => 'sometimes|exists:pais,id',
-        'telefono' => 'required|string|max:100',
-        'email' => 'required|email|max:255',
-        'contacto' => 'nullable|string|max:100',
-        'categoria_id' => 'sometimes|exists:categoria,id',
-        'tipo_pedido_id' => 'required|exists:tipo_pedidos,id',
-        'fecha_necesidad' => 'required|date',
-        'forma_pago_id' => 'required|exists:forma_pagos,id',
-        'forma_entrega' => 'required|string|max:255',
-        'observacion' => 'nullable|string',
-        'bonificacion' => 'required|numeric|min:0',
-        'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        'imagen_2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        'flete_id' => 'nullable|exists:fletes,id',
+    {
+        $request->validate([
+            'cliente' => 'required|string|max:255',
+            'direccion' => 'required|string|max:255',
+            'localidad_id' => 'required|exists:localidad,id',
+            'provincia_id' => 'required|exists:provincia,id',
+            'pais_id' => 'sometimes|exists:pais,id',
+            'telefono' => 'required|string|max:100',
+            'email' => 'required|email|max:255',
+            'contacto' => 'nullable|string|max:100',
+            'categoria_id' => 'sometimes|exists:categoria,id',
+            'tipo_pedido_id' => 'required|exists:tipo_pedidos,id',
+            'fecha_necesidad' => 'required|date',
+            'forma_pago_id' => 'required|exists:forma_pagos,id',
+            'forma_entrega' => 'required|string|max:255',
+            'observacion' => 'nullable|string',
+            'bonificacion' => 'required|numeric|min:0',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'imagen_2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'flete_id' => 'nullable|exists:fletes,id',
+            'subpedidos' => 'required|array|min:1',
+            'subpedidos.*.producto_id' => 'required|exists:productos,id',
+            'subpedidos.*.precio' => 'required|numeric|min:0',
+            'subpedidos.*.cantidad' => 'required|integer|min:1',
+            'subpedidos.*.moneda_id' => 'required|exists:monedas,id',
+            'subpedidos.*.iva' => 'required|numeric|min:0|max:100',
+            'subpedidos.*.color_id' => 'nullable|exists:colores,id',
+            'subpedidos.*.diferencia' => 'nullable|numeric',
+        ]);
 
-        'productos' => 'required|array|min:1',
-        'productos.*.producto_id' => 'required|exists:productos,id',
-        'productos.*.precio' => 'required|numeric|min:0',
-        'productos.*.cantidad' => 'required|integer|min:1',
-        'productos.*.moneda_id' => 'required|exists:monedas,id',
-        'productos.*.iva' => 'required|numeric|min:0|max:100',
-        'productos.*.color_id' => 'nullable|exists:colores,id',
-        'productos.*.diferencia' => 'nullable|numeric',
-    ]);
-
-    DB::beginTransaction();
-
-    try {
         $data = $request->only([
             'cliente', 'direccion', 'localidad_id', 'provincia_id', 'pais_id',
             'telefono', 'email', 'contacto', 'categoria_id', 'tipo_pedido_id',
@@ -316,73 +312,71 @@ public function store(Request $request)
             'bonificacion', 'flete_id'
         ]);
 
-        // Imagen principal
         if ($request->has('eliminar_imagen')) {
-            Storage::disk('public')->delete(str_replace('/storage/', '', $pedido->imagen));
+            if ($pedido->imagen) {
+                Storage::disk('public')->delete(str_replace('/storage/', '', $pedido->imagen));
+            }
             $data['imagen'] = null;
         } elseif ($request->hasFile('imagen')) {
-            Storage::disk('public')->delete(str_replace('/storage/', '', $pedido->imagen));
+            if ($pedido->imagen) {
+                Storage::disk('public')->delete(str_replace('/storage/', '', $pedido->imagen));
+            }
             $data['imagen'] = '/storage/' . $request->file('imagen')->store('pedidos', 'public');
         }
 
-        // Imagen secundaria
         if ($request->has('eliminar_imagen_2')) {
-            Storage::disk('public')->delete(str_replace('/storage/', '', $pedido->imagen_2));
+            if ($pedido->imagen_2) {
+                Storage::disk('public')->delete(str_replace('/storage/', '', $pedido->imagen_2));
+            }
             $data['imagen_2'] = null;
         } elseif ($request->hasFile('imagen_2')) {
-            Storage::disk('public')->delete(str_replace('/storage/', '', $pedido->imagen_2));
+            if ($pedido->imagen_2) {
+                Storage::disk('public')->delete(str_replace('/storage/', '', $pedido->imagen_2));
+            }
             $data['imagen_2'] = '/storage/' . $request->file('imagen_2')->store('pedidos', 'public');
         }
 
         $pedido->update($data);
 
-        // Borrar subpedidos anteriores
         $pedido->subPedidos()->delete();
 
-        foreach ($request->productos as $producto) {
-            $productoDB = Producto::find($producto['producto_id']);
-            $esAccesorio = $productoDB && $productoDB->familia_id == 8;
-            $esComponenteOImplemento = $productoDB && in_array($productoDB->familia_id, [1, 2]);
+        foreach ($request->subpedidos as $subpedidoData) {
+            $producto = Producto::find($subpedidoData['producto_id']);
+            $familiaId = $producto->familia_id ?? null;
 
-            $bonificacion = $esAccesorio ? 0 : (float) $pedido->bonificacion;
-            $diferencia = $esComponenteOImplemento ? ((float)($producto['diferencia'] ?? 0)) : 0;
 
-            $precio = (float) $producto['precio'];
-            $cantidad = (int) $producto['cantidad'];
-            $iva = (float) $producto['iva'];
+            $esAccesorio = $familiaId == 8;
+            $esComponenteOImplemento = in_array($familiaId, [1, 2]);
 
-            $precioConDiferencia = $precio * (1 + $diferencia / 100);
+            $bonificacion = $esAccesorio ? 0 : ($request->bonificacion ?? 0);
+            $diferencia = $esComponenteOImplemento ? ($subpedidoData['diferencia'] ?? 0) : 0;
+
+            $precio = $subpedidoData['precio'];
+            $cantidad = $subpedidoData['cantidad'];
+            $iva = $subpedidoData['iva'];
+
+            $precioConDiferencia = $precio * (1 + ($diferencia / 100));
             $subtotal = $precioConDiferencia * $cantidad * (1 - $bonificacion / 100);
             $total = $subtotal * (1 + $iva / 100);
 
-            $sub = SubPedido::create([
-                'producto_id' => $producto['producto_id'],
-                'precio' => $precio,
-                'cantidad' => $cantidad,
-                'moneda_id' => $producto['moneda_id'],
-                'iva' => $iva,
-                'detalle' => $producto['detalle'] ?? null,
-                'color_id' => $producto['color_id'] ?? null,
-                'subbonificacion' => $bonificacion,
-                'diferencia' => $diferencia,
-                'subtotal' => $subtotal,
-                'total' => $total,
-                'sub_fecha_entrega' => $pedido->fecha_necesidad,
-                'pedido_id' => $pedido->id,
+            SubPedido::create([
+    'producto_id' => $producto['producto_id'],
+    'precio' => $producto['precio'],
+    'cantidad' => $producto['cantidad'],
+    'moneda_id' => $producto['moneda_id'],
+    'iva' => $producto['iva'],
+    'detalle' => $producto['detalle'] ?? null,
+    'color_id' => $producto['color_id'] ?? null,
+    'subbonificacion' => $esAccesorio ? 0 : $pedido->bonificacion,
+    'sub_fecha_entrega' => $pedido->fecha_necesidad,
+    'pedido_id' => $pedido->id,
             ]);
-
-            Log::info('✅ SubPedido actualizado o creado', $sub->toArray());
+            Log::info('✅ SubPedido creado', $sub->toArray()); // ❌ Esto falla porque $sub no existe
         }
 
-        DB::commit();
-
         return redirect()->route('pedidos.show', $pedido->id)->with('success', 'Pedido actualizado correctamente.');
-    } catch (\Exception $e) {
-        DB::rollBack();
-        Log::error('❌ Error al actualizar pedido: ' . $e->getMessage());
-        return back()->with('error', 'Error al actualizar el pedido.');
     }
-}
+
 
 
 
