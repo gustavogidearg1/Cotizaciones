@@ -157,7 +157,7 @@ public function store(Request $request)
         foreach ($request->productos as $producto) {
             $productoDB = Producto::find($producto['producto_id']);
             $esAccesorio = $productoDB && $productoDB->familia_id == 8;
-            $esComponenteOImplemento = $productoDB && in_array($productoDB->familia_id, [1, 2]);
+            $esComponenteOImplemento = $productoDB && in_array($productoDB->familia_id, range(1, 7));
 
             $bonificacion = $esAccesorio ? 0 : (float) $pedido->bonificacion;
             $diferencia = $esComponenteOImplemento ? ((float)($producto['diferencia'] ?? 0)) : 0;
@@ -292,6 +292,7 @@ public function store(Request $request)
         'forma_entrega' => 'required|string|max:255',
         'observacion' => 'nullable|string',
         'bonificacion' => 'required|numeric|min:0',
+        'diferencia' => 'nullable|numeric',
         'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         'imagen_2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         'flete_id' => 'nullable|exists:fletes,id',
@@ -313,7 +314,7 @@ public function store(Request $request)
             'cliente', 'direccion', 'localidad_id', 'provincia_id', 'pais_id',
             'telefono', 'email', 'contacto', 'categoria_id', 'tipo_pedido_id',
             'fecha_necesidad', 'forma_pago_id', 'forma_entrega', 'observacion',
-            'bonificacion', 'flete_id'
+            'bonificacion', 'diferencia','flete_id'
         ]);
 
         // Imagen principal
@@ -342,7 +343,8 @@ public function store(Request $request)
         foreach ($request->productos as $producto) {
             $productoDB = Producto::find($producto['producto_id']);
             $esAccesorio = $productoDB && $productoDB->familia_id == 8;
-            $esComponenteOImplemento = $productoDB && in_array($productoDB->familia_id, [1, 2]);
+            $esComponenteOImplemento = $productoDB && in_array($productoDB->familia_id, range(1, 7));
+
 
             $bonificacion = $esAccesorio ? 0 : (float) $pedido->bonificacion;
             $diferencia = $esComponenteOImplemento ? ((float)($producto['diferencia'] ?? 0)) : 0;

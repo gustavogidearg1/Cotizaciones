@@ -16,7 +16,7 @@ protected $fillable = [
     'forma_entrega', 'observacion', 'bonificacion', 'imagen',
     'imagen_2', 'flete_id', 'user_id', 'cliente', 'direccion',
     'localidad_id', 'provincia_id', 'pais_id', 'telefono', 'email',
-    'contacto', 'categoria_id', 'color_id'
+    'contacto', 'diferencia','categoria_id', 'color_id'
 ];
 
     protected $dates = [

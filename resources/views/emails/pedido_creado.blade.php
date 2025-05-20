@@ -69,7 +69,7 @@
         <table width="100%">
             <tr>
                 <td><strong>COMOFRA SRL</strong></td>
-                <td style="text-align: right;"><h2>{{ $pedido->tipoPedido->nombre }} #{{ $pedido->id }}</h2></td>
+                <td style="text-align: right;"><h2>{{ $pedido->tipoPedido->nombre }} #{{ $pedido->id }}/ {{ $pedido->user->id }}</h2></td>
             </tr>
         </table>
     </div>
@@ -88,6 +88,7 @@
             <p><strong>Forma de Entrega:</strong> {{ $pedido->forma_entrega }}</p>
             <p><strong>Flete:</strong> {{ $pedido->flete->nombre ?? 'Sin flete' }}</p>
             <p><strong>Forma de Pago:</strong> {{ $pedido->formaPago->nombre }}</p>
+            <p><strong>Diferencia (%):</strong> {{ $pedido->diferencia }}</p>
             <p><strong>Bonificación:</strong> {{ $pedido->bonificacion }}%</p>
         </div>
     </div>

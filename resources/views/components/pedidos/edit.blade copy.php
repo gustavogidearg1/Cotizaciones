@@ -291,198 +291,118 @@
     <!-- @include('components.pedidos._productos_form', ['index' => 'new_']) -->
 @endsection
 
-    <script>
-    const familiaPorProducto = {
-        @foreach ($productos as $producto)
-            {{ $producto->id }}: {{ $producto->familia_id }},
-        @endforeach
-    };
-</script>
-
 @section('scripts')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-
-
     <script>
-
-
-
         document.addEventListener('DOMContentLoaded', function() {
-
-
             // Inicializa el contador con la cantidad de productos existentes
             let productoIndex = {{ $pedido->subPedidos->count() }};
             const productosContainer = document.getElementById('productos-container');
             const agregarProductoBtn = document.getElementById('agregar-producto');
 
-            // Función para calcular totales
-    function calcularTotales(productoItem) {
-        const productoId = parseInt($(productoItem).find('.select-producto').val());
-        const precio = parseFloat($(productoItem).find('.precio-input').val()) || 0;
-        const cantidad = parseInt($(productoItem).find('.cantidad-input').val()) || 0;
-        const iva = parseFloat($(productoItem).find('.iva-input').val()) || 0;
-        const bonificacion = parseFloat($('#bonificacion').val()) || 0;
-        const diferencia = parseFloat($('#diferencia').val()) || 0;
-
-        const familiaId = familiaPorProducto[productoId];
-        const esAccesorio = [8].includes(familiaId);
-        const esImplementoOComponente = [1, 2].includes(familiaId);
-
-        const aplicarBonificacion = esAccesorio ? 0 : bonificacion;
-        const aplicarDiferencia = esImplementoOComponente ? diferencia : 0;
-
-        const precioFinal = precio * (1 + aplicarDiferencia / 100);
-        const subtotal = precioFinal * cantidad * (1 - aplicarBonificacion / 100);
-        const total = subtotal * (1 + iva / 100);
-
-        $(productoItem).find('.subtotal-input').val(subtotal.toFixed(2));
-        $(productoItem).find('.total-input').val(total.toFixed(2));
-        $(productoItem).find('.diferencia-pago-input').val(aplicarDiferencia.toFixed(2));
-    }
-
-    // Evento: cambio de forma de pago
-    $('#forma_pago_id').on('change', function () {
-        const formaPagoId = $(this).val();
-        if (formaPagoId) {
-            $.get(`/forma-pago/${formaPagoId}/diferencia`, function (data) {
-                if (data.diferencia !== undefined) {
-                    $('#diferencia').val(data.diferencia);
-                    $('.producto-item').each(function () {
-                        calcularTotales($(this));
-                    });
-                }
-            });
-        }
-    });
-
             // Función para agregar nuevo producto
             function agregarProducto() {
-    const newIndex = productoIndex++;
-    const template = document.createElement('div');
-    template.innerHTML = `
-    <div class="producto-item mb-3 p-3 border rounded">
-        <button type="button" class="btn btn-danger btn-sm mb-2 btn-eliminar-producto">
-            <i class="fas fa-trash"></i> Eliminar
-        </button>
+                const newIndex = productoIndex++;
+                const template = document.createElement('div');
+                template.innerHTML = `
+            <div class="producto-item mb-3 p-3 border rounded">
+                <button type="button" class="btn btn-danger btn-sm mb-2 btn-eliminar-producto">
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
 
-        <div class="row">
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label>Producto*</label>
-                    <select name="productos[${newIndex}][producto_id]" class="form-control select-producto" required>
-                        <option value="">Seleccione producto</option>
-                        @foreach ($productos as $producto)
-                            <option value="{{ $producto->id }}" data-precio="{{ $producto->precio ?? 0 }}">
-                                {{ $producto->codigo }} - {{ $producto->nombre }}
-                            </option>
-                        @endforeach
-                    </select>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Producto*</label>
+                            <select name="subpedidos[${newIndex}][producto_id]" class="form-control select-producto" required>
+                                <option value="">Seleccione producto</option>
+                                @foreach ($productos as $producto)
+                                    <option value="{{ $producto->id }}" data-precio="{{ $producto->precio ?? 0 }}">
+                                        {{ $producto->codigo }} - {{ $producto->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Color*</label>
+                            <select name="subpedidos[${newIndex}][color_id]" class="form-control" >
+                                <option value="">Seleccione color</option>
+                                @foreach ($colores as $color)
+                                    <option value="{{ $color->id }}">{{ $color->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Moneda*</label>
+                            <select name="subpedidos[${newIndex}][moneda_id]" class="form-control" required>
+                                <option value="">Seleccione moneda</option>
+                                @foreach ($monedas as $moneda)
+                                    <option value="{{ $moneda->id }}">{{ $moneda->moneda }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Precio*</label>
+                            <input type="number" step="0.01" min="0" class="form-control precio-input"
+                                   name="subpedidos[${newIndex}][precio]" value="0" required>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label>Cantidad*</label>
+                            <input type="number" min="1" class="form-control cantidad-input"
+                                   name="subpedidos[${newIndex}][cantidad]" value="1" required>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>IVA (%)*</label>
+                            <input type="number" step="0.01" min="0" max="100" class="form-control iva-input"
+                                   name="subpedidos[${newIndex}][iva]" value="21" required>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Subtotal</label>
+                            <input type="text" class="form-control subtotal-input" value="0.00" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Total</label>
+                            <input type="text" class="form-control total-input" value="0.00" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Detalle</label>
+                            <input type="text" class="form-control"
+                                   name="subpedidos[${newIndex}][detalle]" maxlength="255">
+                        </div>
+                    </div>
                 </div>
             </div>
+        `.trim();
 
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Color*</label>
-                    <select name="productos[${newIndex}][color_id]" class="form-control">
-                        <option value="">Seleccione color</option>
-                        @foreach ($colores as $color)
-                            <option value="{{ $color->id }}">{{ $color->nombre }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
+                const newProducto = template.firstChild;
+                productosContainer.appendChild(newProducto);
 
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Moneda*</label>
-                    <select name="productos[${newIndex}][moneda_id]" class="form-control" required>
-                        <option value="">Seleccione moneda</option>
-                        @foreach ($monedas as $moneda)
-                            <option value="{{ $moneda->id }}">{{ $moneda->moneda }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            <div class="col-md-1">
-                <div class="form-group">
-                    <label>Cantidad*</label>
-                    <input type="number" min="1" class="form-control cantidad-input"
-                        name="productos[${newIndex}][cantidad]" value="1" required>
-                </div>
-            </div>
-
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Precio*</label>
-                    <input type="number" step="0.01" min="0" class="form-control precio-input"
-                        name="productos[${newIndex}][precio]" value="0.00" required>
-                </div>
-            </div>
-
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Descuento (%)</label>
-                    <input type="text" class="form-control descuento-porcentaje" readonly value="0.00">
-                </div>
-            </div>
-
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Diferencia de Pago (%)</label>
-                    <input type="text" class="form-control diferencia-pago-input" readonly value="0.00">
-                </div>
-            </div>
-
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Subtotal</label>
-                    <input type="text" class="form-control subtotal-input" readonly value="0.00">
-                </div>
-            </div>
-
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>IVA (%) *</label>
-                    <input type="number" step="0.01" min="0" max="100" class="form-control iva-input"
-                        name="productos[${newIndex}][iva]" value="21" required>
-                </div>
-            </div>
-
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Importe IVA</label>
-                    <input type="text" class="form-control iva-monto-input" readonly value="0.00">
-                </div>
-            </div>
-
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Total</label>
-                    <input type="text" class="form-control total-input" readonly value="0.00">
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-2">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label>Detalle</label>
-                    <input type="text" class="form-control"
-                        name="productos[${newIndex}][detalle]" maxlength="255">
-                </div>
-            </div>
-        </div>
-    </div>
-    `.trim();
-
-    const newProducto = template.firstChild;
-    productosContainer.appendChild(newProducto);
-    inicializarEventosProducto(newProducto);
-}
-
+                // Configurar eventos para el nuevo producto
+                inicializarEventosProducto(newProducto);
+            }
 
             // Función para inicializar eventos de un producto
             function inicializarEventosProducto(productoItem) {
@@ -509,35 +429,19 @@
                 });
             }
 
-
             // Función para calcular totales
-function calcularTotales(productoItem) {
-    const productoId = parseInt($(productoItem).find('.select-producto').val());
-    const precio = parseFloat($(productoItem).find('.precio-input').val()) || 0;
-    const cantidad = parseInt($(productoItem).find('.cantidad-input').val()) || 0;
-    const iva = parseFloat($(productoItem).find('.iva-input').val()) || 0;
-    const bonificacion = parseFloat($('#bonificacion').val()) || 0;
-    const diferencia = parseFloat($('#diferencia').val()) || 0;
+            function calcularTotales(productoItem) {
+                const precio = parseFloat($(productoItem).find('.precio-input').val()) || 0;
+                const cantidad = parseInt($(productoItem).find('.cantidad-input').val()) || 0;
+                const bonificacion = parseFloat($('#bonificacion').val()) || 0;
+                const iva = parseFloat($(productoItem).find('.iva-input').val()) || 0;
 
-    const familiaId = familiaPorProducto[productoId];
-    const esAccesorio = [8].includes(familiaId);
+                const subtotal = precio * cantidad * (1 - (bonificacion / 100));
+                const total = subtotal * (1 + (iva / 100));
 
-    const aplicarBonificacion = esAccesorio ? 0 : bonificacion;
-    const aplicarDiferencia = esAccesorio ? 0 : diferencia;
-
-    const precioFinal = precio * (1 + aplicarDiferencia / 100);
-    const subtotal = precioFinal * cantidad * (1 - aplicarBonificacion / 100);
-    const ivaMonto = subtotal * (iva / 100);
-    const total = subtotal + ivaMonto;
-
-    $(productoItem).find('.descuento-porcentaje').val(aplicarBonificacion.toFixed(2));
-    $(productoItem).find('.subtotal-input').val(subtotal.toFixed(2));
-    $(productoItem).find('.iva-monto-input').val(ivaMonto.toFixed(2));
-    $(productoItem).find('.total-input').val(total.toFixed(2));
-    $(productoItem).find('.diferencia-pago-input').val(aplicarDiferencia.toFixed(2));
-}
-
-
+                $(productoItem).find('.subtotal-input').val(subtotal.toFixed(2));
+                $(productoItem).find('.total-input').val(total.toFixed(2));
+            }
 
             // Configurar eventos para productos existentes
             $('#productos-container').on('change', '.select-producto', function() {
@@ -550,37 +454,15 @@ function calcularTotales(productoItem) {
                 }
             });
 
-$(document).on('input change', '.precio-input, .cantidad-input, .iva-input', function() {
-    calcularTotales($(this).closest('.producto-item'));
-});
+            $('#productos-container').on('input change', '.precio-input, .cantidad-input, .iva-input', function() {
+                calcularTotales($(this).closest('.producto-item'));
+            });
 
-$('#bonificacion, #diferencia').on('input change', function() {
-    $('.producto-item').each(function() {
-        calcularTotales($(this));
-    });
-});
-
-$(document).on('change', '.select-producto', function() {
-    const productoId = $(this).val();
-    const productoItem = $(this).closest('.producto-item');
-
-    if (productoId) {
-        $.get(`/pedidos/last-price/${productoId}`, function(data) {
-            if (data.precio) {
-                productoItem.find('.precio-input').val(data.precio);
-            }
-            if (data.moneda_id) {
-                productoItem.find('.moneda-select').val(data.moneda_id);
-            }
-            calcularTotales(productoItem);
-        }).fail(function() {
-            calcularTotales(productoItem);
-        });
-    } else {
-        calcularTotales(productoItem);
-    }
-});
-
+            $('#bonificacion').on('input change', function() {
+                $('.producto-item').each(function() {
+                    calcularTotales($(this));
+                });
+            });
 
             // Inicializar eventos para productos existentes al cargar
             document.querySelectorAll('.producto-item').forEach(item => {

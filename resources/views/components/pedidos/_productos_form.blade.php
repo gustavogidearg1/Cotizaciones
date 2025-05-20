@@ -57,13 +57,18 @@
         </div>
     </div>
 
-    <div class="col-md-2">
-        <div class="form-group">
-            <label>Diferencia de Pago (%)</label>
-            <input type="text" class="form-control" name="subpedidos[{{ $index }}][diferencia]"
-                value="{{ $subPedido->diferencia ?? 0 }}">
-        </div>
+<div class="col-md-2">
+    <div class="form-group">
+        <label>Diferencia de Pago (%)</label>
+<input type="number" step="0.01"
+       class="form-control diferencia-pago-input"
+       name="productos[{{ $index }}][diferencia]"
+       value="{{ old('productos.'.$index.'.diferencia', $subPedido->diferencia ?? 0) }}">
+
+
     </div>
+</div>
+
 
     <div class="col-md-1">
         <div class="form-group">
@@ -103,3 +108,5 @@
         </div>
     </div>
 </div>
+
+
