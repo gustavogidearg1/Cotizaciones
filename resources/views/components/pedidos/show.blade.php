@@ -21,6 +21,10 @@
         }
     </style>
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+
     <div class="container">
         <div class="card mb-4">
             <div class="card-header bg-orange text-white">
@@ -253,6 +257,21 @@
             <a href="{{ route('pedidos.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Volver
             </a>
+
+@if ($pedido->token)
+    <a href="https://wa.me/?text={{ urlencode('Podés ver el pedido en: ' . route('pedidos.publico', $pedido->token)) }}"
+       class="btn btn-success"
+       target="_blank">
+        <i class="fab fa-whatsapp"></i> Compartir con Cliente
+    </a>
+@endif
+<!--
+<a href="{{ route('pedidos.publico', $pedido->token) }}">
+    {{ route('pedidos.publico', $pedido->token) }}
+</a>
+
+-->
+
         </div>
     </div>
 
@@ -278,4 +297,9 @@
             }, 1000);
         }
     </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
 @endsection

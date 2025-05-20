@@ -1,29 +1,36 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-return new class extends Migration
+class AddIvaAndTotalToSubPedidosTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-public function up()
-{
-    Schema::table('sub_pedidos', function (Blueprint $table) {
-        $table->decimal('iva', 5, 2)->default(21.00)->after('subbonificacion');
-        $table->decimal('total', 12, 2)->after('subtotal');
-    });
+    public function up()
+    {
+        Schema::table('sub_pedidos', function (Blueprint $table) {
+            if (!Schema::hasColumn('sub_pedidos', 'iva')) {
+                $table->decimal('iva', 5, 2)->default(21)->after('subbonificacion');
+            }
+
+            if (!Schema::hasColumn('sub_pedidos', 'total')) {
+                $table->decimal('total', 12, 2)->default(0)->after('subtotal');
+            }
+        });
+    }
+
+    public function down()
+    {
+        Schema::table('sub_pedidos', function (Blueprint $table) {
+            if (Schema::hasColumn('sub_pedidos', 'iva')) {
+                $table->dropColumn('iva');
+            }
+
+            if (Schema::hasColumn('sub_pedidos', 'total')) {
+                $table->dropColumn('total');
+            }
+        });
+    }
 }
 
-    /**
-     * Reverse the migrations.
-     */
-public function down()
-{
-    Schema::table('sub_pedidos', function (Blueprint $table) {
-        $table->dropColumn(['iva', 'total']);
-    });
-}
-};
+

@@ -113,3 +113,6 @@ Route::get('/test-vista-email/{id}', function ($id) {
 
     return view('emails.pedido_creado', compact('pedido'));
 });
+
+Route::get('/pedido-publico/{token}', [PedidoController::class, 'verPublico'])->name('pedidos.publico');
+
