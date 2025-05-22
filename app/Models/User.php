@@ -48,12 +48,12 @@ class User extends Authenticatable
 
     public function isEditor(): bool
     {
-        return $this->role_id === Role::Editor;
+        return $this->role_id === Role::EDITOR;
     }
 
     public function isGuest(): bool
     {
-        return $this->role_id === Role::Invitado;
+        return $this->role_id === Role::GUEST;
     }
 
     // Método para verificar múltiples roles

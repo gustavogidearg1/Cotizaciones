@@ -147,6 +147,13 @@
                                                                     <i class="bi bi-collection"></i> Familias
                                                                 </a>
                                                             </li>
+
+                                                                                                                        <li>
+                                                                <a class="dropdown-item" href="{{ route('monedas.index') }}">
+                                                                    <i class="bi bi-currency-dollar"></i> Monedas
+                                                                </a>
+                                                            </li>
+
                                                         </ul>
                                                     </li>
 

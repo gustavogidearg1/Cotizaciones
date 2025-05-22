@@ -166,8 +166,22 @@
 
                     <div class="row">
 
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="moneda_id" class="form-label">Moneda del Pedido</label>
+                                <select name="moneda_id" id="moneda_id" class="form-select" required>
+                                    <option value="">Seleccione una moneda</option>
+                                    @foreach ($monedas as $moneda)
+                                        <option value="{{ $moneda->id }}"
+                                            {{ old('moneda_id', $pedido->moneda_id) == $moneda->id ? 'selected' : '' }}>
+                                            {{ $moneda->moneda }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group mb-3">
                                 <label for="bonificacion">Bonificación (%)*</label>
                                 <input type="number" step="0.01" min="0" max="100" class="form-control"
@@ -175,7 +189,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group mb-3">
                                 <label for="flete_id">Flete</label>
                                 <select class="form-control" id="flete_id" name="flete_id">
@@ -291,7 +305,7 @@
     <!-- @include('components.pedidos._productos_form', ['index' => 'new_']) -->
 @endsection
 
-    <script>
+<script>
     const familiaPorProducto = {
         @foreach ($productos as $producto)
             {{ $producto->id }}: {{ $producto->familia_id }},
@@ -306,9 +320,6 @@
 
 
     <script>
-
-
-
         document.addEventListener('DOMContentLoaded', function() {
 
 
@@ -318,50 +329,50 @@
             const agregarProductoBtn = document.getElementById('agregar-producto');
 
             // Función para calcular totales
-    function calcularTotales(productoItem) {
-        const productoId = parseInt($(productoItem).find('.select-producto').val());
-        const precio = parseFloat($(productoItem).find('.precio-input').val()) || 0;
-        const cantidad = parseInt($(productoItem).find('.cantidad-input').val()) || 0;
-        const iva = parseFloat($(productoItem).find('.iva-input').val()) || 0;
-        const bonificacion = parseFloat($('#bonificacion').val()) || 0;
-        const diferencia = parseFloat($('#diferencia').val()) || 0;
+            function calcularTotales(productoItem) {
+                const productoId = parseInt($(productoItem).find('.select-producto').val());
+                const precio = parseFloat($(productoItem).find('.precio-input').val()) || 0;
+                const cantidad = parseInt($(productoItem).find('.cantidad-input').val()) || 0;
+                const iva = parseFloat($(productoItem).find('.iva-input').val()) || 0;
+                const bonificacion = parseFloat($('#bonificacion').val()) || 0;
+                const diferencia = parseFloat($('#diferencia').val()) || 0;
 
-        const familiaId = familiaPorProducto[productoId];
-        const esAccesorio = [8].includes(familiaId);
-        const esImplementoOComponente = [1, 2].includes(familiaId);
+                const familiaId = familiaPorProducto[productoId];
+                const esAccesorio = [8].includes(familiaId);
+                const esImplementoOComponente = [1, 2].includes(familiaId);
 
-        const aplicarBonificacion = esAccesorio ? 0 : bonificacion;
-        const aplicarDiferencia = esImplementoOComponente ? diferencia : 0;
+                const aplicarBonificacion = esAccesorio ? 0 : bonificacion;
+                const aplicarDiferencia = esImplementoOComponente ? diferencia : 0;
 
-        const precioFinal = precio * (1 + aplicarDiferencia / 100);
-        const subtotal = precioFinal * cantidad * (1 - aplicarBonificacion / 100);
-        const total = subtotal * (1 + iva / 100);
+                const precioFinal = precio * (1 + aplicarDiferencia / 100);
+                const subtotal = precioFinal * cantidad * (1 - aplicarBonificacion / 100);
+                const total = subtotal * (1 + iva / 100);
 
-        $(productoItem).find('.subtotal-input').val(subtotal.toFixed(2));
-        $(productoItem).find('.total-input').val(total.toFixed(2));
-        $(productoItem).find('.diferencia-pago-input').val(aplicarDiferencia.toFixed(2));
-    }
+                $(productoItem).find('.subtotal-input').val(subtotal.toFixed(2));
+                $(productoItem).find('.total-input').val(total.toFixed(2));
+                $(productoItem).find('.diferencia-pago-input').val(aplicarDiferencia.toFixed(2));
+            }
 
-    // Evento: cambio de forma de pago
-    $('#forma_pago_id').on('change', function () {
-        const formaPagoId = $(this).val();
-        if (formaPagoId) {
-            $.get(`/forma-pago/${formaPagoId}/diferencia`, function (data) {
-                if (data.diferencia !== undefined) {
-                    $('#diferencia').val(data.diferencia);
-                    $('.producto-item').each(function () {
-                        calcularTotales($(this));
+            // Evento: cambio de forma de pago
+            $('#forma_pago_id').on('change', function() {
+                const formaPagoId = $(this).val();
+                if (formaPagoId) {
+                    $.get(`/forma-pago/${formaPagoId}/diferencia`, function(data) {
+                        if (data.diferencia !== undefined) {
+                            $('#diferencia').val(data.diferencia);
+                            $('.producto-item').each(function() {
+                                calcularTotales($(this));
+                            });
+                        }
                     });
                 }
             });
-        }
-    });
 
             // Función para agregar nuevo producto
             function agregarProducto() {
-    const newIndex = productoIndex++;
-    const template = document.createElement('div');
-    template.innerHTML = `
+                const newIndex = productoIndex++;
+                const template = document.createElement('div');
+                template.innerHTML = `
     <div class="producto-item mb-3 p-3 border rounded">
         <button type="button" class="btn btn-danger btn-sm mb-2 btn-eliminar-producto">
             <i class="fas fa-trash"></i> Eliminar
@@ -478,10 +489,10 @@
     </div>
     `.trim();
 
-    const newProducto = template.firstChild;
-    productosContainer.appendChild(newProducto);
-    inicializarEventosProducto(newProducto);
-}
+                const newProducto = template.firstChild;
+                productosContainer.appendChild(newProducto);
+                inicializarEventosProducto(newProducto);
+            }
 
 
             // Función para inicializar eventos de un producto
@@ -511,31 +522,31 @@
 
 
             // Función para calcular totales
-function calcularTotales(productoItem) {
-    const productoId = parseInt($(productoItem).find('.select-producto').val());
-    const precio = parseFloat($(productoItem).find('.precio-input').val()) || 0;
-    const cantidad = parseInt($(productoItem).find('.cantidad-input').val()) || 0;
-    const iva = parseFloat($(productoItem).find('.iva-input').val()) || 0;
-    const bonificacion = parseFloat($('#bonificacion').val()) || 0;
-    const diferencia = parseFloat($('#diferencia').val()) || 0;
+            function calcularTotales(productoItem) {
+                const productoId = parseInt($(productoItem).find('.select-producto').val());
+                const precio = parseFloat($(productoItem).find('.precio-input').val()) || 0;
+                const cantidad = parseInt($(productoItem).find('.cantidad-input').val()) || 0;
+                const iva = parseFloat($(productoItem).find('.iva-input').val()) || 0;
+                const bonificacion = parseFloat($('#bonificacion').val()) || 0;
+                const diferencia = parseFloat($('#diferencia').val()) || 0;
 
-    const familiaId = familiaPorProducto[productoId];
-    const esAccesorio = [8].includes(familiaId);
+                const familiaId = familiaPorProducto[productoId];
+                const esAccesorio = [8].includes(familiaId);
 
-    const aplicarBonificacion = esAccesorio ? 0 : bonificacion;
-    const aplicarDiferencia = esAccesorio ? 0 : diferencia;
+                const aplicarBonificacion = esAccesorio ? 0 : bonificacion;
+                const aplicarDiferencia = esAccesorio ? 0 : diferencia;
 
-    const precioFinal = precio * (1 + aplicarDiferencia / 100);
-    const subtotal = precioFinal * cantidad * (1 - aplicarBonificacion / 100);
-    const ivaMonto = subtotal * (iva / 100);
-    const total = subtotal + ivaMonto;
+                const precioFinal = precio * (1 + aplicarDiferencia / 100);
+                const subtotal = precioFinal * cantidad * (1 - aplicarBonificacion / 100);
+                const ivaMonto = subtotal * (iva / 100);
+                const total = subtotal + ivaMonto;
 
-    $(productoItem).find('.descuento-porcentaje').val(aplicarBonificacion.toFixed(2));
-    $(productoItem).find('.subtotal-input').val(subtotal.toFixed(2));
-    $(productoItem).find('.iva-monto-input').val(ivaMonto.toFixed(2));
-    $(productoItem).find('.total-input').val(total.toFixed(2));
-    $(productoItem).find('.diferencia-pago-input').val(aplicarDiferencia.toFixed(2));
-}
+                $(productoItem).find('.descuento-porcentaje').val(aplicarBonificacion.toFixed(2));
+                $(productoItem).find('.subtotal-input').val(subtotal.toFixed(2));
+                $(productoItem).find('.iva-monto-input').val(ivaMonto.toFixed(2));
+                $(productoItem).find('.total-input').val(total.toFixed(2));
+                $(productoItem).find('.diferencia-pago-input').val(aplicarDiferencia.toFixed(2));
+            }
 
 
 
@@ -550,36 +561,36 @@ function calcularTotales(productoItem) {
                 }
             });
 
-$(document).on('input change', '.precio-input, .cantidad-input, .iva-input', function() {
-    calcularTotales($(this).closest('.producto-item'));
-});
+            $(document).on('input change', '.precio-input, .cantidad-input, .iva-input', function() {
+                calcularTotales($(this).closest('.producto-item'));
+            });
 
-$('#bonificacion, #diferencia').on('input change', function() {
-    $('.producto-item').each(function() {
-        calcularTotales($(this));
-    });
-});
+            $('#bonificacion, #diferencia').on('input change', function() {
+                $('.producto-item').each(function() {
+                    calcularTotales($(this));
+                });
+            });
 
-$(document).on('change', '.select-producto', function() {
-    const productoId = $(this).val();
-    const productoItem = $(this).closest('.producto-item');
+            $(document).on('change', '.select-producto', function() {
+                const productoId = $(this).val();
+                const productoItem = $(this).closest('.producto-item');
 
-    if (productoId) {
-        $.get(`/pedidos/last-price/${productoId}`, function(data) {
-            if (data.precio) {
-                productoItem.find('.precio-input').val(data.precio);
-            }
-            if (data.moneda_id) {
-                productoItem.find('.moneda-select').val(data.moneda_id);
-            }
-            calcularTotales(productoItem);
-        }).fail(function() {
-            calcularTotales(productoItem);
-        });
-    } else {
-        calcularTotales(productoItem);
-    }
-});
+                if (productoId) {
+                    $.get(`/pedidos/last-price/${productoId}`, function(data) {
+                        if (data.precio) {
+                            productoItem.find('.precio-input').val(data.precio);
+                        }
+                        if (data.moneda_id) {
+                            productoItem.find('.moneda-select').val(data.moneda_id);
+                        }
+                        calcularTotales(productoItem);
+                    }).fail(function() {
+                        calcularTotales(productoItem);
+                    });
+                } else {
+                    calcularTotales(productoItem);
+                }
+            });
 
 
             // Inicializar eventos para productos existentes al cargar

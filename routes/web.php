@@ -20,6 +20,7 @@ use App\Models\Pedido;
 use Illuminate\Support\Facades\Auth; // <-- Añade esta línea
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MonedaController;
 
 
 
@@ -115,4 +116,6 @@ Route::get('/test-vista-email/{id}', function ($id) {
 });
 
 Route::get('/pedido-publico/{token}', [PedidoController::class, 'verPublico'])->name('pedidos.publico');
+
+Route::resource('monedas', MonedaController::class);
 

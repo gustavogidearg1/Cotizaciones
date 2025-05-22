@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Pedido Público #{{ $pedido->id }}</title>
@@ -8,6 +9,7 @@
         .bg-orange {
             background-color: #FF9900 !important;
         }
+
         .imagen_Pedido {
             width: 250px;
             height: 250px;
@@ -19,6 +21,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container mt-4">
         <div class="card mb-4">
@@ -45,7 +48,8 @@
                 </div>
 
                 <div class="row mb-2">
-                    <div class="col-md-6"><strong>Fecha de Necesidad:</strong> {{ \Carbon\Carbon::parse($pedido->fecha_necesidad)->format('d/m/Y') }}</div>
+                    <div class="col-md-6"><strong>Fecha de Necesidad:</strong>
+                        {{ \Carbon\Carbon::parse($pedido->fecha_necesidad)->format('d/m/Y') }}</div>
                     <div class="col-md-6"><strong>Forma de Entrega:</strong> {{ $pedido->forma_entrega }}</div>
                 </div>
 
@@ -76,15 +80,16 @@
                 @php
                     $primerProductoInfo = $pedido->subPedidos
                         ->map(fn($sp) => $sp->producto)
-                        ->firstWhere(fn($p) => $p && in_array($p->familia_id, range(1,7)));
+                        ->firstWhere(fn($p) => $p && in_array($p->familia_id, range(1, 7)));
                 @endphp
 
-                @if($primerProductoInfo)
+                @if ($primerProductoInfo)
                     <div class="mt-4">
-                        @if($primerProductoInfo->links)
-                            <p><strong>Links del Producto:</strong> <a href="{{ $primerProductoInfo->links }}" target="_blank">{{ $primerProductoInfo->links }}</a></p>
+                        @if ($primerProductoInfo->links)
+                            <p><strong>Links del Producto:</strong> <a href="{{ $primerProductoInfo->links }}"
+                                    target="_blank">{{ $primerProductoInfo->links }}</a></p>
                         @endif
-                        @if($primerProductoInfo->detalle)
+                        @if ($primerProductoInfo->detalle)
                             <p><strong>Detalle del Producto:</strong> {{ $primerProductoInfo->detalle }}</p>
                         @endif
                     </div>
@@ -93,7 +98,9 @@
         </div>
 
         <div class="card bg-orange text-white">
-            <div class="card-body"><h4 class="mb-0">Productos del Pedido</h4></div>
+            <div class="card-body">
+                <h4 class="mb-0">Productos del Pedido</h4>
+            </div>
         </div>
 
         @php
@@ -101,13 +108,26 @@
             $familiasComponente = [7];
             $familiasAccesorio = [8];
 
-            $grupoImplemento = $pedido->subPedidos->filter(fn($sp) => in_array($sp->producto->familia_id, $familiasImplemento));
-            $grupoComponente = $pedido->subPedidos->filter(fn($sp) => in_array($sp->producto->familia_id, $familiasComponente));
-            $grupoAccesorio = $pedido->subPedidos->filter(fn($sp) => in_array($sp->producto->familia_id, $familiasAccesorio));
+            $grupoImplemento = $pedido->subPedidos->filter(
+                fn($sp) => in_array($sp->producto->familia_id, $familiasImplemento),
+            );
+            $grupoComponente = $pedido->subPedidos->filter(
+                fn($sp) => in_array($sp->producto->familia_id, $familiasComponente),
+            );
+            $grupoAccesorio = $pedido->subPedidos->filter(
+                fn($sp) => in_array($sp->producto->familia_id, $familiasAccesorio),
+            );
 
             $totalCantidad = $subtotal = $ivaTotal = $totalGeneral = 0;
 
-            function renderPublicTable($subPedidos, $esAccesorio, &$totalCantidad, &$subtotal, &$ivaTotal, &$totalGeneral) {
+            function renderPublicTable(
+                $subPedidos,
+                $esAccesorio,
+                &$totalCantidad,
+                &$subtotal,
+                &$ivaTotal,
+                &$totalGeneral,
+            ) {
                 echo '<div class="table-responsive mt-3"><table class="table table-bordered">';
                 echo '<thead class="table-light"><tr>
                         <th>Producto</th><th>Cantidad</th><th>Precio</th><th>Desc (%)</th>
@@ -127,30 +147,42 @@
                     echo "<tr>
                         <td>{$sp->producto->nombre}</td>
                         <td>{$sp->cantidad}</td>
-                        <td>$" . number_format($sp->precio, 2, ',', '.') . "</td>
-                        <td>" . ($esAccesorio ? '0%' : $sp->subbonificacion . '%') . "</td>
-                        <td>" . ($esAccesorio ? '0%' : ($sp->diferencia ?? 0) . '%') . "</td>
-                        <td>$" . number_format($sub, 2, ',', '.') . "</td>
+                        <td>$" .
+                        number_format($sp->precio, 2, ',', '.') .
+                        "</td>
+                        <td>" .
+                        ($esAccesorio ? '0%' : $sp->subbonificacion . '%') .
+                        "</td>
+                        <td>" .
+                        ($esAccesorio ? '0%' : ($sp->diferencia ?? 0) . '%') .
+                        "</td>
+                        <td>$" .
+                        number_format($sub, 2, ',', '.') .
+                        "</td>
                         <td>{$sp->iva}%</td>
-                        <td>$" . number_format($ivaMonto, 2, ',', '.') . "</td>
-                        <td>$" . number_format($total, 2, ',', '.') . "</td>
+                        <td>$" .
+                        number_format($ivaMonto, 2, ',', '.') .
+                        "</td>
+                        <td>$" .
+                        number_format($total, 2, ',', '.') .
+                        "</td>
                     </tr>";
                 }
                 echo '</tbody></table></div>';
             }
         @endphp
 
-        @if($grupoImplemento->count())
+        @if ($grupoImplemento->count())
             <h5 class="mt-3">Implementos</h5>
             @php renderPublicTable($grupoImplemento, false, $totalCantidad, $subtotal, $ivaTotal, $totalGeneral); @endphp
         @endif
 
-        @if($grupoComponente->count())
+        @if ($grupoComponente->count())
             <h5 class="mt-3">Componentes</h5>
             @php renderPublicTable($grupoComponente, false, $totalCantidad, $subtotal, $ivaTotal, $totalGeneral); @endphp
         @endif
 
-        @if($grupoAccesorio->count())
+        @if ($grupoAccesorio->count())
             <h5 class="mt-3">Accesorios</h5>
             @php renderPublicTable($grupoAccesorio, true, $totalCantidad, $subtotal, $ivaTotal, $totalGeneral); @endphp
         @endif
@@ -158,6 +190,12 @@
         <div class="card mt-4">
             <div class="card-body text-end">
                 <h5 class="mb-0">Totales Generales</h5>
+                <p><strong>Moneda:</strong>
+                    {{ $pedido->moneda->moneda ?? 'No definida' }}
+                    @if ($pedido->moneda && $pedido->moneda->desc_ampliada)
+                        - {{ $pedido->moneda->desc_ampliada }}
+                    @endif
+                </p>
                 <p><strong>Cantidad Total:</strong> {{ $totalCantidad }}</p>
                 <p><strong>Subtotal:</strong> ${{ number_format($subtotal, 2, ',', '.') }}</p>
                 <p><strong>Importe IVA:</strong> ${{ number_format($ivaTotal, 2, ',', '.') }}</p>
@@ -165,7 +203,9 @@
             </div>
         </div>
 
-        <p class="text-end mt-4"><small>Visualización pública – generado el {{ \Carbon\Carbon::now()->format('d/m/Y H:i') }}</small></p>
+        <p class="text-end mt-4"><small>Visualización pública – generado el
+                {{ \Carbon\Carbon::now()->format('d/m/Y H:i') }}</small></p>
     </div>
 </body>
+
 </html>

@@ -147,24 +147,19 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label for="telefono">Teléfono<strong style="color: red;">*</strong></label>
                                     <input type="text" class="form-control" id="telefono" name="telefono" required>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label for="email">Email<strong style="color: red;">*</strong></label>
                                     <input type="email" class="form-control" id="email" name="email" required>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label for="contacto">Contacto</label>
-                                    <input type="text" class="form-control" id="contacto" name="contacto">
-                                </div>
-                            </div>
+
                         </div>
 
                         <div class="col-md-6">
@@ -229,7 +224,24 @@
 
                     <div class="row">
 
-                        <div class="col-md-6">
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="moneda_id" class="form-label">Moneda del Pedido</label>
+                                <select name="moneda_id" class="form-select" required>
+                                    <option value="">Seleccione una moneda</option>
+                                    @foreach ($monedas as $moneda)
+                                        <option value="{{ $moneda->id }}"
+                                            {{ old('moneda_id', 1) == $moneda->id ? 'selected' : '' }}>
+                                            {{ $moneda->moneda }}
+                                        </option>
+                                    @endforeach
+
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-4">
                             <div class="form-group mb-3">
                                 <label for="bonificacion">Descuento (%)<strong style="color: red;">*</strong></label>
                                 <input type="number" step="0.01" min="0" max="100" class="form-control"
@@ -240,7 +252,7 @@
 
 
 
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group mb-3">
                                 <label for="flete_id">Flete</label>
                                 <select class="form-control" id="flete_id" name="flete_id">

@@ -127,26 +127,26 @@
                 @endif
 
                 @php
-    $primerProductoInfo = $pedido->subPedidos
-        ->map(fn($sp) => $sp->producto)
-        ->firstWhere(fn($p) => $p && in_array($p->familia_id, [1,2,3,4,5,6,7]));
-@endphp
+                    $primerProductoInfo = $pedido->subPedidos
+                        ->map(fn($sp) => $sp->producto)
+                        ->firstWhere(fn($p) => $p && in_array($p->familia_id, [1, 2, 3, 4, 5, 6, 7]));
+                @endphp
 
-@if($primerProductoInfo)
-    <div class="mt-4">
-        @if($primerProductoInfo->links)
-            <p><strong>Links del Producto:</strong>
-                <a href="{{ $primerProductoInfo->links }}" target="_blank">
-                    {{ $primerProductoInfo->links }}
-                </a>
-            </p>
-        @endif
+                @if ($primerProductoInfo)
+                    <div class="mt-4">
+                        @if ($primerProductoInfo->links)
+                            <p><strong>Links del Producto:</strong>
+                                <a href="{{ $primerProductoInfo->links }}" target="_blank">
+                                    {{ $primerProductoInfo->links }}
+                                </a>
+                            </p>
+                        @endif
 
-        @if($primerProductoInfo->detalle)
-            <p><strong>Detalle del Producto:</strong> {{ $primerProductoInfo->detalle }}</p>
-        @endif
-    </div>
-@endif
+                        @if ($primerProductoInfo->detalle)
+                            <p><strong>Detalle del Producto:</strong> {{ $primerProductoInfo->detalle }}</p>
+                        @endif
+                    </div>
+                @endif
 
 
 
@@ -260,6 +260,12 @@
         <div class="card mt-4">
             <div class="card-body text-end">
                 <h5 class="mb-0">Totales Generales</h5>
+                <p><strong>Moneda:</strong>
+                    {{ $pedido->moneda->moneda ?? 'No definida' }}
+                    @if ($pedido->moneda && $pedido->moneda->desc_ampliada)
+                        - {{ $pedido->moneda->desc_ampliada }}
+                    @endif
+                </p>
                 <p><strong>Cantidad Total:</strong> {{ $totalCantidad }}</p>
                 <p><strong>Subtotal:</strong> ${{ number_format($subtotal, 2, ',', '.') }}</p>
                 <p><strong>Importe IVA:</strong> ${{ number_format($ivaTotal, 2, ',', '.') }}</p>
@@ -291,11 +297,11 @@
                 </a>
             @endif
             <!--
-    <a href="{{ route('pedidos.publico', $pedido->token) }}">
-        {{ route('pedidos.publico', $pedido->token) }}
-    </a>
+        <a href="{{ route('pedidos.publico', $pedido->token) }}">
+            {{ route('pedidos.publico', $pedido->token) }}
+        </a>
 
-    -->
+        -->
 
         </div>
     </div>

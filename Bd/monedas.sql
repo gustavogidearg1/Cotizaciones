@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-05-2025 a las 17:09:52
+-- Tiempo de generación: 22-05-2025 a las 09:30:05
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -39,8 +39,8 @@ CREATE TABLE `monedas` (
 --
 
 INSERT INTO `monedas` (`id`, `moneda`, `created_at`, `updated_at`) VALUES
-(1, 'Dolares', '2025-05-11 15:09:31', NULL),
-(2, 'Pesos', '2025-05-11 15:09:31', NULL);
+(1, 'Dolares', '2025-05-11 18:09:31', NULL),
+(2, 'Pesos', '2025-05-11 18:09:31', NULL);
 
 --
 -- Índices para tablas volcadas
@@ -52,16 +52,6 @@ INSERT INTO `monedas` (`id`, `moneda`, `created_at`, `updated_at`) VALUES
 ALTER TABLE `monedas`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `monedas_moneda_unique` (`moneda`);
-
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `monedas`
---
-ALTER TABLE `monedas`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

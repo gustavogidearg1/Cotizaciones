@@ -78,6 +78,7 @@ class PedidoController extends Controller
         $paises = Pais::all();
         $categorias = Categoria::all();
         $familias = Familia::all();
+        $monedas = Moneda::all();
 
         return view('components.pedidos.create', compact(
             'formasPago',
@@ -117,6 +118,7 @@ class PedidoController extends Controller
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'imagen_2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'flete_id' => 'nullable|exists:fletes,id',
+            'moneda_id' => 'required|exists:monedas,id',
 
             'productos' => 'required|array|min:1',
             'productos.*.producto_id' => 'required|exists:productos,id',
@@ -148,6 +150,7 @@ class PedidoController extends Controller
                 'telefono',
                 'email',
                 'contacto',
+                'moneda_id',
                 'categoria_id'
             ]));
             $pedido->fecha = now();
@@ -249,6 +252,7 @@ class PedidoController extends Controller
             'provincia',
             'pais',
             'categoria',
+            'moneda',
             'subPedidos.color'
         ]);
         return view('components.pedidos.show', compact('pedido'));
@@ -270,6 +274,7 @@ class PedidoController extends Controller
         $paises = Pais::all();
         $categorias = Categoria::all();
         $familias = Familia::all();
+        $monedas = Moneda::all();
 
         $pedido->load('subPedidos');
 
@@ -311,6 +316,7 @@ class PedidoController extends Controller
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'imagen_2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'flete_id' => 'nullable|exists:fletes,id',
+            'moneda_id' => 'required|exists:monedas,id',
 
             'productos' => 'required|array|min:1',
             'productos.*.producto_id' => 'required|exists:productos,id',
@@ -342,6 +348,7 @@ class PedidoController extends Controller
                 'observacion',
                 'bonificacion',
                 'diferencia',
+                'moneda_id',
                 'flete_id'
             ]);
 

@@ -121,6 +121,12 @@
         </tbody>
         <tfoot>
             <tr><td colspan="11" class="total">Cantidad Total: {{ $totalCantidad }}</td></tr>
+            <tr>                <p><strong>Moneda:</strong>
+                    {{ $pedido->moneda->moneda ?? 'No definida' }}
+                    @if ($pedido->moneda && $pedido->moneda->desc_ampliada)
+                        - {{ $pedido->moneda->desc_ampliada }}
+                    @endif
+                </p></td></tr>
             <tr><td colspan="11" class="total">Subtotal: ${{ number_format($subtotal, 2, ',', '.') }}</td></tr>
             <tr><td colspan="11" class="total">Importe IVA: ${{ number_format($ivaTotal, 2, ',', '.') }}</td></tr>
             <tr><td colspan="11" class="total">Total General: ${{ number_format($totalGeneral, 2, ',', '.') }}</td></tr>
