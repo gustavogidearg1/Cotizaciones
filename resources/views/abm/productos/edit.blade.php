@@ -12,18 +12,23 @@
         @method('PUT')
 
         <div class="row">
-            <div class="col-md-6">
-                <div class="form-group mb-3">
+            <div class="col-md-4">
+                <div class="form-group mb-4">
                     <label for="codigo">Código</label>
                     <input type="number" class="form-control" id="codigo" name="codigo" value="{{ $producto->codigo }}" required>
                 </div>
 
-                <div class="form-group mb-3">
+            </div>
+            <div class="col-md-4">
+                <div class="form-group mb-4">
                     <label for="nombre">Nombre</label>
                     <input type="text" class="form-control" id="nombre" name="nombre" value="{{ $producto->nombre }}" maxlength="255" required>
                 </div>
 
-                <div class="form-group mb-3">
+            </div>
+            <div class="col-md-4">
+
+                <div class="form-group mb-4">
                     <label for="um_id">Unidad de Medida</label>
                     <select class="form-control" id="um_id" name="um_id" required>
                         @foreach($unidades as $unidad)
@@ -31,14 +36,16 @@
                         @endforeach
                     </select>
                 </div>
+            </div>
 
-                <div class="form-group mb-3">
+                   <div class="form-group mb-3">
                     <label for="detalle">Detalle</label>
                     <textarea class="form-control" id="detalle" name="detalle" rows="3">{{ $producto->detalle }}</textarea>
                 </div>
-            </div>
 
-            <div class="col-md-6">
+                    <div class="row">
+            <div class="col-md-4">
+
                 <div class="form-group mb-3">
                     <label for="familia_id">Familia</label>
                     <select class="form-control" id="familia_id" name="familia_id" required>
@@ -47,6 +54,9 @@
                         @endforeach
                     </select>
                 </div>
+                </div>
+
+                <div class="col-md-4">
 
                 <div class="form-group mb-3">
                     <label for="activo">Activo</label>
@@ -56,6 +66,10 @@
                     </select>
                 </div>
 
+                   </div>
+
+                <div class="col-md-4">
+
                 <div class="form-group mb-3">
                     <label for="tipo_id">Tipo</label>
                     <select class="form-control" id="tipo_id" name="tipo_id" required>
@@ -64,6 +78,13 @@
                         @endforeach
                     </select>
                 </div>
+
+                </div>
+
+
+            </div>
+
+
             </div>
         </div>
 
@@ -134,6 +155,103 @@
                 </div>
             </div>
         </div>
+
+        <hr>
+<h4 class="mt-4 mb-3">Especificaciones Técnicas</h4>
+
+<div class="form-group mb-3">
+    <label for="links">Links</label>
+    <input type="text" class="form-control" id="links" name="links" value="{{ old('links', $producto->links) }}">
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group mb-3">
+            <label for="volumen_carga_m3">Volumen de Carga (m³)</label>
+            <input type="number" step="0.01" class="form-control" name="volumen_carga_m3" value="{{ old('volumen_carga_m3', $producto->volumen_carga_m3) }}">
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group mb-3">
+            <label for="potencia_requerida_hp">Potencia Requerida (HP)</label>
+            <input type="text" class="form-control" name="potencia_requerida_hp" value="{{ old('potencia_requerida_hp', $producto->potencia_requerida_hp) }}">
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group mb-3">
+            <label for="toma_potencia_tom">TOMA DE POTENCIA (R.P.M)</label>
+            <input type="text" class="form-control" name="toma_potencia_tom" value="{{ old('toma_potencia_tom', $producto->toma_potencia_tom) }}">
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group mb-3">
+            <label for="tiempo_descarga_aprx_min">TIEMPO DE DESCARGA APROXIMADO (MIN.)</label>
+            <input type="text" class="form-control" name="tiempo_descarga_aprx_min" value="{{ old('tiempo_descarga_aprx_min', $producto->tiempo_descarga_aprx_min) }}">
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group mb-3">
+            <label for="balanza">Balanza</label>
+            <input type="text" class="form-control" name="balanza" value="{{ old('balanza', $producto->balanza) }}">
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group mb-3">
+            <label for="camaras">Cámaras</label>
+            <input type="text" class="form-control" name="camaras" value="{{ old('camaras', $producto->camaras) }}">
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group mb-3">
+            <label for="altura_maxima_mm">ALTURA MÁXIMA (MM)</label>
+            <input type="text" class="form-control" name="altura_maxima_mm" value="{{ old('altura_maxima_mm', $producto->altura_maxima_mm) }}">
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group mb-3">
+            <label for="altura_carga_mm">ALTURA DE CARGA (MM)</label>
+            <input type="text" class="form-control" name="altura_carga_mm" value="{{ old('altura_carga_mm', $producto->altura_carga_mm) }}">
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group mb-3">
+            <label for="longitud_total_mm">LONGITUD TOTAL (MM)</label>
+            <input type="text" class="form-control" name="longitud_total_mm" value="{{ old('longitud_total_mm', $producto->longitud_total_mm) }}">
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group mb-3">
+            <label for="peso_vacio_kg">PESO EN VACÍO (KG)</label>
+            <input type="text" class="form-control" name="peso_vacio_kg" value="{{ old('peso_vacio_kg', $producto->peso_vacio_kg) }}">
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group mb-3">
+            <label for="de_serie">DE SERIE</label>
+            <input type="text" class="form-control" name="de_serie" value="{{ old('de_serie', $producto->de_serie) }}">
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group mb-3">
+            <label for="colores">COLORES</label>
+            <input type="text" class="form-control" name="colores" value="{{ old('colores', $producto->colores) }}">
+        </div>
+    </div>
+</div>
+
+<div class="form-group mb-4">
+    <label for="opcional">OPCIONAL</label>
+    <input type="text" class="form-control" name="opcional" value="{{ old('opcional', $producto->opcional) }}">
+</div>
 
         <div class="mt-4">
             <button type="submit" class="btn btn-primary">Actualizar</button>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-05-2025 a las 17:17:31
+-- Tiempo de generación: 21-05-2025 a las 00:39:59
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -50,7 +50,11 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`id`, `codigo`, `nombre`, `um_id`, `detalle`, `img`, `img_1`, `img_2`, `img_3`, `familia_id`, `activo`, `tipo_id`, `user_id`, `created_at`, `updated_at`) VALUES
-(3, 2200, 'Auto descargable', 1, NULL, '/storage/img/F6NsIj1ntjqe5cqNahrtr5YcdpNZksvtDxvKrVQY.png', NULL, NULL, NULL, 1, 1, 1, 3, '2025-05-11 18:16:49', '2025-05-11 18:16:49');
+(3, 2200, 'Auto descargable', 1, NULL, '/storage/img/F6NsIj1ntjqe5cqNahrtr5YcdpNZksvtDxvKrVQY.png', NULL, NULL, NULL, 1, 1, 1, 3, '2025-05-11 21:16:49', '2025-05-11 21:16:49'),
+(4, 199, 'Caja', 1, NULL, '/storage/img/A4ESSq0uC1Ry3e3fbZ9KfiXH15BbpfUga8UppkBg.jpg', NULL, NULL, NULL, 7, 1, 2, 3, '2025-05-17 22:24:14', '2025-05-17 22:24:14'),
+(5, 188, 'Neumatico', 1, NULL, '/storage/img/XiSfMlOPrWO0iKsWuS9SaKus8U94qUoEpHOmIVk0.png', NULL, NULL, NULL, 8, 1, 2, 3, '2025-05-17 22:26:42', '2025-05-17 22:36:07'),
+(6, 177, 'Rueda', 1, NULL, '/storage/img/mFntUIURSD4d9FyioQ11Zpio7jmcQeY0ZGclKoLm.png', NULL, NULL, NULL, 8, 1, 2, 3, '2025-05-17 22:34:33', '2025-05-17 22:36:26'),
+(7, 5500, 'ATF-26', 1, NULL, '/storage/img/qt5rfr59ueAh6JBPxE7QaYfZEswCvoL2DEGBeFHS.png', NULL, NULL, NULL, 2, 1, 1, 3, '2025-05-17 22:37:03', '2025-05-17 22:37:03');
 
 --
 -- Índices para tablas volcadas
@@ -76,20 +80,7 @@ ALTER TABLE `productos`
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- Restricciones para tablas volcadas
---
-
---
--- Filtros para la tabla `productos`
---
-ALTER TABLE `productos`
-  ADD CONSTRAINT `productos_familia_id_foreign` FOREIGN KEY (`familia_id`) REFERENCES `familias` (`id`),
-  ADD CONSTRAINT `productos_tipo_id_foreign` FOREIGN KEY (`tipo_id`) REFERENCES `tipos` (`id`),
-  ADD CONSTRAINT `productos_um_id_foreign` FOREIGN KEY (`um_id`) REFERENCES `unidades` (`id`),
-  ADD CONSTRAINT `productos_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

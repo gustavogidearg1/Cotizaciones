@@ -33,32 +33,65 @@ class ProductoController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-        'codigo' => 'required|numeric|unique:productos',
-        'nombre' => 'required|string|max:255|unique:productos',
-        'um_id' => 'required|exists:unidades,id',
-        'detalle' => 'nullable|string',
-        'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        'img_1' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        'img_2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        'img_3' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        'familia_id' => 'required|exists:familias,id',
-        'activo' => 'required|boolean',
-        'tipo_id' => 'required|exists:tipos,id',
+            'codigo' => 'required|numeric|unique:productos',
+            'nombre' => 'required|string|max:255|unique:productos',
+            'um_id' => 'required|exists:unidades,id',
+            'detalle' => 'nullable|string',
+            'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'img_1' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'img_2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'img_3' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'familia_id' => 'required|exists:familias,id',
+            'activo' => 'required|boolean',
+            'tipo_id' => 'required|exists:tipos,id',
+            'links' => 'nullable|string|max:255',
+            'volumen_carga_m3' => 'nullable|numeric|between:0,999999.99',
+            'potencia_requerida_hp' => 'nullable|string|max:50',
+            'toma_potencia_tom' => 'nullable|string|max:50',
+            'tiempo_descarga_aprx_min' => 'nullable|string|max:50',
+            'balanza' => 'nullable|string|max:50',
+            'camaras' => 'nullable|string|max:50',
+            'altura_maxima_mm' => 'nullable|numeric|between:0,999999.99',
+            'altura_carga_mm' => 'nullable|numeric|between:0,999999.99',
+            'longitud_total_mm' => 'nullable|numeric|between:0,999999.99',
+            'peso_vacio_kg' => 'nullable|numeric|between:0,999999.99',
+            'de_serie' => 'nullable|string|max:255',
+            'opcional' => 'nullable|string|max:255',
+            'colores' => 'nullable|string|max:255',
+
         ]);
 
         $productoData = $validated;
         $productoData['user_id'] = auth()->id();
 
-        // Procesar imágenes
-    $imageFields = ['img', 'img_1', 'img_2', 'img_3'];
-    foreach ($imageFields as $field) {
-        if ($request->hasFile($field)) {
-            $path = $request->file($field)->store('img', 'public');
-            $productoData[$field] = '/storage/' . $path;
-        }
-    }
+        $productoData += $request->only([
+            'links',
+            'volumen_carga_m3',
+            'potencia_requerida_hp',
+            'toma_potencia_tom',
+            'tiempo_descarga_aprx_min',
+            'balanza',
+            'camaras',
+            'altura_maxima_mm',
+            'altura_carga_mm',
+            'longitud_total_mm',
+            'peso_vacio_kg',
+            'de_serie',
+            'opcional',
+            'colores'
+        ]);
 
-    Producto::create($productoData);
+
+        // Procesar imágenes
+        $imageFields = ['img', 'img_1', 'img_2', 'img_3'];
+        foreach ($imageFields as $field) {
+            if ($request->hasFile($field)) {
+                $path = $request->file($field)->store('img', 'public');
+                $productoData[$field] = '/storage/' . $path;
+            }
+        }
+
+        Producto::create($productoData);
 
         return redirect()->route('productos.index')->with('success', 'Producto creado correctamente.');
     }
@@ -79,8 +112,8 @@ class ProductoController extends Controller
     public function update(Request $request, Producto $producto)
     {
         $validated = $request->validate([
-            'codigo' => 'required|numeric|unique:productos,codigo,'.$producto->id,
-            'nombre' => 'required|string|max:255|unique:productos,nombre,'.$producto->id,
+            'codigo' => 'required|numeric|unique:productos,codigo,' . $producto->id,
+            'nombre' => 'required|string|max:255|unique:productos,nombre,' . $producto->id,
             'um_id' => 'required|exists:unidades,id',
             'detalle' => 'nullable|string',
             'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -90,9 +123,43 @@ class ProductoController extends Controller
             'familia_id' => 'required|exists:familias,id',
             'activo' => 'required|boolean',
             'tipo_id' => 'required|exists:tipos,id',
+            'links' => 'nullable|string|max:255',
+            'volumen_carga_m3' => 'nullable|numeric|between:0,999999.99',
+            'potencia_requerida_hp' => 'nullable|string|max:50',
+            'toma_potencia_tom' => 'nullable|string|max:50',
+            'tiempo_descarga_aprx_min' => 'nullable|string|max:50',
+            'balanza' => 'nullable|string|max:50',
+            'camaras' => 'nullable|string|max:50',
+            'altura_maxima_mm' => 'nullable|numeric|between:0,999999.99',
+            'altura_carga_mm' => 'nullable|numeric|between:0,999999.99',
+            'longitud_total_mm' => 'nullable|numeric|between:0,999999.99',
+            'peso_vacio_kg' => 'nullable|numeric|between:0,999999.99',
+            'de_serie' => 'nullable|string|max:255',
+            'opcional' => 'nullable|string|max:255',
+            'colores' => 'nullable|string|max:255',
+
+
         ]);
 
         $productoData = $validated;
+
+        $productoData += $request->only([
+            'links',
+            'volumen_carga_m3',
+            'potencia_requerida_hp',
+            'toma_potencia_tom',
+            'tiempo_descarga_aprx_min',
+            'balanza',
+            'camaras',
+            'altura_maxima_mm',
+            'altura_carga_mm',
+            'longitud_total_mm',
+            'peso_vacio_kg',
+            'de_serie',
+            'opcional',
+            'colores'
+        ]);
+
 
         // Procesar imágenes
         $imageFields = ['img', 'img_1', 'img_2', 'img_3'];
@@ -110,6 +177,9 @@ class ProductoController extends Controller
         }
 
         $producto->update($productoData);
+
+        $productoData['user_id'] = auth()->id(); // opcional, si querés registrar el último que lo modificó
+
 
         return redirect()->route('productos.index')->with('success', 'Producto actualizado correctamente.');
     }
