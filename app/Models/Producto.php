@@ -34,8 +34,8 @@ class Producto extends Model
         return $this->belongsTo(Tipo::class);
     }
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+public function user()
+{
+    return $this->belongsTo(User::class);
+}
 }

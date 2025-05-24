@@ -62,7 +62,8 @@ class ProductoController extends Controller
         ]);
 
         $productoData = $validated;
-        $productoData['user_id'] = auth()->id();
+        $productoData['user_id'] = auth()->id();// ✅ Funciona perfectamente
+
 
         $productoData += $request->only([
             'links',
@@ -98,7 +99,8 @@ class ProductoController extends Controller
 
     public function show(Producto $producto)
     {
-        return view('abm.productos.show', compact('producto'));
+       $producto->load(['unidad', 'familia', 'tipo', 'user']);
+    return view('abm.productos.show', compact('producto'));
     }
 
     public function edit(Producto $producto)

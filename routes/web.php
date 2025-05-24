@@ -94,9 +94,7 @@ Route::get('users/{user}', [UserController::class, 'show'])
     ->name('users.show');
 
     // Rutas protegidas para administradores (role_id = 1)
-    Route::middleware(['auth', 'can:admin'])->group(function () {
-        Route::resource('colores', ColorController::class);
-    });
+Route::resource('colores', ColorController::class)->parameters(['colores' => 'color']);
 
     Route::get('/forma-pago/{id}/diferencia', [PedidoController::class, 'getDiferencia']);
 

@@ -52,7 +52,6 @@ class PedidoController extends Controller
                     ->orWhereHas('user', function ($q) use ($search) {
                         $q->where('name', 'like', "%$search%");
                     })
-                    ->orWhere('solicitante', 'like', "%$search%")
                     ->orWhere('id', 'like', "%$search%");
             });
         }
@@ -119,6 +118,8 @@ class PedidoController extends Controller
             'imagen_2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'flete_id' => 'nullable|exists:fletes,id',
             'moneda_id' => 'required|exists:monedas,id',
+            'cuit' => 'required|string|size:11',
+
 
             'productos' => 'required|array|min:1',
             'productos.*.producto_id' => 'required|exists:productos,id',
@@ -349,7 +350,8 @@ class PedidoController extends Controller
                 'bonificacion',
                 'diferencia',
                 'moneda_id',
-                'flete_id'
+                'flete_id',
+                'cuit'
             ]);
 
             // Imagen principal

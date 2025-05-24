@@ -17,7 +17,11 @@
             <p class="card-text"><strong>Código:</strong> {{ $producto->codigo }} - <strong>Unidad:</strong> {{ $producto->unidad->nombre }}</p>
             <p class="card-text"><strong>Detalle:</strong> {{ $producto->detalle }}</p>
             <p class="card-text"><strong>Familia:</strong> {{ $producto->familia->nombre }} - <strong>Tipo:</strong> {{ $producto->tipo->nombre }} - <strong>Activo:</strong> {{ $producto->activo ? 'Sí' : 'No' }}</p>
-            <p class="card-text"><strong>Creado por:</strong> {{ $producto->user->name }}</p>
+            <p class="card-text">
+    <strong>Creado por:</strong>
+    {{ $producto->user?->name ?? 'Sin asignar' }}
+</p>
+
 
             <!-- Sección de imágenes mejorada -->
             @if($producto->img || $producto->img_1 || $producto->img_2 || $producto->img_3)

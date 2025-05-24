@@ -119,6 +119,9 @@
                             </div>
 
 
+
+
+
                         </div>
 
 
@@ -126,7 +129,16 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-4">
+
+                        <div class="col-md-3">
+                            <div class="form-group mb-3">
+                                <label for="cuit">CUIT<strong style="color: red;">*</strong></label>
+                                <input type="text" class="form-control" id="cuit" name="cuit" maxlength="11"
+                                    value="{{ $pedido->cuit }}" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
                             <div class="form-group mb-3">
                                 <label for="fecha_necesidad">Fecha de Necesidad*</label>
                                 <input type="date" class="form-control" id="fecha_necesidad" name="fecha_necesidad"
@@ -134,7 +146,7 @@
                                     required>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group mb-3">
                                 <label for="forma_pago_id">Forma de Pago*</label>
                                 <select class="form-control" id="forma_pago_id" name="forma_pago_id" required>
@@ -150,7 +162,7 @@
                         </div>
 
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group mb-3">
                                 <label for="diferencia">Diferencia (%)</label>
                                 <input type="number" step="0.01" class="form-control" id="diferencia"
@@ -182,7 +194,7 @@
                         </div>
 
                         <div class="col-md-4">
-                            <div class="form-group mb-3">
+                            <div class="for3m-group mb-3">
                                 <label for="bonificacion">Bonificación (%)*</label>
                                 <input type="number" step="0.01" min="0" max="100" class="form-control"
                                     id="bonificacion" name="bonificacion" value="{{ $pedido->bonificacion }}" required>
@@ -190,7 +202,7 @@
                         </div>
 
                         <div class="col-md-4">
-                            <div class="form-group mb-3">
+                            <div class="for3m-group mb-3">
                                 <label for="flete_id">Flete</label>
                                 <select class="form-control" id="flete_id" name="flete_id">
                                     <option value="">Seleccione flete</option>
@@ -198,7 +210,7 @@
                                         <option value="{{ $flete->id }}"
                                             {{ $pedido->flete_id == $flete->id ? 'selected' : '' }}>
                                             {{ $flete->nombre }}
-                                        </option>
+                                        </o3ption>
                                     @endforeach
                                 </select>
                             </div>
@@ -214,7 +226,7 @@
                     </div>
 
                     <!-- Sección de imágenes - Organizada en filas -->
-                    <div class="row">
+                    <div class="row">3
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label for="imagen">Imagen Principal</label>

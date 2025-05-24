@@ -29,14 +29,17 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role_id' => 'required|exists:roles,id'
+            'role_id' => 'required|exists:roles,id',
+            'nom_corto' => 'required|string|size:2',
         ]);
 
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role_id' => $request->role_id
+            'role_id' => $request->role_id,
+            'nom_corto' => $request->nom_corto,
+
         ]);
 
         return redirect()->route('users.index')->with('success', 'Usuario creado correctamente');
@@ -59,13 +62,17 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
-            'role_id' => 'required|exists:roles,id'
+            'role_id' => 'required|exists:roles,id',
+            'nom_corto' => 'required|string|size:2',
+
         ]);
 
         $data = [
             'name' => $request->name,
             'email' => $request->email,
-            'role_id' => $request->role_id
+            'role_id' => $request->role_id,
+            'nom_corto' => $request->nom_corto,
+
         ];
 
         if ($request->filled('password')) {

@@ -147,18 +147,27 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group mb-3">
                                     <label for="telefono">Teléfono<strong style="color: red;">*</strong></label>
                                     <input type="text" class="form-control" id="telefono" name="telefono" required>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group mb-3">
                                     <label for="email">Email<strong style="color: red;">*</strong></label>
                                     <input type="email" class="form-control" id="email" name="email" required>
                                 </div>
                             </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="cuit">CUIT o DNI<strong style="color: red;">*</strong></label>
+                                    <input type="text" class="form-control" id="cuit" name="cuit" maxlength="11"
+                                        required>
+                                </div>
+                            </div>
+
 
                         </div>
 

@@ -135,7 +135,7 @@
 
     <!-- FOOTER -->
     <div class="footer">
-        <p>Creado por: {{ $pedido->user->name }}</p>
+        <p>Creado por: {{ $pedido->user->name ?? ''}}</p>
         <p>Generado el: {{ \Carbon\Carbon::now()->format('d/m/Y H:i') }}</p>
     </div>
 </body>

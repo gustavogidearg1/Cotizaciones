@@ -53,6 +53,8 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'nom_corto' => ['required', 'string', 'size:2'],
+
         ]);
     }
 
@@ -69,6 +71,8 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'role_id' => Role::GUEST, // Asigna automáticamente el rol de invitado
+            'nom_corto' => strtoupper($data['nom_corto']),
+
         ]);
     }
 }

@@ -27,7 +27,7 @@
         <div class="card mb-4">
             <div class="card-header bg-orange text-white d-flex justify-content-between align-items-center">
                 <img src="{{ asset('images/logo.png') }}" alt="Logo" height="40">
-                <h2 class="mb-0">Pedido Público #{{ $pedido->id }} / {{ $pedido->user->id }}</h2>
+                <h2 class="mb-0">Pedido Público #{{ $pedido->id }} / {{ $pedido->user->id ?? ''}}</h2>
             </div>
             <div class="card-body">
                 <div class="row mb-2">

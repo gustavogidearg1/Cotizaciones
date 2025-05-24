@@ -38,27 +38,30 @@
                             <td>{{ $color->nombre }}</td>
                             <td>{{ $color->descripcion ?? '-' }}</td>
                             <td>
-                                <div class="d-flex justify-content-end gap-2">
-                                    <a href="{{ route('colores.show', $color->id) }}"
-                                       class="btn btn-sm btn-outline-info"
-                                       title="Ver detalles">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('colores.edit', $color->id) }}"
-                                       class="btn btn-sm btn-outline-warning"
-                                       title="Editar">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form action="{{ route('colores.destroy', $color->id) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                                class="btn btn-sm btn-outline-danger"
-                                                title="Eliminar"
-                                                onclick="return confirm('¿Estás seguro de eliminar este color?')">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
+           <div class="d-flex gap-1">
+
+                                            <a href="{{ route('colores.show', $color->id) }}" class="btn btn-sm btn-primary"
+                                                title="Ver detalles">
+                                                Ver
+                                            </a>
+
+
+                                            <a href="{{ route('colores.edit', $color) }}" class="btn btn-sm btn-warning"
+                                                title="Editar">
+                                                Editar
+                                            </a>
+
+                                            <form action="{{ route('colores.destroy', $color) }}" method="POST"
+                                                onsubmit="return confirm('¿Estás seguro de eliminar el registro?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger" title="Eliminar">
+                                                    Eliminar
+                                                </button>
+                                            </form>
+                                        </div>
+
+                </div>
                                 </div>
                             </td>
                         </tr>

@@ -83,7 +83,7 @@
                 <tr>
                     <td><strong>COMOFRA SRL</strong></td>
                     <td style="text-align: right;">
-                        <h2>{{ $pedido->tipoPedido->nombre }} #{{ $pedido->id }}/ {{ $pedido->user->id }}</h2>
+                        <h2>{{ $pedido->tipoPedido->nombre }} #{{ $pedido->id }}/ {{ $pedido->user->id ?? ''}}</h2>
                     </td>
                 </tr>
             </table>

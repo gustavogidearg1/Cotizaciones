@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -12,7 +16,7 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-4 fw-bold">Nombre:</div>
-                        <div class="col-md-8">{{ $user->name }}</div>
+                        <div class="col-md-8">{{ $user->name }} /<strong> {{ $user->nom_corto }}</strong>       </div>
                     </div>
 
                     <div class="row mb-3">
@@ -48,4 +52,8 @@
         </div>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 @endsection

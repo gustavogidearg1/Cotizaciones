@@ -34,7 +34,8 @@ class Pedido extends Model
         'diferencia',
         'categoria_id',
         'moneda_id',
-        'color_id'
+        'color_id',
+        'cuit'
     ];
 
     protected $dates = [

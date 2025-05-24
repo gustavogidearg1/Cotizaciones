@@ -35,7 +35,7 @@
                         </a>
                     </div>
                     <div class="col-6 text-end">
-                        <h2 class="mb-0">{{ $pedido->tipoPedido->nombre }} #{{ $pedido->id }}/ {{ $pedido->user->id }}
+                        <h2 class="mb-0">{{ $pedido->tipoPedido->nombre }} #{{ $pedido->id }}/ {{ $pedido->user->nom_corto ?? ''}}
                         </h2>
                     </div>
                 </div>
@@ -73,20 +73,25 @@
                     <div class="col-md-4">
                         <p><strong>Email:</strong> {{ $pedido->email }}</p>
                     </div>
+
                     <div class="col-md-4">
-                        <p><strong>Flete:</strong> {{ $pedido->flete->nombre ?? 'Sin flete' }}</p>
-
-
+                        <p><strong>CUIT:</strong> {{ $pedido->cuit }}</p>
                     </div>
+
 
                 </div>
 
                 <div class="row">
-                    <div class="col-md-6">
+
+                    <div class="col-md-4">
+                        <p><strong>Flete:</strong> {{ $pedido->flete->nombre ?? 'Sin flete' }}</p>
+                    </div>
+
+                    <div class="col-md-4">
                         <p><strong>Fecha Necesidad a partir de la confirmacion del pedido:</strong>
                             {{ \Carbon\Carbon::parse($pedido->fecha_necesidad)->format('d/m/Y') }}</p>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <p><strong>Forma de Entrega:</strong> {{ $pedido->forma_entrega }}</p>
 
                     </div>
@@ -266,7 +271,7 @@
                         - {{ $pedido->moneda->desc_ampliada }}
                     @endif
                 </p>
-                <p><strong>Cantidad Total:</strong> {{ $totalCantidad }}</p>
+                <p><strong>Cantidad de productos:</strong> {{ $totalCantidad }}</p>
                 <p><strong>Subtotal:</strong> ${{ number_format($subtotal, 2, ',', '.') }}</p>
                 <p><strong>Importe IVA:</strong> ${{ number_format($ivaTotal, 2, ',', '.') }}</p>
                 <p><strong>Total:</strong> ${{ number_format($totalGeneral, 2, ',', '.') }}</p>
@@ -297,11 +302,11 @@
                 </a>
             @endif
             <!--
-        <a href="{{ route('pedidos.publico', $pedido->token) }}">
-            {{ route('pedidos.publico', $pedido->token) }}
-        </a>
+                <a href="{{ route('pedidos.publico', $pedido->token) }}">
+                    {{ route('pedidos.publico', $pedido->token) }}
+                </a>
 
-        -->
+                -->
 
         </div>
     </div>
