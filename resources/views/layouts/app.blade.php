@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -28,10 +29,46 @@
             --danger-color: #e3342f;
         }
 
-        .navbar-custom {
-            background-color: #ffffff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 0.8rem 0;
+        .navbar-bg {
+            position: relative;
+            background-image: url('{{ asset('images/FondoMenu.png') }}');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 1;
+        }
+
+        .navbar-bg::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2;
+        }
+
+        .navbar .container,
+        .navbar .navbar-brand,
+        .navbar .navbar-toggler,
+        .navbar .navbar-collapse {
+            position: relative;
+            z-index: 3;
+        }
+
+        .navbar .nav-link,
+        .navbar .navbar-brand {
+            color: #fff !important;
+            height: 100%;
+        }
+
+        .navbar .nav-link:hover {
+            color: #f0f0f0 !important;
+        }
+
+        .navbar-toggler-icon {
+            filter: invert(100%);
         }
 
         .navbar-brand {
@@ -89,17 +126,21 @@
             background-color: var(--primary-color);
         }
     </style>
+
 </head>
 
 @stack('scripts')
 
 <body>
+
+
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-custom">
+        <nav class="navbar navbar-expand-lg shadow-sm navbar-bg py-2">
             <div class="container">
                 <!-- Logo y nombre -->
                 <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
-                    <img src="{{ asset('images/Isologotipo_con_anclaje_lateral_RGB.png') }}" alt="Logo" height="40" class="me-2">
+                    <img src="{{ asset('images/Isologotipo_con_anclaje_lateral_Negativo_RGB.png') }}" alt="Logo"
+                        height="40" class="me-2">
 
                 </a>
 
@@ -115,69 +156,85 @@
                     <!-- Menú izquierdo (opcional) -->
                     <ul class="navbar-nav me-auto">
                         @auth
-                        @if(auth()->user()->role_id == 1)
+                            @if (auth()->user()->role_id == 1)
+                                <!-- Menú desplegable ABM -->
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarABM" role="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-gear"></i> ABM
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="navbarABM">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('users.index') }}">
+                                                <i class="bi bi-people"></i> Usuarios
+                                            </a>
+                                        </li>
 
-                                                    <!-- Menú desplegable ABM -->
-                                                    <li class="nav-item dropdown">
-                                                        <a class="nav-link dropdown-toggle" href="#" id="navbarABM" role="button"
-                                                           data-bs-toggle="dropdown" aria-expanded="false">
-                                                            <i class="bi bi-gear"></i> ABM
-                                                        </a>
-                                                        <ul class="dropdown-menu" aria-labelledby="navbarABM">
-                                                            <li>
-                                                                <a class="dropdown-item" href="{{ route('users.index') }}">
-                                                                    <i class="bi bi-people"></i> Usuarios
-                                                                </a>
-                                                            </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('forma-pagos.index') }}">
+                                                <i class="bi-credit-card"></i> Forma de Pago
+                                            </a>
+                                        </li>
 
-                                                                                                                        <li>
-                                                                <a class="dropdown-item" href="{{ route('forma-pagos.index') }}">
-                                                                    <i class="bi-credit-card"></i> Forma de Pago
-                                                                </a>
-                                                            </li>
+                                        <!-- Puedes agregar más items aquí -->
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('colores.index') }}">
+                                                <i class="bi bi-palette"></i> Colores
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('familias.index') }}">
+                                                <i class="bi bi-collection"></i> Familias
+                                            </a>
+                                        </li>
 
-                                                            <!-- Puedes agregar más items aquí -->
-                                                            <li>
-                                                                <a class="dropdown-item" href="{{ route('colores.index') }}">
-                                                                    <i class="bi bi-palette"></i> Colores
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a class="dropdown-item" href="{{ route('familias.index') }}">
-                                                                    <i class="bi bi-collection"></i> Familias
-                                                                </a>
-                                                            </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('monedas.index') }}">
+                                                <i class="bi bi-currency-dollar"></i> Monedas
+                                            </a>
+                                        </li>
 
-                                                                                                                        <li>
-                                                                <a class="dropdown-item" href="{{ route('monedas.index') }}">
-                                                                    <i class="bi bi-currency-dollar"></i> Monedas
-                                                                </a>
-                                                            </li>
-
-                                                        </ul>
-                                                    </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('productos.index') }}">
-                                    <i class="bi bi-box-seam"></i> Productos
-                                </a>
-                            </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('pais.index') }}">
+                                                <i class="bi bi-globe"></i> Países
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('provincia.index') }}">
+                                                <i class="bi bi-map"></i> Provincias
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('localidad.index') }}">
+                                                <i class="bi bi-geo-alt"></i> Localidades
+                                            </a>
+                                        </li>
 
 
+                                    </ul>
+                                </li>
 
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('cotizaciones.index') }}">
-                                    <i class="bi bi-file-earmark-text"></i> Cotizaciones
-                                </a>
-                            </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('productos.index') }}">
+                                        <i class="bi bi-box-seam"></i> Productos
+                                    </a>
+                                </li>
 
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('pedidos.index') }}">
-                                    <i class="bi bi-file-earmark-text"></i> Pedidos
-                                </a>
-                            </li>
-                        @endif
-                    @endauth
+
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('cotizaciones.index') }}">
+                                        <i class="bi bi-file-earmark-text"></i> Costos
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('pedidos.index') }}">
+                                        <i class="bi bi-file-earmark-text"></i> Costizaciones
+                                    </a>
+                                </li>
+                            @endif
+                        @endauth
                     </ul>
 
                     <!-- Menú derecho -->
@@ -190,11 +247,11 @@
                                     </a>
                                 </li>
                             @endif
-
-
                         @else
                             <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle d-flex align-items-center"
+                                    href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false" v-pre>
                                     <i class="bi bi-person-circle me-1"></i>
                                     {{ Auth::user()->name }}
                                 </a>
@@ -206,12 +263,13 @@
                                     <div class="dropdown-divider"></div>
 
                                     <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
+                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                         <i class="bi bi-box-arrow-left me-2"></i> {{ __('Cerrar Sesión') }}
                                     </a>
 
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                        class="d-none">
                                         @csrf
                                     </form>
                                 </div>
@@ -234,4 +292,5 @@
 
     @yield('scripts')
 </body>
+
 </html>

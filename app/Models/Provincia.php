@@ -13,7 +13,6 @@ class Provincia extends Model
     protected $fillable = [
         'provincia',
         'pais_id',
-        // Agregar si falta:
         'created_at',
         'updated_at'
     ];

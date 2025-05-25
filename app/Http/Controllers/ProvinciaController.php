@@ -3,63 +3,62 @@
 namespace App\Http\Controllers;
 
 use App\Models\Provincia;
+use App\Models\Pais;
 use Illuminate\Http\Request;
 
 class ProvinciaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $provincias = Provincia::with('pais')->get();
+        return view('abm.provincia.index', compact('provincias'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $paises = Pais::all();
+        return view('abm.provincia.create', compact('paises'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'provincia' => 'required|string|max:100|unique:provincia',
+            'pais_id' => 'required|exists:pais,id',
+        ]);
+
+        Provincia::create($request->only('provincia', 'pais_id'));
+
+        return redirect()->route('provincia.index')->with('success', 'Provincia creada correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Provincia $provincia)
+    public function show($id)
     {
-        //
+        $provincia = Provincia::with('pais')->findOrFail($id);
+        return view('abm.provincia.show', compact('provincia'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Provincia $provincia)
     {
-        //
+        $paises = Pais::all();
+        return view('abm.provincia.edit', compact('provincia', 'paises'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Provincia $provincia)
     {
-        //
+        $request->validate([
+            'provincia' => 'required|string|max:100|unique:provincia,provincia,' . $provincia->id,
+            'pais_id' => 'required|exists:pais,id',
+        ]);
+
+        $provincia->update($request->only('provincia', 'pais_id'));
+
+        return redirect()->route('provincia.index')->with('success', 'Provincia actualizada correctamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Provincia $provincia)
     {
-        //
+        $provincia->delete();
+        return redirect()->route('provincia.index')->with('success', 'Provincia eliminada correctamente.');
     }
 }

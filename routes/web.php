@@ -49,9 +49,6 @@ Route::resource('unidades', UnidadController::class)->middleware('auth');
 Route::resource('familias', FamiliaController::class);
 Route::resource('tipos', TipoController::class)->middleware('auth');
 
-Route::resource('pais', PaisController::class);
-Route::resource('provincia', ProvinciaController::class);
-Route::resource('localidad', LocalidadController::class);
 Route::resource('categoria', CategoriaController::class);
 Route::resource('cliente', ClienteController::class);
 
@@ -71,15 +68,15 @@ Route::get('/pedidos/last-price/{producto}', [PedidoController::class, 'getLastP
 Route::get('/pedidos/{pedido}/pdf', [PedidoController::class, 'generarPDF'])->name('pedidos.pdf');
 
 // RUTA DE PRUEBA PARA TESTEAR EL ENVÍO DE CORREOS (TEMPORAL)
-Route::get('/test-email', function() {
+Route::get('/test-email', function () {
     try {
-        Mail::raw('This is a test email', function($message) {
+        Mail::raw('This is a test email', function ($message) {
             $message->to('gustavog@live.com.ar')
-                    ->subject('Test Email');
+                ->subject('Test Email');
         });
         return 'Email sent successfully';
     } catch (\Exception $e) {
-        return 'Error: '.$e->getMessage();
+        return 'Error: ' . $e->getMessage();
     }
 });
 
@@ -93,10 +90,10 @@ Route::get('users/{user}', [UserController::class, 'show'])
     ->middleware('auth')
     ->name('users.show');
 
-    // Rutas protegidas para administradores (role_id = 1)
+// Rutas protegidas para administradores (role_id = 1)
 Route::resource('colores', ColorController::class)->parameters(['colores' => 'color']);
 
-    Route::get('/forma-pago/{id}/diferencia', [PedidoController::class, 'getDiferencia']);
+Route::get('/forma-pago/{id}/diferencia', [PedidoController::class, 'getDiferencia']);
 
 Route::get('/test-vista-email/{id}', function ($id) {
     $pedido = Pedido::with([
@@ -117,3 +114,14 @@ Route::get('/pedido-publico/{token}', [PedidoController::class, 'verPublico'])->
 
 Route::resource('monedas', MonedaController::class);
 
+Route::resource('pais', PaisController::class)
+    ->parameters(['pais' => 'pais'])
+    ->middleware('auth');
+
+Route::resource('provincia', ProvinciaController::class)
+    ->parameters(['provincia' => 'provincia'])
+    ->middleware('auth');
+
+Route::resource('localidad', LocalidadController::class)
+    ->parameters(['localidad' => 'localidad'])
+    ->middleware('auth');

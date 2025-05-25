@@ -7,59 +7,57 @@ use Illuminate\Http\Request;
 
 class PaisController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $paises = Pais::all();
+        return view('abm.pais.index', compact('paises'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('abm.pais.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'pais' => 'required|string|max:100|unique:pais',
+        ]);
+
+        Pais::create($request->all());
+
+        return redirect()->route('pais.index')->with('success', 'País creado correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Pais $pais)
-    {
-        //
-    }
+public function show($id)
+{
+    $pais = Pais::findOrFail($id);
+    return view('abm.pais.show', compact('pais'));
+}
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+// Cambié el nombre de la variable a $pais
     public function edit(Pais $pais)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
+ {
+    return view('abm.pais.edit', compact('pais'));
+}
+
+    // update
     public function update(Request $request, Pais $pais)
     {
-        //
+        $request->validate([
+            'pais' => 'required|string|max:100|unique:pais,pais,' . $pais->id,
+        ]);
+
+        $pais->update($request->all());
+
+        return redirect()->route('pais.index')->with('success', 'País actualizado correctamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    // destroy
     public function destroy(Pais $pais)
     {
-        //
+        $pais->delete();
+        return redirect()->route('pais.index')->with('success', 'País eliminado correctamente.');
     }
 }

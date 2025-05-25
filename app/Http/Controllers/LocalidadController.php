@@ -3,63 +3,69 @@
 namespace App\Http\Controllers;
 
 use App\Models\Localidad;
+use App\Models\Provincia;
+use App\Models\Pais;
 use Illuminate\Http\Request;
 
 class LocalidadController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $localidades = Localidad::with(['provincia', 'pais'])->get();
+        return view('abm.localidad.index', compact('localidades'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $provincias = Provincia::all();
+        $paises = Pais::all();
+        return view('abm.localidad.create', compact('provincias', 'paises'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nombre' => 'required|string|max:255|unique:localidad,nombre',
+            'cp' => 'required|string|max:10',
+            'provincia_id' => 'required|exists:provincia,id',
+            'pais_id' => 'required|exists:pais,id',
+        ]);
+
+        Localidad::create($request->only('nombre', 'cp', 'provincia_id', 'pais_id'));
+
+        return redirect()->route('localidad.index')->with('success', 'Localidad creada correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Localidad $localidad)
+    public function show($id)
     {
-        //
+        $localidad = Localidad::with(['provincia', 'pais'])->findOrFail($id);
+        return view('abm.localidad.show', compact('localidad'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Localidad $localidad)
     {
-        //
+        $provincias = Provincia::all();
+        $paises = Pais::all();
+        return view('abm.localidad.edit', compact('localidad', 'provincias', 'paises'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Localidad $localidad)
     {
-        //
+        $request->validate([
+            'nombre' => 'required|string|max:255|unique:localidad,nombre,' . $localidad->id,
+            'cp' => 'required|string|max:10',
+            'provincia_id' => 'required|exists:provincia,id',
+            'pais_id' => 'required|exists:pais,id',
+        ]);
+
+        $localidad->update($request->only('nombre', 'cp', 'provincia_id', 'pais_id'));
+
+        return redirect()->route('localidad.index')->with('success', 'Localidad actualizada correctamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Localidad $localidad)
     {
-        //
+        $localidad->delete();
+        return redirect()->route('localidad.index')->with('success', 'Localidad eliminada correctamente.');
     }
 }

@@ -8,6 +8,12 @@
 //@import 'bootstrap/scss/bootstrap';
 
 /* resources/css/app.css o public/css/styles.css */
+
+        body {
+            background-color: #f2f2f2;
+            /* gris claro */
+        }
+
 #FondoDeInicio {
     position: fixed;
     top: 0;
@@ -20,3 +26,5 @@
     background-repeat: no-repeat;
     z-index: -1; /* Asegura que el fondo esté detrás del contenido */
 }
+
+
