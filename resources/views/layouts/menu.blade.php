@@ -26,13 +26,7 @@
                                 <i class="bi bi-box-arrow-in-right me-1"></i> Acceso
                             </a>
                         </li>
-                        @if (Route::has('register'))
-                        <li class="nav-item">
-                            <a class="nav-link" href="mailto:industrial@comofrasrl.com.ar">
-                                <i class="bi bi-envelope me-1"></i> Solicitar Registro
-                            </a>
-                        </li>
-                        @endif
+
                     @endauth
                 @endif
             </ul>

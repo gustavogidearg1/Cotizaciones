@@ -99,7 +99,7 @@
             <div class="container">
                 <!-- Logo y nombre -->
                 <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
-                    <img src="{{ asset('images/Logotipo2023.JPG') }}" alt="Logo" height="40" class="me-2">
+                    <img src="{{ asset('images/Isologotipo_con_anclaje_lateral_RGB.png') }}" alt="Logo" height="40" class="me-2">
 
                 </a>
 
@@ -191,13 +191,7 @@
                                 </li>
                             @endif
 
-                            @if (Route::has('register'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">
-                                        <i class="bi bi-person-plus"></i> {{ __('Register') }}
-                                    </a>
-                                </li>
-                            @endif
+
                         @else
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
