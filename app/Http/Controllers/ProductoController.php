@@ -33,8 +33,8 @@ class ProductoController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'codigo' => 'required|numeric|unique:productos',
-            'nombre' => 'required|string|max:255|unique:productos',
+            'codigo' => 'required|numeric|unique:productos,codigo',
+            'nombre' => 'required|string|max:255|unique:productos,nombre',
             'um_id' => 'required|exists:unidades,id',
             'detalle' => 'nullable|string',
             'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -58,11 +58,14 @@ class ProductoController extends Controller
             'de_serie' => 'nullable|string|max:255',
             'opcional' => 'nullable|string|max:255',
             'colores' => 'nullable|string|max:255',
-
+        ], [
+            'codigo.unique' => 'Ya existe un producto con el código ingresado.',
+            'nombre.unique' => 'Ya existe un producto con el nombre ingresado.',
         ]);
 
+
         $productoData = $validated;
-        $productoData['user_id'] = auth()->id();// ✅ Funciona perfectamente
+        $productoData['user_id'] = auth()->id(); // ✅ Funciona perfectamente
 
 
         $productoData += $request->only([
@@ -99,8 +102,8 @@ class ProductoController extends Controller
 
     public function show(Producto $producto)
     {
-       $producto->load(['unidad', 'familia', 'tipo', 'user']);
-    return view('abm.productos.show', compact('producto'));
+        $producto->load(['unidad', 'familia', 'tipo', 'user']);
+        return view('abm.productos.show', compact('producto'));
     }
 
     public function edit(Producto $producto)
