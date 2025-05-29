@@ -14,13 +14,25 @@ class ProductoController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware('can:admin-or-editor')->except(['index', 'show']);
     }
 
-    public function index()
-    {
-        $productos = Producto::with(['unidad', 'familia', 'tipo', 'user'])->get();
-        return view('abm.productos.index', compact('productos'));
-    }
+    public function index(Request $request)
+{
+    $search = $request->input('search');
+
+    $productos = Producto::with(['unidad', 'familia', 'tipo', 'user'])
+        ->when($search, function ($query, $search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%")
+                  ->orWhere('codigo', 'like', "%{$search}%");
+            });
+        })
+        ->orderBy('nombre')
+        ->paginate(10);
+
+    return view('abm.productos.index', compact('productos', 'search'));
+}
 
     public function create()
     {

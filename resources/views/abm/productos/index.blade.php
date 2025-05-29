@@ -22,6 +22,21 @@
         <div class="card card-dashboard">
             <div class="card-body p-0">
                 <div class="table-responsive">
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <form action="{{ route('productos.index') }}" method="GET">
+                                <div class="input-group">
+                                    <input type="text" name="search" class="form-control"
+                                        placeholder="Buscar productos..." value="{{ request('search') }}">
+                                    <button class="btn btn-outline-secondary" type="submit">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
@@ -84,6 +99,10 @@
                             @endforeach
                         </tbody>
                     </table>
+                    <div class="card-footer">
+    {{ $productos->withQueryString()->links('pagination::bootstrap-5') }}
+</div>
+
                 </div>
             </div>
         </div>

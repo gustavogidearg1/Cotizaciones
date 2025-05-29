@@ -18,6 +18,17 @@
             border-radius: 8px;
             padding: 5px;
             background-color: white;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .imagen_Pedido:hover {
+            transform: scale(1.05);
+        }
+
+        .modal-img {
+            max-width: 100%;
+            height: auto;
         }
     </style>
 
@@ -31,11 +42,12 @@
                 <div class="row align-items-center">
                     <div class="col-6">
                         <a class="navbar-brand" href="{{ url('/') }}">
-                            <img src="{{ asset('images/logo.png') }}" alt="Logo" height="40">
+                            <img src="{{ asset('images/Isologotipo con anclaje. Negro CMYK.png') }}" alt="Logo" height="50">
                         </a>
                     </div>
                     <div class="col-6 text-end">
-                        <h2 class="mb-0">{{ $pedido->tipoPedido->nombre }} #{{ $pedido->id }}/ {{ $pedido->user->nom_corto ?? ''}}
+                        <h2 class="mb-0">{{ $pedido->tipoPedido->nombre }} #{{ $pedido->id }}/
+                            {{ $pedido->user->nom_corto ?? '' }}
                         </h2>
                     </div>
                 </div>
@@ -120,12 +132,14 @@
                     <div class="row mt-4">
                         @if ($pedido->imagen)
                             <div class="col-md-6">
-                                <img src="{{ $pedido->imagen }}" class="imagen_Pedido" alt="Imagen Principal">
+                                <img src="{{ $pedido->imagen }}" class="imagen_Pedido" alt="Imagen Principal"
+                                    onclick="showImageModal('{{ $pedido->imagen }}')">
                             </div>
                         @endif
                         @if ($pedido->imagen_2)
                             <div class="col-md-6">
-                                <img src="{{ $pedido->imagen_2 }}" class="imagen_Pedido" alt="Imagen Secundaria">
+                                <img src="{{ $pedido->imagen_2 }}" class="imagen_Pedido" alt="Imagen Secundaria"
+                                    onclick="showImageModal('{{ $pedido->imagen_2 }}')">
                             </div>
                         @endif
                     </div>
@@ -302,11 +316,11 @@
                 </a>
             @endif
             <!--
-                <a href="{{ route('pedidos.publico', $pedido->token) }}">
-                    {{ route('pedidos.publico', $pedido->token) }}
-                </a>
+                                <a href="{{ route('pedidos.publico', $pedido->token) }}">
+                                    {{ route('pedidos.publico', $pedido->token) }}
+                                </a>
 
-                -->
+                                -->
 
         </div>
     </div>
@@ -336,6 +350,25 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function showImageModal(src) {
+            document.getElementById('modalImage').src = src;
+            const modal = new bootstrap.Modal(document.getElementById('imageModal'));
+            modal.show();
+        }
+    </script>
+
+    <!-- Modal de imagen ampliada -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <img id="modalImage" src="" class="modal-img" alt="Vista ampliada">
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 @endsection
