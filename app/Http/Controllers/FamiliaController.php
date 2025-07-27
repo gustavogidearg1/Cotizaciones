@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Familia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class FamiliaController extends Controller
 {
@@ -32,15 +33,18 @@ class FamiliaController extends Controller
 
         $data = $request->only('nombre');
 
-        if ($request->hasFile('imagen_principal')) {
-            $path = $request->file('imagen_principal')->store('images', 'public');
-            $data['imagen_principal'] = $path;
-        }
+            foreach (['imagen_principal', 'imagen_secundaria'] as $field) {
+        if ($request->hasFile($field)) {
+            $path = $request->file($field)->store('images', 'public');
+            $data[$field] = $path;
 
-        if ($request->hasFile('imagen_secundaria')) {
-            $path = $request->file('imagen_secundaria')->store('images', 'public');
-            $data['imagen_secundaria'] = $path;
+            // Copiar a public/storage
+            $source = storage_path('app/public/' . $path);
+            $dest = public_path('storage/' . $path);
+            File::ensureDirectoryExists(dirname($dest));
+            File::copy($source, $dest);
         }
+    }
 
         Familia::create($data);
 
@@ -68,28 +72,26 @@ class FamiliaController extends Controller
         $data = $request->only('nombre');
 
         // Manejar imagen principal
-        if ($request->has('remove_imagen_principal')) {
-            Storage::disk('public')->delete($familia->imagen_principal);
-            $data['imagen_principal'] = null;
-        } elseif ($request->hasFile('imagen_principal')) {
-            if ($familia->imagen_principal) {
-                Storage::disk('public')->delete($familia->imagen_principal);
+        foreach (['imagen_principal', 'imagen_secundaria'] as $field) {
+        if ($request->has("remove_$field")) {
+            Storage::disk('public')->delete($familia->$field);
+            @unlink(public_path('storage/' . $familia->$field));
+            $data[$field] = null;
+        } elseif ($request->hasFile($field)) {
+            if ($familia->$field) {
+                Storage::disk('public')->delete($familia->$field);
+                @unlink(public_path('storage/' . $familia->$field));
             }
-            $path = $request->file('imagen_principal')->store('images', 'public');
-            $data['imagen_principal'] = $path;
-        }
 
-        // Manejar imagen secundaria
-        if ($request->has('remove_imagen_secundaria')) {
-            Storage::disk('public')->delete($familia->imagen_secundaria);
-            $data['imagen_secundaria'] = null;
-        } elseif ($request->hasFile('imagen_secundaria')) {
-            if ($familia->imagen_secundaria) {
-                Storage::disk('public')->delete($familia->imagen_secundaria);
-            }
-            $path = $request->file('imagen_secundaria')->store('images', 'public');
-            $data['imagen_secundaria'] = $path;
+            $path = $request->file($field)->store('images', 'public');
+            $data[$field] = $path;
+
+            $source = storage_path('app/public/' . $path);
+            $dest = public_path('storage/' . $path);
+            File::ensureDirectoryExists(dirname($dest));
+            File::copy($source, $dest);
         }
+    }
 
         $familia->update($data);
 
@@ -98,17 +100,16 @@ class FamiliaController extends Controller
 
 public function destroy(Familia $familia)
 {
-    // Eliminar imágenes si existen
-    if ($familia->imagen_principal) {
-        Storage::disk('public')->delete($familia->imagen_principal);
-    }
-
-    if ($familia->imagen_secundaria) {
-        Storage::disk('public')->delete($familia->imagen_secundaria);
+    foreach (['imagen_principal', 'imagen_secundaria'] as $field) {
+        if ($familia->$field) {
+            Storage::disk('public')->delete($familia->$field);
+            @unlink(public_path('storage/' . $familia->$field));
+        }
     }
 
     $familia->delete();
 
     return redirect()->route('familias.index')->with('success', 'Familia eliminada correctamente.');
 }
+
 }

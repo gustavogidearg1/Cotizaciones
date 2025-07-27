@@ -83,8 +83,7 @@
                 <tr>
                     <td><strong>COMOFRA SRL</strong></td>
                     <td style="text-align: right;">
-                        <h2>{{ $pedido->tipoPedido->nombre }} #{{ $pedido->id }}/ {{ $pedido->user->nom_corto ?? ''}}</h2>
-
+                        <h2>{{ $pedido->tipoPedido->nombre }} #{{ $pedido->id }} / {{ $pedido->user->nom_corto ?? '' }}</h2>
                     </td>
                 </tr>
             </table>
@@ -92,13 +91,10 @@
 
         <div class="card">
             <div class="card-header">Datos del Pedido</div>
-                <div class="card-body">
-            <a href="{{ route('pedidos.publico', $pedido->token) }}" class="btn btn-success" target="_blank">
-                Para ver su pedido, haga clic aquí
-            </a>
-            </div>
-
             <div class="card-body">
+                <a href="{{ route('pedidos.publico', $pedido->token) }}" class="btn btn-success" target="_blank">
+                    Para ver su pedido, haga clic aquí
+                </a>
                 <p><strong>Cliente:</strong> {{ $pedido->cliente }}</p>
                 <p><strong>Dirección:</strong> {{ $pedido->direccion }}</p>
                 <p><strong>Localidad:</strong> {{ $pedido->localidad->nombre }}</p>
@@ -106,7 +102,6 @@
                 <p><strong>País:</strong> {{ $pedido->pais->pais }}</p>
                 <p><strong>Teléfono:</strong> {{ $pedido->telefono }}</p>
                 <p><strong>Email:</strong> {{ $pedido->email }}</p>
-                <!-- <p><strong>Fecha necesidad a partir de la orden de compra:</strong> {{ \Carbon\Carbon::parse($pedido->fecha_necesidad)->format('d/m/Y') }}</p>-->
                 <p><strong>Forma de Entrega:</strong> {{ $pedido->forma_entrega }}</p>
                 <p><strong>Flete:</strong> {{ $pedido->flete->nombre ?? 'Sin flete' }}</p>
                 <p><strong>Forma de Pago:</strong> {{ $pedido->formaPago->nombre }}</p>
@@ -115,73 +110,124 @@
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-header">Productos</div>
+      <div class="card">
+    <div class="card-header">Productos</div>
+    <div class="card-body">
+        @php
+            $familiasImplemento = [1,2,3,4,5,6];
+            $familiasComponente = [7];
+            $familiasAccesorio = [8];
 
-            <div class="card-body">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Color</th>
-                            <th>Moneda</th>
-                            <th>Cantidad</th>
-                            <th>Precio</th>
-                            <th>Desc (%)</th>
-                            <th>Dif Pago (%)</th>
-                            <th>Subtotal</th>
-                            <th>IVA (%)</th>
-                            <th>Importe IVA</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php
-                            $familiasAccesorio = [8];
-                            $totalCantidad = $subtotal = $ivaTotal = $totalGeneral = 0;
-                        @endphp
-                        @foreach ($pedido->subPedidos as $sp)
-                            @php
-                                $esAccesorio = in_array($sp->producto->familia_id, $familiasAccesorio);
-                                $precioBonificado = $sp->precio * (1 - $sp->subbonificacion / 100);
-                                $sub = $precioBonificado * $sp->cantidad;
-                                $ivaMonto = ($sub * $sp->iva) / 100;
-                                $total = $sub + $ivaMonto;
+            $grupoImplemento = $pedido->subPedidos->filter(fn($sp) => in_array($sp->producto->familia_id, $familiasImplemento));
+            $grupoComponente = $pedido->subPedidos->filter(fn($sp) => in_array($sp->producto->familia_id, $familiasComponente));
+            $grupoAccesorio = $pedido->subPedidos->filter(fn($sp) => in_array($sp->producto->familia_id, $familiasAccesorio));
 
-                                $totalCantidad += $sp->cantidad;
-                                $subtotal += $sub;
-                                $ivaTotal += $ivaMonto;
-                                $totalGeneral += $total;
-                            @endphp
+            $totalCantidad = $subtotal = $ivaTotal = $totalGeneral = 0;
+        @endphp
+
+        @foreach ([
+            'Implementos' => $grupoImplemento,
+            'Componentes / Opcionales' => $grupoComponente,
+            'Accesorios' => $grupoAccesorio
+        ] as $titulo => $grupo)
+            @if ($grupo->count())
+                <h4>{{ $titulo }}</h4>
+
+                @foreach ($grupo as $sp)
+                    @php
+                        $producto = $sp->producto;
+                        $precioConDiferencia = $sp->precio * (1 + ($sp->diferencia ?? 0) / 100);
+
+                        foreach ([$sp->subbonificacion, $sp->descuento_2, $sp->descuento_3, $sp->descuento_4] as $desc) {
+                            $precioConDiferencia *= (1 - ($desc / 100));
+                        }
+
+                        $sub = $precioConDiferencia * $sp->cantidad;
+                        $ivaMonto = ($sub * $sp->iva) / 100;
+                        $total = $sub + $ivaMonto;
+
+                        $totalCantidad += $sp->cantidad;
+                        $subtotal += $sub;
+                        $ivaTotal += $ivaMonto;
+                        $totalGeneral += $total;
+
+                        $hayDescuento = ($sp->subbonificacion > 0 || $sp->descuento_2 > 0 || $sp->descuento_3 > 0 || $sp->descuento_4 > 0);
+                        $hayDiferencia = ($sp->diferencia ?? 0) > 0;
+                    @endphp
+
+                    <table>
+                        <tbody>
                             <tr>
-                                <td>{{ $sp->producto->nombre }}</td>
-                                <td>{{ $sp->color->nombre }}</td>
-                                <td>{{ $sp->moneda->moneda }}</td>
-                                <td>{{ $sp->cantidad }}</td>
-                                <td>${{ number_format($sp->precio, 2, ',', '.') }}</td>
-                                <td>{{ $esAccesorio ? '0%' : $sp->subbonificacion . '%' }}</td>
-                                <td>{{ $esAccesorio ? '0%' : ($sp->diferencia ?? 0) . '%' }}</td>
-                                <td>${{ number_format($sub, 2, ',', '.') }}</td>
-                                <td>{{ $sp->iva }}%</td>
-                                <td>${{ number_format($ivaMonto, 2, ',', '.') }}</td>
-                                <td>${{ number_format($total, 2, ',', '.') }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                                <td><strong>Producto:</strong> {{ $producto->nombre }}</td>
+                                <td><strong>Color:</strong> {{ $sp->color->nombre ?? '-' }}</td>
+                                <td><strong>Moneda:</strong> {{ $sp->moneda->moneda ?? '-' }}</td>
+                                @if ($pedido->cotizacion)
+                                <p><strong>Cotización:</strong> ${{ number_format($pedido->cotizacion, 2, ',', '.') }}</p>
+                                @endif
 
-                <p class="total">Cantidad Total: {{ $totalCantidad }}</p>
-                <p><strong>Moneda:</strong>
-                    {{ $pedido->moneda->moneda ?? 'No definida' }}
-                    @if ($pedido->moneda && $pedido->moneda->desc_ampliada)
-                        - {{ $pedido->moneda->desc_ampliada }}
-                    @endif
-                </p>
-                <p class="total">Subtotal: ${{ number_format($subtotal, 2, ',', '.') }}</p>
-                <p class="total">Importe IVA: ${{ number_format($ivaTotal, 2, ',', '.') }}</p>
-                <p class="total">Total General: ${{ number_format($totalGeneral, 2, ',', '.') }}</p>
-            </div>
-        </div>
+                                <td><strong>Cantidad:</strong> {{ $sp->cantidad }}</td>
+                                <td><strong>Precio:</strong> ${{ number_format($sp->precio, 2, ',', '.') }}</td>
+                            </tr>
+
+                            @if ($hayDiferencia || $hayDescuento)
+                                <tr>
+                                    @if ($hayDiferencia)
+                                        <td><strong>Diferencia (%):</strong> {{ $sp->diferencia }}%</td>
+                                    @endif
+                                    @if ($sp->subbonificacion > 0)
+                                        <td><strong>Desc. 1:</strong> {{ $sp->subbonificacion }}%</td>
+                                    @endif
+                                    @if ($sp->descuento_2 > 0)
+                                        <td><strong>Desc. 2:</strong> {{ $sp->descuento_2 }}%</td>
+                                    @endif
+                                    @if ($sp->descuento_3 > 0)
+                                        <td><strong>Desc. 3:</strong> {{ $sp->descuento_3 }}%</td>
+                                    @endif
+                                    @if ($sp->descuento_4 > 0)
+                                        <td><strong>Desc. 4:</strong> {{ $sp->descuento_4 }}%</td>
+                                    @endif
+                                </tr>
+                            @endif
+
+                            <tr>
+                                <td><strong>Forma de Pago:</strong> {{ $sp->formaPago->nombre ?? '-' }}</td>
+                                <td><strong>Subtotal:</strong> ${{ number_format($sub, 2, ',', '.') }}</td>
+                                <td><strong>IVA:</strong> {{ $sp->iva }}%</td>
+                                <td><strong>Importe IVA:</strong> ${{ number_format($ivaMonto, 2, ',', '.') }}</td>
+                                <td><strong>Total:</strong> ${{ number_format($total, 2, ',', '.') }}</td>
+                            </tr>
+
+                            @if ($sp->detalle)
+                                <tr>
+                                    <td colspan="5"><strong>Detalle:</strong> {{ $sp->detalle }}</td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                @endforeach
+            @endif
+        @endforeach
+
+<p class="total">Cantidad Total: {{ $totalCantidad }}</p>
+<p><strong>Moneda:</strong>
+    {{ $pedido->moneda->moneda ?? 'No definida' }}
+</p>
+@if ($pedido->cotizacion)
+    <p><strong>Cotización:</strong> ${{ number_format($pedido->cotizacion, 2, ',', '.') }}</p>
+@endif
+<p class="total">Subtotal: USD {{ number_format($subtotal, 2, ',', '.') }}</p>
+<p class="total">Importe IVA: USD {{ number_format($ivaTotal, 2, ',', '.') }}</p>
+<p class="total">Total General: USD {{ number_format($totalGeneral, 2, ',', '.') }}</p>
+@if ($pedido->cotizacion && $pedido->cotizacion != 1)
+    <p class="total">
+        <strong>Total en Pesos:</strong>
+        ${{ number_format($totalGeneral * $pedido->cotizacion, 2, ',', '.') }}
+    </p>
+@endif
+
+    </div>
+</div>
+
 
         <div class="footer">
             <p>Este es un correo automático, por favor no responda a este mensaje.</p>

@@ -18,6 +18,7 @@ use App\Models\Localidad;
 use App\Models\Provincia;
 use App\Models\SubPedido;
 use App\Mail\PedidoCreado;
+use Illuminate\Support\Facades\File;//imagenes
 
 //correo electronico
 use App\Models\TipoPedido;
@@ -36,48 +37,95 @@ class PedidoController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth')->except('verPublico');
     }
 
 
     public function index(Request $request)
-    {
-        $query = Pedido::with(['user', 'subPedidos.producto'])
-            ->orderBy('id', 'desc');
+{
+    $user = Auth::user();
 
-        if ($request->has('search')) {
-            $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('cliente', 'like', "%$search%") // Buscar directamente en campo cliente
-                    ->orWhereHas('user', function ($q) use ($search) {
-                        $q->where('name', 'like', "%$search%");
-                    })
-                    ->orWhere('id', 'like', "%$search%");
-            });
-        }
+    $query = Pedido::with(['user', 'subPedidos.producto'])
+        ->orderBy('id', 'desc');
 
-        $pedidos = $query->paginate(10);
-
-        return view('components.pedidos.index', compact('pedidos'));
+    if ((int) $user->role_id === 3) {
+        $query->where('user_id', $user->id);
     }
+
+    if ($request->has('search')) {
+        $search = $request->input('search');
+        $query->where(function ($q) use ($search) {
+            $q->where('cliente', 'like', "%$search%")
+                ->orWhereHas('user', fn($q) => $q->where('name', 'like', "%$search%"))
+                ->orWhere('id', 'like', "%$search%")
+                ->orWhereHas('subPedidos.producto', fn($q) => $q->where('nombre', 'like', "%$search%"));
+        });
+    }
+
+    $pedidos = $query->paginate(10);
+
+    $familiasPermitidas = [1, 2, 3, 4, 5, 6];
+
+// 🔢 SubPedidos por producto (Implemento)
+$porImplemento = DB::table('sub_pedidos')
+    ->join('productos', 'sub_pedidos.producto_id', '=', 'productos.id')
+    ->whereIn('productos.familia_id', $familiasPermitidas)
+    ->select('productos.nombre as producto', DB::raw('COUNT(*) as cantidad'))
+    ->groupBy('productos.nombre')
+    ->orderByDesc('cantidad')
+    ->limit(10)
+    ->get();
+
+// 👤 SubPedidos por usuario
+$porUsuario = DB::table('sub_pedidos')
+    ->join('productos', 'sub_pedidos.producto_id', '=', 'productos.id')
+    ->whereIn('productos.familia_id', $familiasPermitidas)
+    ->join('pedidos', 'sub_pedidos.pedido_id', '=', 'pedidos.id')
+    ->join('users', 'pedidos.user_id', '=', 'users.id')
+    ->select('users.name as usuario', DB::raw('COUNT(*) as cantidad'))
+    ->groupBy('users.name')
+    ->orderByDesc('cantidad')
+    ->get();
+
+// 📆 SubPedidos por mes
+$porMes = DB::table('sub_pedidos')
+    ->join('productos', 'sub_pedidos.producto_id', '=', 'productos.id')
+    ->whereIn('productos.familia_id', $familiasPermitidas)
+    ->join('pedidos', 'sub_pedidos.pedido_id', '=', 'pedidos.id')
+    ->select(DB::raw("DATE_FORMAT(pedidos.created_at, '%Y-%m') as mes"), DB::raw('COUNT(*) as cantidad'))
+    ->groupBy('mes')
+    ->orderBy('mes')
+    ->get();
+
+
+    return view('components.pedidos.index', compact(
+        'pedidos',
+        'porImplemento',
+        'porUsuario',
+        'porMes'
+    ));
+}
+
 
     public function create()
     {
         //$clientes = Cliente::all();
         $formasPago = FormaPago::all();
-        $productos = Producto::where('activo', 1)
-            ->where('tipo_id', 1)
-            ->get();
+$productos = Producto::with('familia')
+    ->where('activo', 1)
+    ->orderBy('nombre')
+    ->orderBy('codigo')
+    ->get();
         $colores = Color::all();
         $monedas = Moneda::all();
         $tipoPedidos = TipoPedido::all();
         $fletes = Flete::all();
-        $localidades = Localidad::all();
-        $provincias = Provincia::with('pais')->get(); // Cargar relación país
-        $paises = Pais::all();
+        $localidades = Localidad::orderBy('nombre')->get();
+        $provincias = Provincia::with('pais')->orderBy('provincia')->get();
+        $paises = Pais::orderBy('pais')->get();
+
         $categorias = Categoria::all();
         $familias = Familia::all();
-        $monedas = Moneda::all();
 
         return view('components.pedidos.create', compact(
             'formasPago',
@@ -95,146 +143,130 @@ class PedidoController extends Controller
     }
 
     public function store(Request $request)
-    {
-        Log::info('📝 PedidoController@store - Datos recibidos', $request->all());
+{
+    Log::info('PedidoController@store - Datos recibidos', $request->all());
 
-        $request->validate([
-            'cliente' => 'required|string|max:255',
-            'direccion' => 'required|string|max:255',
-            'localidad_id' => 'required|exists:localidad,id',
-            'provincia_id' => 'required|exists:provincia,id',
-            'pais_id' => 'sometimes|exists:pais,id',
-            'telefono' => 'required|string|max:100',
-            'email' => 'required|email|max:255',
-            'contacto' => 'nullable|string|max:100',
-            'categoria_id' => 'sometimes|exists:categoria,id',
-            'tipo_pedido_id' => 'required|exists:tipo_pedidos,id',
-            'fecha_necesidad' => 'required|date',
-            'forma_pago_id' => 'required|exists:forma_pagos,id',
-            'forma_entrega' => 'required|string|max:255',
-            'observacion' => 'nullable|string',
-            'bonificacion' => 'required|numeric|min:0',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'imagen_2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'flete_id' => 'nullable|exists:fletes,id',
-            'moneda_id' => 'required|exists:monedas,id',
-            'cuit' => 'required|string|size:11',
+    $request->validate([
+        'cliente' => 'required|string|max:255',
+        'direccion' => 'required|string|max:255',
+        'localidad_id' => 'required|exists:localidad,id',
+        'provincia_id' => 'required|exists:provincia,id',
+        'pais_id' => 'sometimes|exists:pais,id',
+        'telefono' => 'required|string|max:100',
+        'email' => 'required|email|max:255',
+        'contacto' => 'nullable|string|max:100',
+        'categoria_id' => 'sometimes|exists:categoria,id',
+        'tipo_pedido_id' => 'required|exists:tipo_pedidos,id',
+        'fecha_necesidad' => 'required|date',
+        'forma_pago_id' => 'required|exists:forma_pagos,id',
+        'forma_entrega' => 'required|string|max:255',
+        'observacion' => 'nullable|string',
+        'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'imagen_2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'flete_id' => 'nullable|exists:fletes,id',
+        'moneda_id' => 'required|exists:monedas,id',
+        'cotizacion' => 'nullable|numeric|min:1',
+        'cuit' => 'required|digits_between:1,11',
+        'productos' => 'required|array|min:1',
+        'productos.*.producto_id' => 'required|exists:productos,id',
+        'productos.*.precio' => 'required|numeric|min:0',
+        'productos.*.cantidad' => 'required|integer|min:1',
+        'productos.*.moneda_id' => 'required|exists:monedas,id',
+        'productos.*.iva' => 'required|numeric|min:0|max:100',
+        'productos.*.color_id' => 'nullable|exists:colores,id',
+        'productos.*.diferencia' => 'nullable|numeric',
+    ]);
 
+    DB::beginTransaction();
 
-            'productos' => 'required|array|min:1',
-            'productos.*.producto_id' => 'required|exists:productos,id',
-            'productos.*.precio' => 'required|numeric|min:0',
-            'productos.*.cantidad' => 'required|integer|min:1',
-            'productos.*.moneda_id' => 'required|exists:monedas,id',
-            'productos.*.iva' => 'required|numeric|min:0|max:100',
-            'productos.*.color_id' => 'nullable|exists:colores,id',
-            'productos.*.diferencia' => 'nullable|numeric',
-        ]);
+    try {
+        $pedido = new Pedido();
+        $pedido->fill($request->only([
+            'tipo_pedido_id', 'fecha_necesidad', 'forma_pago_id', 'forma_entrega', 'observacion',
+            'flete_id', 'cliente', 'direccion', 'localidad_id', 'provincia_id',
+            'pais_id', 'telefono', 'email', 'contacto', 'moneda_id', 'categoria_id', 'cuit'
+        ]));
+        $pedido->fecha = now();
+        $pedido->user_id = Auth::id();
+        $pedido->token = Str::uuid();
+        $pedido->bonificacion = 0;
+        $pedido->diferencia = 0;
 
-        DB::beginTransaction();
+        // Guardar imágenes si vienen
+        foreach (['imagen', 'imagen_2'] as $field) {
+            if ($request->hasFile($field)) {
+                $path = $request->file($field)->store('pedidos', 'public');
+                $pedido->$field = '/storage/' . $path;
+
+                $source = storage_path('app/public/' . $path);
+                $dest = public_path('storage/' . $path);
+                File::ensureDirectoryExists(dirname($dest));
+                File::copy($source, $dest);
+            }
+        }
+
+        $pedido->cotizacion = $request->cotizacion ?? (
+            Moneda::find($request->moneda_id)->tipo_cambio ?? 0
+        );
+
+        $pedido->save();
+
+        // Guardar subpedidos
+        foreach ($request->productos as $producto) {
+            $bonificacion = (float)($producto['subbonificacion'] ?? $pedido->bonificacion);
+            $diferencia = (float)($producto['diferencia'] ?? 0);
+
+            $precio = (float) $producto['precio'];
+            $cantidad = (int) $producto['cantidad'];
+            $iva = (float) $producto['iva'];
+
+            $precioConDiferencia = $precio * (1 + $diferencia / 100);
+            $subtotal = $precioConDiferencia * $cantidad * (1 - $bonificacion / 100);
+            $total = $subtotal * (1 + $iva / 100);
+
+            SubPedido::create([
+                'producto_id'    => $producto['producto_id'],
+                'precio'         => $precio,
+                'cantidad'       => $cantidad,
+                'moneda_id'      => $producto['moneda_id'],
+                'iva'            => $iva,
+                'detalle'        => $producto['detalle'] ?? null,
+                'color_id'       => $producto['color_id'] ?? null,
+                'subbonificacion'=> $producto['descuento'] ?? 0,
+                'descuento_2'    => $producto['descuento_2'] ?? 0,
+                'descuento_3'    => $producto['descuento_3'] ?? 0,
+                'descuento_4'    => $producto['descuento_4'] ?? 0,
+                'forma_pago_id'  => $producto['forma_pago_id'] ?? $pedido->forma_pago_id,
+                'diferencia'     => $producto['diferencia'] ?? 0,
+                'subtotal'       => $subtotal,
+                'total'          => $total,
+                'sub_fecha_entrega' => $pedido->fecha_necesidad,
+                'pedido_id'      => $pedido->id,
+            ]);
+        }
+
+        DB::commit();
 
         try {
-            $pedido = new Pedido();
-            $pedido->fill($request->only([
-                'tipo_pedido_id',
-                'fecha_necesidad',
-                'forma_pago_id',
-                'forma_entrega',
-                'observacion',
-                'bonificacion',
-                'flete_id',
-                'cliente',
-                'direccion',
-                'localidad_id',
-                'provincia_id',
-                'pais_id',
-                'telefono',
-                'email',
-                'contacto',
-                'moneda_id',
-                'categoria_id'
-            ]));
-            $pedido->fecha = now();
-            $pedido->user_id = Auth::id();
-
-            // Imágenes
-            if ($request->hasFile('imagen')) {
-                $path = $request->file('imagen')->store('pedidos', 'public');
-                $pedido->imagen = '/storage/' . $path;
-            }
-            if ($request->hasFile('imagen_2')) {
-                $path = $request->file('imagen_2')->store('pedidos', 'public');
-                $pedido->imagen_2 = '/storage/' . $path;
-            }
-
-
-            $pedido->token = Str::uuid(); // o Str::random(32)
-
-            $pedido->save();
-            Log::info('✅ Pedido guardado correctamente', ['pedido_id' => $pedido->id]);
-
-            // Subpedidos
-            foreach ($request->productos as $producto) {
-                $productoDB = Producto::find($producto['producto_id']);
-                $esAccesorio = $productoDB && $productoDB->familia_id == 8;
-                $esComponenteOImplemento = $productoDB && in_array($productoDB->familia_id, range(1, 7));
-
-                $bonificacion = $esAccesorio ? 0 : (float) $pedido->bonificacion;
-                $diferencia = $esComponenteOImplemento ? ((float)($producto['diferencia'] ?? 0)) : 0;
-
-                $precio = (float) $producto['precio'];
-                $cantidad = (int) $producto['cantidad'];
-                $iva = (float) $producto['iva'];
-
-                $precioConDiferencia = $precio * (1 + $diferencia / 100);
-                $subtotal = $precioConDiferencia * $cantidad * (1 - $bonificacion / 100);
-                $total = $subtotal * (1 + $iva / 100);
-
-                $sub = SubPedido::create([
-                    'producto_id' => $producto['producto_id'],
-                    'precio' => $precio,
-                    'cantidad' => $cantidad,
-                    'moneda_id' => $producto['moneda_id'],
-                    'iva' => $iva,
-                    'detalle' => $producto['detalle'] ?? null,
-                    'color_id' => $producto['color_id'] ?? null,
-                    'subbonificacion' => $bonificacion,
-                    'diferencia' => $diferencia,
-                    'subtotal' => $subtotal,
-                    'total' => $total,
-                    'sub_fecha_entrega' => $pedido->fecha_necesidad,
-                    'pedido_id' => $pedido->id,
-                ]);
-
-                Log::info('✅ SubPedido creado', $sub->toArray());
-            }
-
-            DB::commit();
-
-            try {
-                Mail::to($pedido->email)
-                    ->cc([
-                        Auth::user()->email,
-                        'grgodoy1984@gmail.com'
-                    ])
-                    ->bcc([
-                        'industrial@comofrasrl.com.ar'
-                    ])
-                    ->send(new PedidoCreado($pedido));
-            } catch (\Exception $ex) {
-                Log::error('Error al enviar correo: ' . $ex->getMessage());
-            }
-
-            return redirect()->route('pedidos.show', $pedido->id)
-                ->with('success', 'Pedido creado correctamente' .
-                    (isset($ex) ? ', pero hubo un problema al enviar el correo.' : ' y correo enviado.'));
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('❌ Error al crear pedido: ' . $e->getMessage());
-            Log::error('📦 Datos del request al fallar:', $request->all());
-            return back()->with('error', 'Error al crear el pedido: ' . $e->getMessage());
+            Mail::to($pedido->email)
+                ->cc([Auth::user()->email, 'grgodoy1984@gmail.com'])
+                ->bcc(['industrial@comofrasrl.com.ar'])
+                ->send(new PedidoCreado($pedido));
+        } catch (\Exception $ex) {
+            Log::error('Error al enviar correo: ' . $ex->getMessage());
         }
+
+        return redirect()->route('pedidos.show', $pedido->id)
+            ->with('success', 'Pedido creado correctamente' . (isset($ex) ? ', pero hubo un problema al enviar el correo.' : ' y correo enviado.'));
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        Log::error('❌ Error al crear pedido: ' . $e->getMessage());
+        return back()->with('error', 'Error al crear el pedido.');
     }
+}
+
+
 
 
 
@@ -243,212 +275,209 @@ class PedidoController extends Controller
 
         //$pedido = Pedido::with(['subPedidos.color', 'subPedidos.producto'])->findOrFail($id);
 
-        $pedido->load([
-            //'cliente',
-            'formaPago',
-            'user',
-            'subPedidos.producto',
-            'subPedidos.moneda',
-            'localidad',
-            'provincia',
-            'pais',
-            'categoria',
-            'moneda',
-            'subPedidos.color'
-        ]);
+$pedido->load([
+    'formaPago',
+    'user',
+    'subPedidos.producto',
+    'subPedidos.moneda',
+    'subPedidos.color',
+    'subPedidos.formaPago',
+    'localidad',
+    'provincia',
+    'pais',
+    'categoria',
+    'moneda'
+]);
         return view('components.pedidos.show', compact('pedido'));
     }
 
 
 
     public function edit(Pedido $pedido)
-    {
-        $colores = Color::all();
-        $formasPago = FormaPago::all();
-        $productos = Producto::where('activo', 1)->get();
-        $monedas = Moneda::all();
-        $tipoPedidos = TipoPedido::all();
-        $fletes = Flete::all();
+{
+    // Cargar los subpedidos relacionados al pedido
+    $pedido->load('subPedidos');
 
-        $localidades = Localidad::all();
-        $provincias = Provincia::with('pais')->get();
-        $paises = Pais::all();
-        $categorias = Categoria::all();
-        $familias = Familia::all();
-        $monedas = Moneda::all();
+    // Obtener todos los productos activos que pueden ser seleccionados
+    $productos = Producto::where('activo', 1)->orderBy('nombre')->orderBy('codigo')->get();
 
-        $pedido->load('subPedidos');
+    // Obtener la última SubCotización por producto activo (usando los IDs de $productos)
+    $subCotizaciones = SubCotizacion::whereIn('producto_id', $productos->pluck('id'))
+        ->latest('id')
+        ->get()
+        ->keyBy('producto_id');
 
-        return view('components.pedidos.edit', compact(
-            'pedido',
-            'formasPago',
-            'productos',
-            'monedas',
-            'tipoPedidos',
-            'fletes',
-            'localidades',
-            'provincias',
-            'paises',
-            'categorias',
-            'familias',
-            'colores'
-        ));
-    }
+    // Catálogos
+    $colores       = Color::all();
+    $formasPago    = FormaPago::all();
+    $monedas       = Moneda::all();
+    $tipoPedidos   = TipoPedido::all();
+    $fletes        = Flete::all();
+    $localidades   = Localidad::orderBy('nombre')->get();
+    $provincias    = Provincia::with('pais')->orderBy('provincia')->get();
+    $paises        = Pais::orderBy('pais')->get();
+    $categorias    = Categoria::all();
+    $familias      = Familia::all();
 
-    public function update(Request $request, Pedido $pedido)
-    {
-        $request->validate([
-            'cliente' => 'required|string|max:255',
-            'direccion' => 'required|string|max:255',
-            'localidad_id' => 'required|exists:localidad,id',
-            'provincia_id' => 'required|exists:provincia,id',
-            'pais_id' => 'sometimes|exists:pais,id',
-            'telefono' => 'required|string|max:100',
-            'email' => 'required|email|max:255',
-            'contacto' => 'nullable|string|max:100',
-            'categoria_id' => 'sometimes|exists:categoria,id',
-            'tipo_pedido_id' => 'required|exists:tipo_pedidos,id',
-            'fecha_necesidad' => 'required|date',
-            'forma_pago_id' => 'required|exists:forma_pagos,id',
-            'forma_entrega' => 'required|string|max:255',
-            'observacion' => 'nullable|string',
-            'bonificacion' => 'required|numeric|min:0',
-            'diferencia' => 'nullable|numeric',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'imagen_2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'flete_id' => 'nullable|exists:fletes,id',
-            'moneda_id' => 'required|exists:monedas,id',
+    // Vista con todos los datos necesarios
+    return view('components.pedidos.edit', compact(
+        'pedido',
+        'formasPago',
+        'productos',
+        'monedas',
+        'tipoPedidos',
+        'fletes',
+        'localidades',
+        'provincias',
+        'paises',
+        'categorias',
+        'familias',
+        'colores',
+        'subCotizaciones'
+    ));
+}
 
-            'productos' => 'required|array|min:1',
-            'productos.*.producto_id' => 'required|exists:productos,id',
-            'productos.*.precio' => 'required|numeric|min:0',
-            'productos.*.cantidad' => 'required|integer|min:1',
-            'productos.*.moneda_id' => 'required|exists:monedas,id',
-            'productos.*.iva' => 'required|numeric|min:0|max:100',
-            'productos.*.color_id' => 'nullable|exists:colores,id',
-            'productos.*.diferencia' => 'nullable|numeric',
-        ]);
 
-        DB::beginTransaction();
 
-        try {
-            $data = $request->only([
-                'cliente',
-                'direccion',
-                'localidad_id',
-                'provincia_id',
-                'pais_id',
-                'telefono',
-                'email',
-                'contacto',
-                'categoria_id',
-                'tipo_pedido_id',
-                'fecha_necesidad',
-                'forma_pago_id',
-                'forma_entrega',
-                'observacion',
-                'bonificacion',
-                'diferencia',
-                'moneda_id',
-                'flete_id',
-                'cuit'
-            ]);
+   public function update(Request $request, $id)
+{
+    $pedido = Pedido::findOrFail($id);
 
-            // Imagen principal
-            if ($request->has('eliminar_imagen')) {
-                Storage::disk('public')->delete(str_replace('/storage/', '', $pedido->imagen));
-                $data['imagen'] = null;
-            } elseif ($request->hasFile('imagen')) {
-                Storage::disk('public')->delete(str_replace('/storage/', '', $pedido->imagen));
-                $data['imagen'] = '/storage/' . $request->file('imagen')->store('pedidos', 'public');
+$request->validate([
+    'productos.*.producto_id' => 'required|exists:productos,id',
+    'productos.*.precio' => 'required|numeric|min:0',
+    'productos.*.cantidad' => 'required|integer|min:1',
+    'productos.*.moneda_id' => 'required|exists:monedas,id',
+    'cotizacion' => 'nullable|numeric|min:1',
+    'productos.*.iva' => 'required|numeric|min:0|max:100',
+    'productos.*.forma_pago_id' => 'nullable|exists:forma_pagos,id',
+    'productos.*.descuento' => 'nullable|numeric|min:0|max:100',
+    'productos.*.descuento_2' => 'nullable|numeric|min:0|max:100',
+    'productos.*.descuento_3' => 'nullable|numeric|min:0|max:100',
+    'productos.*.descuento_4' => 'nullable|numeric|min:0|max:100',
+]);
+
+    // Actualizar datos generales del pedido
+    $pedido->fill($request->only([
+        'tipo_pedido_id', 'cliente', 'direccion', 'localidad_id', 'telefono', 'email',
+        'forma_entrega', 'cuit', 'fecha_necesidad', 'forma_pago_id', 'moneda_id',
+        'flete_id', 'observacion'
+    ]));
+
+    $pedido->bonificacion = 0;
+    $pedido->diferencia = 0;
+
+    // Manejo de imágenes
+    foreach (['imagen', 'imagen_2'] as $field) {
+        if ($request->hasFile($field)) {
+            if ($pedido->$field && Storage::exists($pedido->$field)) {
+                Storage::delete($pedido->$field);
             }
+            $path = $request->file($field)->store('public/pedidos');
+            $pedido->$field = str_replace('public/', '/storage/', $path);
 
-            // Imagen secundaria
-            if ($request->has('eliminar_imagen_2')) {
-                Storage::disk('public')->delete(str_replace('/storage/', '', $pedido->imagen_2));
-                $data['imagen_2'] = null;
-            } elseif ($request->hasFile('imagen_2')) {
-                Storage::disk('public')->delete(str_replace('/storage/', '', $pedido->imagen_2));
-                $data['imagen_2'] = '/storage/' . $request->file('imagen_2')->store('pedidos', 'public');
+            // Copiar a public
+            $source = storage_path('app/' . $path);
+            $dest = public_path(str_replace('public', 'storage', $path));
+            \Illuminate\Support\Facades\File::ensureDirectoryExists(dirname($dest));
+            \Illuminate\Support\Facades\File::copy($source, $dest);
+        }
+
+        if ($request->filled("eliminar_$field")) {
+            if ($pedido->$field && Storage::exists($pedido->$field)) {
+                Storage::delete($pedido->$field);
             }
-
-            $pedido->update($data);
-
-            // Borrar subpedidos anteriores
-            $pedido->subPedidos()->delete();
-
-            foreach ($request->productos as $producto) {
-                $productoDB = Producto::find($producto['producto_id']);
-                $esAccesorio = $productoDB && $productoDB->familia_id == 8;
-                $esComponenteOImplemento = $productoDB && in_array($productoDB->familia_id, range(1, 7));
-
-
-                $bonificacion = $esAccesorio ? 0 : (float) $pedido->bonificacion;
-                $diferencia = $esComponenteOImplemento ? ((float)($producto['diferencia'] ?? 0)) : 0;
-
-                $precio = (float) $producto['precio'];
-                $cantidad = (int) $producto['cantidad'];
-                $iva = (float) $producto['iva'];
-
-                $precioConDiferencia = $precio * (1 + $diferencia / 100);
-                $subtotal = $precioConDiferencia * $cantidad * (1 - $bonificacion / 100);
-                $total = $subtotal * (1 + $iva / 100);
-
-                $sub = SubPedido::create([
-                    'producto_id' => $producto['producto_id'],
-                    'precio' => $precio,
-                    'cantidad' => $cantidad,
-                    'moneda_id' => $producto['moneda_id'],
-                    'iva' => $iva,
-                    'detalle' => $producto['detalle'] ?? null,
-                    'color_id' => $producto['color_id'] ?? null,
-                    'subbonificacion' => $bonificacion,
-                    'diferencia' => $diferencia,
-                    'subtotal' => $subtotal,
-                    'total' => $total,
-                    'sub_fecha_entrega' => $pedido->fecha_necesidad,
-                    'pedido_id' => $pedido->id,
-                ]);
-
-                Log::info('✅ SubPedido actualizado o creado', $sub->toArray());
-            }
-
-            DB::commit();
-
-            return redirect()->route('pedidos.show', $pedido->id)->with('success', 'Pedido actualizado correctamente.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('❌ Error al actualizar pedido: ' . $e->getMessage());
-            return back()->with('error', 'Error al actualizar el pedido.');
+            $pedido->$field = null;
         }
     }
 
+        $pedido->cotizacion = $request->cotizacion ?? (
+         Moneda::find($request->moneda_id)->tipo_cambio ?? 0
+        );
 
+    $pedido->save();
 
+    // Obtener todos los IDs existentes enviados
+    $idsEnviados = collect($request->input('productos', []))
+        ->pluck('id')
+        ->filter()
+        ->toArray();
 
-    public function destroy(Pedido $pedido)
-    {
-        try {
-            // Eliminar imágenes primero
-            if ($pedido->imagen) {
-                $imagePath = str_replace('/storage/', '', $pedido->imagen);
-                Storage::disk('public')->delete($imagePath);
-            }
+    // Eliminar subpedidos que no fueron reenviados
+    $pedido->subPedidos()->whereNotIn('id', $idsEnviados)->delete();
 
-            if ($pedido->imagen_2) {
-                $imagePath = str_replace('/storage/', '', $pedido->imagen_2);
-                Storage::disk('public')->delete($imagePath);
-            }
-
-            $pedido->delete();
-
-            return redirect()->route('pedidos.index')
-                ->with('success', 'Pedido eliminado correctamente.');
-        } catch (\Exception $e) {
-            //Log::error('Error al eliminar pedido: ' . $e->getMessage());
-            return back()->with('error', 'No se pudo eliminar el pedido.');
+    // Guardar los subpedidos reenviados y/o nuevos
+    foreach ($request->input('productos', []) as $index => $prod) {
+        if (isset($prod['eliminar']) && $prod['eliminar'] == 1) {
+            continue; // salteamos productos marcados para eliminar
         }
+
+        $sub = isset($prod['id']) ? SubPedido::find($prod['id']) : new SubPedido();
+
+        $productoDB = Producto::find($prod['producto_id']);
+$bonificacion = (float)($prod['subbonificacion'] ?? 0);
+$diferencia = (float)($prod['diferencia'] ?? 0);
+
+
+        $precio = (float)($prod['precio'] ?? 0);
+        $cantidad = (int)($prod['cantidad'] ?? 0);
+        $iva = (float)($prod['iva'] ?? 0);
+
+        $precioConDiferencia = $precio * (1 + $diferencia / 100);
+        $subtotal = $precioConDiferencia * $cantidad * (1 - $bonificacion / 100);
+        $total = $subtotal * (1 + $iva / 100);
+
+        $sub->pedido_id = $pedido->id;
+        $sub->producto_id = $prod['producto_id'];
+        $sub->color_id = $prod['color_id'] ?? null;
+        $sub->moneda_id = $prod['moneda_id'];
+        $sub->cantidad = $cantidad;
+        $sub->precio = $precio;
+        $sub->forma_pago_id = $prod['forma_pago_id'] ?? null;
+        $sub->diferencia = $diferencia;
+        $sub->subbonificacion = $bonificacion;
+        $sub->descuento_2 = $prod['descuento_2'] ?? 0;
+        $sub->descuento_3 = $prod['descuento_3'] ?? 0;
+        $sub->descuento_4 = $prod['descuento_4'] ?? 0;
+        $sub->iva = $iva;
+        $sub->detalle = $prod['detalle'] ?? null;
+
+        // Aquí se usa el valor enviado en el formulario:
+$sub->sub_fecha_entrega = $producto['sub_fecha_entrega'] ?? $pedido->fecha_necesidad;
+
+        $sub->subtotal = $subtotal;
+        $sub->total = $total;
+
+        $sub->save();
+
+        Log::info('✏️ SubPedido creado/actualizado', $sub->toArray());
     }
+
+    return redirect()->route('pedidos.index')->with('success', 'Pedido actualizado correctamente.');
+}
+
+
+
+   public function destroy(Pedido $pedido)
+{
+    try {
+        foreach (['imagen', 'imagen_2'] as $field) {
+            if ($pedido->$field) {
+                $path = str_replace('/storage/', '', $pedido->$field);
+                Storage::disk('public')->delete($path);
+                @unlink(public_path('storage/' . $path));
+            }
+        }
+
+        $pedido->delete();
+
+        return redirect()->route('pedidos.index')->with('success', 'Pedido eliminado correctamente.');
+    } catch (\Exception $e) {
+        Log::error('Error al eliminar pedido: ' . $e->getMessage());
+        return back()->with('error', 'No se pudo eliminar el pedido.');
+    }
+}
+
 
     public function getLastPrice($productoId)
     {
@@ -481,7 +510,7 @@ class PedidoController extends Controller
             'pedido' => $pedido,
             'logo_url' => 'https://interno.comofrasrl.com.ar/sistema/img/Logotipo2023.JPG',
             'imagen1_url' => $pedido->imagen ? config('app.url') . $pedido->imagen : null,
-            'imagen2_url' => $pedido->imagen_2 ? config('app.url') . $pedido->imagen : null,
+            'imagen2_url' => $pedido->imagen_2 ? config('app.url') . $pedido->imagen_2 : null,
         ];
 
         $pdf = Pdf::loadView('components.pedidos.pdf', $data)
@@ -497,19 +526,21 @@ class PedidoController extends Controller
             return response()->json(['error' => 'Familia no encontrada'], 404);
         }
 
-        $productos = Producto::where('familia_id', $familia->id)
-            ->where('activo', 1)
-            ->select([
-                'id',
-                'codigo',
-                'nombre',
-                'um_id',
-                'familia_id',
-                'detalle',
-                'img'
-            ])
-            ->with(['unidad', 'familia']) // Cargar relaciones necesarias
-            ->get();
+$productos = Producto::where('familia_id', $familia->id)
+    ->where('activo', 1)
+    ->orderBy('nombre')
+    ->orderBy('codigo')
+    ->select([
+        'id',
+        'codigo',
+        'nombre',
+        'um_id',
+        'familia_id',
+        'detalle',
+        'img'
+    ])
+    ->with(['unidad', 'familia'])
+    ->get();
 
         return response()->json($productos);
     }

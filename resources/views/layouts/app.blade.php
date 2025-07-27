@@ -138,7 +138,7 @@
         <nav class="navbar navbar-expand-lg shadow-sm navbar-bg py-2">
             <div class="container">
                 <!-- Logo y nombre -->
-                <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
+                <a class="navbar-brand d-flex align-items-center" href="{{ url('/home') }}">
                     <img src="{{ asset('images/Isologotipo_con_anclaje_lateral_Negativo_RGB.png') }}" alt="Logo"
                         height="40" class="me-2">
 
@@ -182,11 +182,7 @@
                                                 <i class="bi bi-palette"></i> Colores
                                             </a>
                                         </li>
-                                        <li>
-                                            <a class="dropdown-item" href="{{ route('familias.index') }}">
-                                                <i class="bi bi-collection"></i> Familias
-                                            </a>
-                                        </li>
+
 
                                         <li>
                                             <a class="dropdown-item" href="{{ route('monedas.index') }}">
@@ -230,7 +226,7 @@
 
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('pedidos.index') }}">
-                                        <i class="bi bi-file-earmark-text"></i> Costizaciones
+                                        <i class="bi bi-file-earmark-text"></i> Cotizaciones
                                     </a>
                                 </li>
                             @endif

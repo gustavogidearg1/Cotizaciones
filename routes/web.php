@@ -1,78 +1,125 @@
 <?php
 
-use App\Http\Controllers\CategoriaController;
-use App\Http\Controllers\ClienteController;
-use App\Http\Controllers\ColorController;
-use App\Http\Controllers\CotizacionController;
-//use App\Http\Controllers\RoleController;
-use App\Http\Controllers\FamiliaController;
-use App\Http\Controllers\FormaPagoController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\LocalidadController;
-use App\Http\Controllers\PaisController;
-use App\Http\Controllers\PedidoController;
-use App\Http\Controllers\ProductoController;
-use App\Http\Controllers\ProvinciaController;
-use App\Http\Controllers\TipoController;
-use App\Http\Controllers\UnidadController;
-use App\Http\Controllers\UserController;
-use App\Models\Pedido;
-use Illuminate\Support\Facades\Auth; // <-- Añade esta línea
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MonedaController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Mail;
+use App\Models\Pedido;
 
+use App\Http\Controllers\{
+    CategoriaController,
+    ClienteController,
+    ColorController,
+    CotizacionController,
+    FamiliaController,
+    FormaPagoController,
+    HomeController,
+    LocalidadController,
+    PaisController,
+    PedidoController,
+    ProductoController,
+    ProvinciaController,
+    TipoController,
+    UnidadController,
+    UserController,
+    MonedaController
+};
 
+// P��gina de bienvenida
+Route::get('/', fn() => view('welcome'));
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
+// Autenticaci��n
 Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-// routes/web.php
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 
-// Rutas protegidas por roles
-Route::middleware(['auth', 'can:admin'])->group(function () {
+// �7�3 RUTAS P�0�3BLICAS
+Route::get('cotizaciones/consulta-productos', [CotizacionController::class, 'buscarProducto'])->name('cotizaciones.buscar_producto');
+Route::get('cotizaciones/producto/{id}', [CotizacionController::class, 'consultaProducto'])->name('cotizaciones.consulta_producto');
+
+
+// �7�3 RUTAS PROTEGIDAS POR LOGIN
+Route::middleware(['auth'])->group(function () {
+
+    // Usuarios
     Route::resource('users', UserController::class)->except(['show']);
-});
+    Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
 
-Route::middleware('auth')->group(function () {
+    Route::get('/cotizaciones/duplicar', function () {
+    return view('components.cotizaciones.duplicar_seleccionar');
+    })->name('cotizaciones.duplicar.seleccionar');
+
+
+    Route::get('/cotizaciones/duplicar-con-aumento', [CotizacionController::class, 'duplicarConAumento'])->name('cotizaciones.duplicar');
+
+    Route::post('/sub-cotizaciones/{id}/actualizar', [CotizacionController::class, 'actualizarSubCotizacion'])
+    ->name('sub_cotizaciones.actualizar');
+
+    // Vista de edici��n de productos de la ��ltima cotizaci��n
+    Route::get('cotizaciones/editar-precios', [CotizacionController::class, 'editarPrecios'])
+    ->name('cotizaciones.editar_precios');
+
+    // Guardar precios masivos
+    Route::post('cotizaciones/guardar-precios', [CotizacionController::class, 'guardarPrecios'])
+    ->name('cotizaciones.guardar_precios');
+
+    // Cotizaciones
+    Route::get('/cotizaciones/importar', [CotizacionController::class, 'formImportar'])->name('cotizaciones.importar.form');
+    Route::post('/cotizaciones/importar', [CotizacionController::class, 'importar'])->name('cotizaciones.importar');
+    Route::get('/cotizaciones/exportar-plantilla', [CotizacionController::class, 'exportarPlantilla'])->name('cotizaciones.exportar.plantilla');
+    Route::resource('cotizaciones', CotizacionController::class)->parameters(['cotizaciones' => 'cotizacion']);
+
+
+
+    // Productos
     Route::resource('productos', ProductoController::class);
-});
 
-// Opcional: Rutas para las tablas relacionadas (si quieres CRUD para ellas también)
-Route::resource('unidades', UnidadController::class)->middleware('auth');
-Route::resource('familias', FamiliaController::class);
-Route::resource('tipos', TipoController::class)->middleware('auth');
-
-Route::resource('categoria', CategoriaController::class);
-Route::resource('cliente', ClienteController::class);
-
-Route::middleware(['auth'])->group(function () {
-    Route::resource('cotizaciones', CotizacionController::class)
-        ->parameters(['cotizaciones' => 'cotizacion']);
-});
-
-
-Route::middleware(['auth'])->group(function () {
+    // Tablas relacionadas
+    Route::resource('unidades', UnidadController::class);
+    Route::resource('tipos', TipoController::class);
     Route::resource('pedidos', PedidoController::class);
     Route::resource('forma-pagos', FormaPagoController::class);
+    Route::resource('monedas', MonedaController::class);
+
+    // Pa��s/Provincia/Localidad
+    Route::resource('pais', PaisController::class)->parameters(['pais' => 'pais']);
+    Route::resource('provincia', ProvinciaController::class)->parameters(['provincia' => 'provincia']);
+    Route::resource('localidad', LocalidadController::class)->parameters(['localidad' => 'localidad']);
+
+    // Ruta de debug de roles
+    Route::get('/debug-rol', function () {
+        $user = Auth::user();
+        return view('debug.rol', ['user' => $user, 'is_admin' => Gate::allows('admin')]);
+    });
+
+
+
 });
 
+
+// �7�3 RUTAS GENERALES (fuera de `auth` porque algunas podr��an ser p��blicas)
+
+Route::resource('familias', FamiliaController::class);
+Route::resource('categoria', CategoriaController::class);
+Route::resource('cliente', ClienteController::class);
+// Rutas protegidas para administradores (role_id = 1)
+Route::resource('colores', ColorController::class)->parameters(['colores' => 'color']);
+
 Route::get('/pedidos/last-price/{producto}', [PedidoController::class, 'getLastPrice']);
-
 Route::get('/pedidos/{pedido}/pdf', [PedidoController::class, 'generarPDF'])->name('pedidos.pdf');
+Route::post('/pedidos', [PedidoController::class, 'store'])->name('pedidos.store');
 
-// RUTA DE PRUEBA PARA TESTEAR EL ENVÍO DE CORREOS (TEMPORAL)
+Route::get('/forma-pago/{id}/diferencia', [PedidoController::class, 'getDiferencia']);
+Route::get('/pedido-publico/{token}', [PedidoController::class, 'verPublico'])->name('pedidos.publico');
+Route::get('/productos-por-familia/{familia}', [PedidoController::class, 'productosPorFamilia']);
+
+Route::get('/subpedido-template', [PedidoController::class, 'subpedidoTemplate'])->name('subpedido.template');
+
+// Test de email
 Route::get('/test-email', function () {
     try {
         Mail::raw('This is a test email', function ($message) {
-            $message->to('gustavog@live.com.ar')
-                ->subject('Test Email');
+            $message->to('gustavog@live.com.ar')->subject('Test Email');
         });
         return 'Email sent successfully';
     } catch (\Exception $e) {
@@ -80,21 +127,7 @@ Route::get('/test-email', function () {
     }
 });
 
-
-Route::get('/productos-por-familia/{familia}', [PedidoController::class, 'productosPorFamilia']);
-
-Route::post('/pedidos', [PedidoController::class, 'store'])->name('pedidos.store');
-
-// Agrega esto con las demás rutas de recursos
-Route::get('users/{user}', [UserController::class, 'show'])
-    ->middleware('auth')
-    ->name('users.show');
-
-// Rutas protegidas para administradores (role_id = 1)
-Route::resource('colores', ColorController::class)->parameters(['colores' => 'color']);
-
-Route::get('/forma-pago/{id}/diferencia', [PedidoController::class, 'getDiferencia']);
-
+// Test de vista email
 Route::get('/test-vista-email/{id}', function ($id) {
     $pedido = Pedido::with([
         'formaPago',
@@ -109,19 +142,3 @@ Route::get('/test-vista-email/{id}', function ($id) {
 
     return view('emails.pedido_creado', compact('pedido'));
 });
-
-Route::get('/pedido-publico/{token}', [PedidoController::class, 'verPublico'])->name('pedidos.publico');
-
-Route::resource('monedas', MonedaController::class);
-
-Route::resource('pais', PaisController::class)
-    ->parameters(['pais' => 'pais'])
-    ->middleware('auth');
-
-Route::resource('provincia', ProvinciaController::class)
-    ->parameters(['provincia' => 'provincia'])
-    ->middleware('auth');
-
-Route::resource('localidad', LocalidadController::class)
-    ->parameters(['localidad' => 'localidad'])
-    ->middleware('auth');

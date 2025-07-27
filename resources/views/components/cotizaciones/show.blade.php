@@ -12,6 +12,21 @@
         .imagen-logo {
             height: 40px;
         }
+        
+   
+
+    body {
+        margin: 0;
+        font-size: 12pt;
+    }
+
+    .card {
+        box-shadow: none !important;
+    }
+
+    .table td, .table th {
+        padding: 4px !important;
+    }
     </style>
 
     <div class="container">
@@ -76,7 +91,7 @@
 
                         @foreach ($tipos as $nombreTipo => $subCotizaciones)
                             <div class="card-header bg-white border-bottom">
-                                <strong>{{ $nombreTipo }}</strong>
+                                <h3><strong>{{ $nombreTipo }}</strong></h3>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-bordered table-striped mb-0">
@@ -87,27 +102,20 @@
                                             <th>Moneda</th>
                                             <th>Precio</th>
                                             <th>Precio Bonif.</th>
-                                            <th>Descuento</th>
-                                        </tr>
+                                            
+                                            </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($subCotizaciones as $subCotizacion)
                                             <tr>
                                                 <td>{{ $subCotizacion->producto->codigo ?? 'N/A' }}</td>
-                                                <td>{{ $subCotizacion->producto->nombre ?? 'N/A' }}</td>
+                                                <td><strong>{{ $subCotizacion->producto->nombre ?? 'N/A' }}</strong></td>
                                                 <td>{{ $subCotizacion->moneda->moneda ?? 'N/A' }}</td>
                                                 <td>${{ number_format($subCotizacion->precio, 2, ',', '.') }}</td>
                                                 <td>${{ number_format($subCotizacion->precio_bonificado, 2, ',', '.') }}
-                                                </td>
-                                                <td>{{ number_format($subCotizacion->descuento, 2, ',', '.') }}%</td>
+              
                                             </tr>
-                                            @if (!empty($subCotizacion->producto->detalle))
-                                                <tr>
-                                                    <td colspan="6" class="bg-light">
-                                                        <strong>Detalle:</strong> {{ $subCotizacion->producto->detalle }}
-                                                    </td>
-                                                </tr>
-                                            @endif
+
                                         @endforeach
                                     </tbody>
                                 </table>

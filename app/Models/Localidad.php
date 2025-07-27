@@ -10,7 +10,8 @@ class Localidad extends Model
     use HasFactory;
 
     protected $table = 'localidad';
-    protected $fillable = ['localidad', 'cp', 'provincia_id', 'pais_id'];
+    protected $fillable = ['nombre', 'cp', 'provincia_id', 'pais_id'];
+
 
     public function provincia()
     {

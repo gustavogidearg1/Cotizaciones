@@ -14,8 +14,32 @@
     <a href="{{ route('localidad.create') }}" class="btn btn-primary mb-3">
         <i class="fa fa-plus-circle"></i> Nueva Localidad
     </a>
+    
+<form method="GET" action="{{ route('localidad.index') }}" class="row mb-4 g-2">
+    <div class="col-md-4">
+        <input type="text" name="buscar" value="{{ request('buscar') }}" class="form-control"
+               placeholder="Buscar por nombre de localidad">
+    </div>
+    <div class="col-md-4">
+        <input type="text" name="provincia" value="{{ request('provincia') }}" class="form-control"
+               placeholder="Buscar por provincia">
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-secondary w-100">
+            <i class="fa fa-search"></i> Buscar
+        </button>
+    </div>
+    <div class="col-md-2">
+        <a href="{{ route('localidad.index') }}" class="btn btn-outline-secondary w-100">
+            <i class="fa fa-times"></i> Limpiar
+        </a>
+    </div>
+</form>
 
-    <table class="table table-bordered table-hover">
+
+
+    <table class="table table-bordered table-hover table-sm align-middle">
+
         <thead class="table-dark">
             <tr>
                 <th>ID</th>
@@ -53,6 +77,13 @@
             @endforeach
         </tbody>
     </table>
+    
+  
+
+                    <div class="card-footer">
+                        {{ $localidades->withQueryString()->links('pagination::bootstrap-5') }}
+                    </div>
+    
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

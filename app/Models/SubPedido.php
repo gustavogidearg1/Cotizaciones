@@ -9,21 +9,26 @@ class SubPedido extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'producto_id',
-        'precio',
-        'subbonificacion',
-        'iva',
-        'cantidad',
-        'moneda_id',
-        'sub_fecha_entrega',
-        'subtotal',
-        'total',
-        'detalle',
-        'pedido_id',
-        'color_id',
-        'diferencia'
-    ];
+protected $fillable = [
+    'producto_id',
+    'precio',
+    'subbonificacion',
+    'descuento_2',
+    'descuento_3',
+    'descuento_4',
+    'diferencia',
+    'iva',
+    'cantidad',
+    'moneda_id',
+    'forma_pago_id',
+    'sub_fecha_entrega',
+    'subtotal',
+    'total',
+    'detalle',
+    'pedido_id',
+    'color_id'
+];
+
 
     protected $dates = ['sub_fecha_entrega'];
 
@@ -65,4 +70,10 @@ class SubPedido extends Model
             $subPedido->total = $subtotal * (1 + ($subPedido->iva / 100));
         });
     }
+
+    public function formaPago()
+{
+    return $this->belongsTo(FormaPago::class);
+}
+
 }

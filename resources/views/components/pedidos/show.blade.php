@@ -1,11 +1,10 @@
-<!-- Vista show.blade.php actualizada -->
 @extends('layouts.app')
 
 @section('content')
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-    <style>
+   <style>
         .bg-orange {
             background-color: #FF9900 !important;
         }
@@ -30,6 +29,53 @@
             max-width: 100%;
             height: auto;
         }
+        
+        @media print {
+        body {
+            margin: 0;
+            padding: 0;
+            zoom: 90%; /* Ajusta la escala general. Probá también con 80%-100% */
+        }
+
+        @page {
+            size: A4;
+            margin: 0; /* Elimina márgenes del navegador/impressora */
+        }
+
+        .container, .card, table {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        .table {
+            font-size: 12px;
+            table-layout: fixed;
+            word-wrap: break-word;
+        }
+
+        .table th,
+        .table td {
+            padding: 4px !important;
+        }
+
+        .table-responsive {
+            overflow: visible !important;
+        }
+
+        .row,
+        .col-md-4,
+        .col-md-6,
+        .col-md-12 {
+            page-break-inside: avoid; /* Intenta evitar corte de bloques */
+        }
+
+        .btn,
+        .navbar,
+        footer,
+        header {
+            display: none !important; /* Oculta elementos no necesarios en impresión */
+        }
+    }
     </style>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -38,94 +84,41 @@
 
     <div class="container">
         <div class="card mb-4">
-            <div class="card-header bg-orange text-white">
-                <div class="row align-items-center">
-                    <div class="col-6">
-                        <a class="navbar-brand" href="{{ url('/') }}">
-                            <img src="{{ asset('images/Isologotipo con anclaje. Negro CMYK.png') }}" alt="Logo" height="50">
-                        </a>
-                    </div>
-                    <div class="col-6 text-end">
-                        <h2 class="mb-0">{{ $pedido->tipoPedido->nombre }} #{{ $pedido->id }}/
-                            {{ $pedido->user->nom_corto ?? '' }}
-                        </h2>
-                    </div>
-                </div>
+            <div class="card-header bg-orange text-white d-flex justify-content-between align-items-center">
+                <img src="{{ asset('images/Isologotipo con anclaje. Negro CMYK.png') }}" alt="Logo" height="50">
+                <h2 class="mb-0">{{ $pedido->tipoPedido->nombre }} # {{ $pedido->id }} / {{ $pedido->user->nom_corto ?? '' }}</h2>
+                
             </div>
-
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <p><strong>Cliente:</strong> {{ $pedido->cliente }}</p>
-                    </div>
-
-                    <div class="col-md-6">
-                        <p><strong>Dirección:</strong> {{ $pedido->direccion }}</p>
-                    </div>
-
+                <div class="row mb-2">
+                    <div class="col-md-3"><strong>Cliente:</strong> {{ $pedido->cliente }}</div>
+                    <div class="col-md-3"><strong>Dirección:</strong> {{ $pedido->direccion }}</div>
+                    <div class="col-md-3"><strong>Email:</strong> {{ $pedido->email }}</div>
+                    <div class="col-md-3"><strong>Teléfono:</strong> {{ $pedido->telefono }}</div>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-4">
-                        <p><strong>Localidad:</strong> {{ $pedido->localidad->nombre }}</p>
-                    </div>
-                    <div class="col-md-4">
-                        <p><strong>Provincia:</strong> {{ $pedido->provincia->provincia }}</p>
-                    </div>
-                    <div class="col-md-4">
-                        <p><strong>País:</strong> {{ $pedido->pais->pais }}</p>
-                    </div>
-
+                <div class="row mb-2">
+                    <div class="col-md-3"><strong>Localidad:</strong> {{ $pedido->localidad->nombre }}</div>
+                    <div class="col-md-3"><strong>Provincia:</strong> {{ $pedido->provincia->provincia }}</div>
+                    <div class="col-md-3"><strong>País:</strong> {{ $pedido->pais->pais }}</div>
+                    <div class="col-md-3"><strong>Flete:</strong> {{ $pedido->flete->nombre ?? 'Sin flete' }}</div>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-4">
-                        <p><strong>Teléfono:</strong> {{ $pedido->telefono }}</p>
-                    </div>
-                    <div class="col-md-4">
-                        <p><strong>Email:</strong> {{ $pedido->email }}</p>
-                    </div>
-
-                    <div class="col-md-4">
-                        <p><strong>CUIT:</strong> {{ $pedido->cuit }}</p>
-                    </div>
-
-
+                <div class="row mb-2">
+                    <div class="col-md-6"><strong>Forma de Pago:</strong> {{ $pedido->formaPago->nombre }}</div>
+                    <div class="col-md-6"><strong>Forma de Entrega:</strong> {{ $pedido->forma_entrega }}</div>
                 </div>
 
-                <div class="row">
-
-                    <div class="col-md-4">
-                        <p><strong>Flete:</strong> {{ $pedido->flete->nombre ?? 'Sin flete' }}</p>
-                    </div>
-
-                    <div class="col-md-4">
-                        <p><strong>Fecha Necesidad a partir de la confirmacion del pedido:</strong>
-                            {{ \Carbon\Carbon::parse($pedido->fecha_necesidad)->format('d/m/Y') }}</p>
-                    </div>
-                    <div class="col-md-4">
-                        <p><strong>Forma de Entrega:</strong> {{ $pedido->forma_entrega }}</p>
-
-                    </div>
-
+<!-- 
+                <div class="row mb-2">
+                    <div class="col-md-6"><strong>Fecha de Necesidad:</strong>
+                        {{ \Carbon\Carbon::parse($pedido->fecha_necesidad)->format('d/m/Y') }}</div>
+                    <div class="col-md-4"><strong>Diferencia (%):</strong> {{ $pedido->diferencia ?? 0 }}%</div>
+                    <div class="col-md-4"><strong>Descuento (%):</strong> {{ $pedido->bonificacion ?? 0 }}%</div>
                 </div>
-
-                <div class="row">
-                    <div class="col-md-4">
-                        <p><strong>Flete:</strong> {{ $pedido->flete->nombre ?? 'Sin flete' }}</p>
-                    </div>
-                    <div class="col-md-4">
-                        <p><strong>Forma de Pago:</strong> {{ $pedido->formaPago->nombre }}</p>
-                    </div>
-                    <div class="col-md-4">
-                        <p><strong>Diferencia (%):</strong> {{ $pedido->diferencia ?? 0 }}%</p>
-                    </div>
-                </div>
-
+-->
                 @if ($pedido->observacion)
-                    <div class="mt-3">
-                        <p><strong>Observaciones:</strong> {{ $pedido->observacion }}</p>
-                    </div>
+                    <div class="mt-2"><strong>Observaciones:</strong> {{ $pedido->observacion }}</div>
                 @endif
 
                 @if ($pedido->imagen || $pedido->imagen_2)
@@ -148,27 +141,20 @@
                 @php
                     $primerProductoInfo = $pedido->subPedidos
                         ->map(fn($sp) => $sp->producto)
-                        ->firstWhere(fn($p) => $p && in_array($p->familia_id, [1, 2, 3, 4, 5, 6, 7]));
+                        ->firstWhere(fn($p) => $p && in_array($p->familia_id, range(1, 7)));
                 @endphp
 
                 @if ($primerProductoInfo)
                     <div class="mt-4">
                         @if ($primerProductoInfo->links)
-                            <p><strong>Links del Producto:</strong>
-                                <a href="{{ $primerProductoInfo->links }}" target="_blank">
-                                    {{ $primerProductoInfo->links }}
-                                </a>
-                            </p>
+                            <p><strong>Links del Producto:</strong> <a href="{{ $primerProductoInfo->links }}"
+                                    target="_blank">{{ $primerProductoInfo->links }}</a></p>
                         @endif
-
                         @if ($primerProductoInfo->detalle)
                             <p><strong>Detalle del Producto:</strong> {{ $primerProductoInfo->detalle }}</p>
                         @endif
                     </div>
                 @endif
-
-
-
             </div>
         </div>
 
@@ -178,121 +164,198 @@
             </div>
         </div>
 
-        @php
-            $familiasImplemento = [1, 2, 3, 4, 5, 6];
-            $familiasComponente = [7];
-            $familiasAccesorio = [8];
+     @php
+    $familiasImplemento = [1, 2, 3, 4, 5, 6];
+    $familiasComponente = [7];
+    $familiasAccesorio = [8];
 
-            $grupoImplemento = $pedido->subPedidos->filter(
-                fn($sp) => in_array($sp->producto->familia_id, $familiasImplemento),
-            );
-            $grupoComponente = $pedido->subPedidos->filter(
-                fn($sp) => in_array($sp->producto->familia_id, $familiasComponente),
-            );
-            $grupoAccesorio = $pedido->subPedidos->filter(
-                fn($sp) => in_array($sp->producto->familia_id, $familiasAccesorio),
-            );
+    $grupoImplemento = $pedido->subPedidos->filter(fn($sp) => in_array($sp->producto->familia_id, $familiasImplemento));
+    $grupoComponente = $pedido->subPedidos->filter(fn($sp) => in_array($sp->producto->familia_id, $familiasComponente));
+    $grupoAccesorio = $pedido->subPedidos->filter(fn($sp) => in_array($sp->producto->familia_id, $familiasAccesorio));
 
-            $totalCantidad = $subtotal = $ivaTotal = $totalGeneral = 0;
+    $totalCantidad = $subtotal = $ivaTotal = $totalGeneral = 0;
 
-            function renderTable(
-                $subPedidos,
-                $esAccesorio = false,
-                &$totalCantidad,
-                &$subtotal,
-                &$ivaTotal,
-                &$totalGeneral,
-            ) {
-                echo '<div class="table-responsive mt-3">';
-                echo '<table class="table table-bordered table-striped">';
-                echo '<thead class="table-light">
-                    <tr>
-                        <th>Producto</th>
-                        <th>Color</th>
-                        <th>Moneda</th>
-                        <th>Cantidad</th>
-                        <th>Precio</th>
-                        <th>Desc (%)</th>
-                        <th>Dif Pago (%)</th>
-                        <th>Subtotal</th>
-                        <th>IVA (%)</th>
-                        <th>Importe IVA</th>
-                        <th>Total</th>
-                    </tr>
-                  </thead><tbody>';
-                foreach ($subPedidos as $sp) {
-                    $precioBonificado = $sp->precio * (1 - $sp->subbonificacion / 100);
-                    $sub = $precioBonificado * $sp->cantidad;
-                    $ivaMonto = ($sub * $sp->iva) / 100;
-                    $total = $sub + $ivaMonto;
+    function renderGrupoProductosDiv($grupo, $titulo, &$totalCantidad, &$subtotal, &$ivaTotal, &$totalGeneral)
+{
+    if ($grupo->isEmpty()) return;
 
-                    $totalCantidad += $sp->cantidad;
-                    $subtotal += $sub;
-                    $ivaTotal += $ivaMonto;
-                    $totalGeneral += $total;
+    echo "<h5 class='mt-4'>{$titulo}</h5>";
 
-                    echo "<tr>
-                        <td>{$sp->producto->nombre}</td>
-                        <td>{$sp->color->nombre}</td>
-                        <td>{$sp->moneda->moneda}</td>
-                        <td>{$sp->cantidad}</td>
-                        <td>$" .
-                        number_format($sp->precio, 2, ',', '.') .
-                        "</td>
-                        <td>" .
-                        ($esAccesorio ? '0%' : $sp->subbonificacion . '%') .
-                        "</td>
-                        <td>" .
-                        ($esAccesorio ? '0%' : ($sp->diferencia ?? 0) . '%') .
-                        "</td>
-                        <td>$" .
-                        number_format($sub, 2, ',', '.') .
-                        "</td>
-                        <td>{$sp->iva}%</td>
-                        <td>$" .
-                        number_format($ivaMonto, 2, ',', '.') .
-                        "</td>
-                        <td>$" .
-                        number_format($total, 2, ',', '.') .
-                        "</td>
-                    </tr>";
-                }
-                echo '</tbody></table></div>';
+    foreach ($grupo as $sp) {
+        $producto = $sp->producto;
+        $precioConDiferencia = $sp->precio * (1 + ($sp->diferencia ?? 0) / 100);
+        $precioBonificado = $precioConDiferencia;
+
+        foreach ([$sp->subbonificacion, $sp->descuento_2, $sp->descuento_3, $sp->descuento_4] as $desc) {
+            $desc = floatval($desc);
+            if ($desc > 0) {
+                $precioBonificado *= (1 - $desc / 100);
             }
-        @endphp
+        }
 
-        @if ($grupoImplemento->count() > 0)
-            <h5 class="mt-4">Implementos</h5>
-            @php renderTable($grupoImplemento, false, $totalCantidad, $subtotal, $ivaTotal, $totalGeneral); @endphp
+        $sub = $precioBonificado * $sp->cantidad;
+        $ivaMonto = ($sub * $sp->iva) / 100;
+        $total = $sub + $ivaMonto;
+
+        $totalCantidad += $sp->cantidad;
+        $subtotal += $sub;
+        $ivaTotal += $ivaMonto;
+        $totalGeneral += $total;
+
+        echo '<div class="border rounded p-3 mb-3 bg-light">';
+
+        // Fila 1
+        echo '<div class="row mb-2">';
+        echo '<div class="col-md-4"><strong>Producto:</strong> ' . $producto->nombre . '</div>';
+        echo '<div class="col-md-2"><strong>Color:</strong> ' . ($sp->color->nombre ?? '-') . '</div>';
+        echo '<div class="col-md-2"><strong>Moneda:</strong> ' . ($sp->moneda->moneda ?? '-') . '</div>';
+        echo '<div class="col-md-2"><strong>Cantidad:</strong> ' . $sp->cantidad . '</div>';
+        echo '<div class="col-md-2"><strong>Precio:</strong> $' . number_format($sp->precio, 2, ',', '.') . '</div>';
+        echo '</div>';
+
+        // Fila 2 - Descuentos (ocupar espacio aunque estén vacíos)
+        echo '<div class="row mb-2">';
+        echo '<div class="col-md-2">' . (($sp->diferencia ?? 0) != 0 ? '<strong>Diferencia (%):</strong> ' . number_format($sp->diferencia, 2, ',', '.') . '%' : '&nbsp;') . '</div>';
+        echo '<div class="col-md-2">' . ($sp->subbonificacion > 0 ? '<strong>Desc. 1:</strong> ' . $sp->subbonificacion . '%' : '&nbsp;') . '</div>';
+        echo '<div class="col-md-2">' . ($sp->descuento_2 > 0 ? '<strong>Desc. 2:</strong> ' . $sp->descuento_2 . '%' : '&nbsp;') . '</div>';
+        echo '<div class="col-md-2">' . ($sp->descuento_3 > 0 ? '<strong>Desc. 3:</strong> ' . $sp->descuento_3 . '%' : '&nbsp;') . '</div>';
+        echo '<div class="col-md-2">' . ($sp->descuento_4 > 0 ? '<strong>Desc. 4:</strong> ' . $sp->descuento_4 . '%' : '&nbsp;') . '</div>';
+        echo '</div>';
+
+        // Fila 3 - Totales
+        echo '<div class="row mb-2">';
+        echo '<div class="col-md-3"><strong>Subtotal:</strong> $' . number_format($sub, 2, ',', '.') . '</div>';
+        echo '<div class="col-md-2"><strong>IVA:</strong> ' . $sp->iva . '%</div>';
+        echo '<div class="col-md-2"><strong>Importe IVA:</strong> $' . number_format($ivaMonto, 2, ',', '.') . '</div>';
+        echo '<div class="col-md-3"><strong>Total:</strong> $' . number_format($total, 2, ',', '.') . '</div>';
+
+        echo '</div>';
+
+        // Fila 4 - Forma de pago y detalle
+        echo '<div class="row mb-2">';
+        echo '<div class="col-md-4"><strong>Forma de Pago:</strong> ' . ($sp->formaPago->nombre ?? '-') . '</div>';
+        echo '<div class="col-md-8">' . (!empty($sp->detalle) ? '<strong>Detalle:</strong> ' . $sp->detalle : '&nbsp;') . '</div>';
+        echo '</div>';
+
+        echo '</div>';
+    }
+}
+
+
+@endphp
+
+
+@if ($grupoImplemento->count() > 0)
+    @php
+        // Obtener productos únicos por ID
+        $productosUnicos = $grupoImplemento->pluck('producto')->unique('id');
+    @endphp
+    
+    
+
+           
+
+    <div class="row mt-3">
+        @foreach ($productosUnicos as $producto)
+            @if ($producto->img || $producto->img_1 || $producto->img_2 || $producto->img_3)
+                @if ($loop->first)
+                   
+                @endif
+                @if ($producto->img)
+                    <div class="col-md-3 mb-3">
+                        
+                        <img src="{{ asset($producto->img) }}" alt="Imagen principal"
+                            class="img-thumbnail w-100 zoom-hover"
+                            onclick="showImageModal('{{ asset($producto->img) }}')">
+                    </div>
+                @endif
+
+                @if ($producto->img_1)
+                    <div class="col-md-3 mb-3">
+                       
+                        <img src="{{ asset($producto->img_1) }}" alt="Imagen 2"
+                            class="img-thumbnail w-100 zoom-hover"
+                            onclick="showImageModal('{{ asset($producto->img_1) }}')">
+                    </div>
+                @endif
+
+                @if ($producto->img_2)
+                    <div class="col-md-3 mb-3">
+                        
+                        <img src="{{ asset($producto->img_2) }}" alt="Imagen 3"
+                            class="img-thumbnail w-100 zoom-hover"
+                            onclick="showImageModal('{{ asset($producto->img_2) }}')">
+                    </div>
+                @endif
+
+                @if ($producto->img_3)
+                    <div class="col-md-3 mb-3">
+                       
+                        <img src="{{ asset($producto->img_3) }}" alt="Imagen 4"
+                            class="img-thumbnail w-100 zoom-hover"
+                            onclick="showImageModal('{{ asset($producto->img_3) }}')">
+                    </div>
+                @endif
+            @endif
+        @endforeach
+    </div>
+
+    @php
+        // Renderizamos los productos agrupados
+        renderGrupoProductosDiv($grupoImplemento, 'Implementos', $totalCantidad, $subtotal, $ivaTotal, $totalGeneral);
+    @endphp
+@endif
+
+
+
+
+   
+
+        @if ($grupoComponente->count())
+            
+            @php renderGrupoProductosDiv($grupoComponente, 'Componentes', $totalCantidad, $subtotal, $ivaTotal, $totalGeneral); @endphp
+
         @endif
 
-        @if ($grupoComponente->count() > 0)
-            <h5 class="mt-4">Componentes</h5>
-            @php renderTable($grupoComponente, false, $totalCantidad, $subtotal, $ivaTotal, $totalGeneral); @endphp
+        @if ($grupoAccesorio->count())
+            
+            @php renderGrupoProductosDiv($grupoAccesorio, 'Accesorios', $totalCantidad, $subtotal, $ivaTotal, $totalGeneral); @endphp
+
         @endif
 
-        @if ($grupoAccesorio->count() > 0)
-            <h5 class="mt-4">Accesorios</h5>
-            @php renderTable($grupoAccesorio, true, $totalCantidad, $subtotal, $ivaTotal, $totalGeneral); @endphp
+@php
+    $totalCantidadImplementos = $grupoImplemento->sum('cantidad');
+@endphp
+
+<div class="card mt-4">
+    <div class="card-body text-end">
+        <h5 class="mb-0">Totales Generales</h5>
+        <p><strong>Moneda:</strong>
+            {{ $pedido->moneda->moneda ?? 'No definida' }}
+            @if ($pedido->moneda && $pedido->moneda->desc_ampliada)
+                - {{ $pedido->moneda->desc_ampliada }}
+            @endif
+        </p>
+        @if ($pedido->cotizacion)
+            <p><strong>Cotización:</strong> ${{ number_format($pedido->cotizacion, 2, ',', '.') }}</p>
         @endif
+        <p><strong>Cantidad Total (Implementos):</strong> {{ $totalCantidadImplementos }}</p>
+        <p><strong>Subtotal:</strong> USD {{ number_format($subtotal, 2, ',', '.') }}</p>
+        <p><strong>Importe IVA:</strong> USD {{ number_format($ivaTotal, 2, ',', '.') }}</p>
+        <p><strong>Total:</strong> USD {{ number_format($totalGeneral, 2, ',', '.') }}</p>
+@if ($pedido->cotizacion && $pedido->cotizacion != 1)
+    <p>
+        <strong>Total en Pesos:</strong>
+        ${{ number_format($totalGeneral * $pedido->cotizacion, 2, ',', '.') }}
+    </p>
+@endif
+    </div>
+</div>
 
-        <div class="card mt-4">
-            <div class="card-body text-end">
-                <h5 class="mb-0">Totales Generales</h5>
-                <p><strong>Moneda:</strong>
-                    {{ $pedido->moneda->moneda ?? 'No definida' }}
-                    @if ($pedido->moneda && $pedido->moneda->desc_ampliada)
-                        - {{ $pedido->moneda->desc_ampliada }}
-                    @endif
-                </p>
-                <p><strong>Cantidad de productos:</strong> {{ $totalCantidad }}</p>
-                <p><strong>Subtotal:</strong> ${{ number_format($subtotal, 2, ',', '.') }}</p>
-                <p><strong>Importe IVA:</strong> ${{ number_format($ivaTotal, 2, ',', '.') }}</p>
-                <p><strong>Total:</strong> ${{ number_format($totalGeneral, 2, ',', '.') }}</p>
-            </div>
-        </div>
-
-        <div class="mt-4">
+        
+         </div>
+        
+                <div class="mt-4">
             <a href="{{ route('pedidos.edit', $pedido->id) }}" class="btn btn-warning">
                 <i class="fas fa-edit"></i> Editar
             </a>
@@ -315,16 +378,11 @@
                     <i class="fab fa-whatsapp"></i> Compartir con Cliente
                 </a>
             @endif
-            <!--
-                                <a href="{{ route('pedidos.publico', $pedido->token) }}">
-                                    {{ route('pedidos.publico', $pedido->token) }}
-                                </a>
-
-                                -->
 
         </div>
-    </div>
 
+    </div>
+    
     <script>
         function printPedido() {
             const header = document.querySelector('header');
@@ -347,10 +405,10 @@
             }, 1000);
         }
     </script>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+    
     <script>
         function showImageModal(src) {
             document.getElementById('modalImage').src = src;

@@ -2,35 +2,21 @@
 
 namespace Database\Seeders;
 
-use App\Models\Role;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 
-class RoleSeeder extends Seeder
+class RolesTableSeeder extends Seeder
 {
-    public function run(): void
+    public function run()
     {
-        Role::create([
-            'id' => Role::ADMIN,
-            'name' => 'Admin',
-            'description' => 'Administrador del sistema'
-        ]);
+        // Limpia la tabla (ojo: elimina todos los roles existentes)
+        DB::table('roles')->truncate();
 
-        Role::create([
-            'id' => Role::EDITOR,
-            'name' => 'Editor',
-            'description' => 'Editor de contenido'
-        ]);
-
-        Role::create([
-            'id' => Role::GUEST,
-            'name' => 'Invitado',
-            'description' => 'Usuario invitado'
-        ]);
-
-        Role::create([
-            'id' => Role::GUEST,
-            'name' => 'Cliente',
-            'description' => 'Usuario Cliente'
+        DB::table('roles')->insert([
+            ['id' => 1, 'name' => 'Administrador', 'description' => '...', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 2, 'name' => 'Editor', 'description' => '...', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 3, 'name' => 'Invitado', 'description' => '...', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }
+

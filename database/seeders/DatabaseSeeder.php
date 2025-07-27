@@ -15,8 +15,28 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            RoleSeeder::class,
-           PedidoSeeder::class,
+        ChatSeeder::class,
+        ChatMessageSeeder::class,
+        LogSeeder::class,
+        ParameterSeeder::class,
+        RolesTableSeeder::class,
+        CategoriaTableSeeder::class,
+        UsersTableSeeder::class,
+        FormaPagosTableSeeder::class,
+        ColoresTableSeeder::class,
+        FamiliasTableSeeder::class,
+        MonedasTableSeeder::class,
+        PaisTableSeeder::class,
+        ProvinciaTableSeeder::class,
+        LocalidadTableSeeder::class,
+        FletesTableSeeder::class,
+        TiposTableSeeder::class,
+        TipoPedidosTableSeeder::class,
+        UnidadesTableSeeder::class,
+        ProductosTableSeeder::class,
+        CotizacionesTableSeeder::class,
+        SubCotizacionesTableSeeder::class,
+
         ]);
 
     }

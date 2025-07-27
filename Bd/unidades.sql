@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 11-05-2025 a las 17:12:02
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
+-- Servidor: localhost:3306
+-- Tiempo de generación: 20-07-2025 a las 17:48:10
+-- Versión del servidor: 10.6.20-MariaDB-cll-lve
+-- Versión de PHP: 8.1.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `bd_cotizacion`
+-- Base de datos: `comofras_bd_cotizacion`
 --
 
 -- --------------------------------------------------------
@@ -39,7 +39,7 @@ CREATE TABLE `unidades` (
 --
 
 INSERT INTO `unidades` (`id`, `nombre`, `created_at`, `updated_at`) VALUES
-(1, 'Unidad', '2025-05-11 15:11:09', NULL);
+(1, 'Unidad', '2025-05-11 18:11:09', NULL);
 
 --
 -- Índices para tablas volcadas
@@ -50,16 +50,6 @@ INSERT INTO `unidades` (`id`, `nombre`, `created_at`, `updated_at`) VALUES
 --
 ALTER TABLE `unidades`
   ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `unidades`
---
-ALTER TABLE `unidades`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

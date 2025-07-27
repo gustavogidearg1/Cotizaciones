@@ -1,0 +1,878 @@
+@extends('layouts.app')
+
+<style>
+    .familia-item {
+        transition: all 0.3s ease;
+    }
+
+    .familia-item:hover {
+        transform: scale(1.05);
+    }
+
+    .border-primary {
+        border: 2px solid #0d6efd !important;
+    }
+
+    /* Estilos para el modal de confirmación */
+    #debugModal .modal-xl {
+        max-width: 90%;
+    }
+
+    #debugModal .card {
+        border: 1px solid #dee2e6;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+
+    #debugModal .card-header {
+        padding: 0.75rem 1.25rem;
+        font-weight: 600;
+    }
+
+    #debugModal .table {
+        margin-bottom: 0;
+        font-size: 0.875rem;
+    }
+
+    #debugModal .table th {
+        background-color: #f8f9fa;
+        white-space: nowrap;
+    }
+
+    #debugModal pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 0.25rem;
+        border: 1px solid #dee2e6;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    /* Mejora para las tablas de datos */
+    #debugFormTable td {
+        padding: 0.5rem;
+        vertical-align: top;
+    }
+
+    #debugFormTable tr td:first-child {
+        font-weight: 600;
+        color: #495057;
+        white-space: nowrap;
+    }
+
+    #debugProductsTable tr:hover {
+        background-color: rgba(0, 123, 255, 0.05);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        #debugModal .modal-xl {
+            max-width: 95%;
+        }
+
+        #debugModal .row {
+            flex-direction: column;
+        }
+
+        #debugModal .col-md-6 {
+            width: 100%;
+        }
+    }
+</style>
+
+@section('content')
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <div class="container">
+        <h1>Crear nuevo Cotizacion o Pedido</h1>
+
+        <form action="{{ route('pedidos.store') }}" method="POST" id="pedido-form" enctype="multipart/form-data">
+            @csrf
+
+            <!-- Formulario principal -->
+            <div class="card mb-4">
+                <div class="card-header">Datos del Pedido</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="cliente">Nombre del Cliente<strong style="color: red;">*</strong></label>
+                                    <input type="text" class="form-control" id="cliente" name="cliente" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="direccion">Dirección<strong style="color: red;">*</strong></label>
+                                    <input type="text" class="form-control" id="direccion" name="direccion" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="localidad_id">Localidad<strong style="color: red;">*</strong></label>
+       <select class="form-control" id="localidad_id" name="localidad_id" required>
+    @foreach ($localidades as $localidad)
+        <option value="{{ $localidad->id }}" {{ $localidad->id == 1 ? 'selected' : '' }}>
+            {{ $localidad->nombre }}
+        </option>
+    @endforeach
+</select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="provincia_id">Provincia<strong style="color: red;">*</strong></label>
+<select class="form-control" id="provincia_id" name="provincia_id" required>
+    @foreach ($provincias as $provincia)
+        <option value="{{ $provincia->id }}" {{ $provincia->id == 1 ? 'selected' : '' }}>
+            {{ $provincia->provincia }}
+        </option>
+    @endforeach
+</select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="pais_id">País<strong style="color: red;">*</strong></label>
+                                    <select class="form-control" id="pais_id" name="pais_id">
+                                        @foreach ($paises as $pais)
+                                            <option value="{{ $pais->id }}" {{ $pais->id == 1 ? 'selected' : '' }}>
+                                                {{ $pais->pais }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="telefono">Teléfono<strong style="color: red;">*</strong></label>
+                                    <input type="text" class="form-control" id="telefono" name="telefono" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="email">Email<strong style="color: red;">*</strong></label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="cuit">CUIT o DNI<strong style="color: red;">*</strong></label>
+                                    <input type="text" class="form-control" id="cuit" name="cuit" maxlength="11"
+                                        required>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="tipo_pedido_id">Tipo de Pedido<strong style="color: red;">*</strong></label>
+                                <select class="form-control" id="tipo_pedido_id" name="tipo_pedido_id" required>
+                                    <option value="">Seleccione un tipo</option>
+                                    @foreach ($tipoPedidos as $tipo)
+                                        <option value="{{ $tipo->id }}" {{ $tipo->id == 1 ? 'selected' : '' }}>
+                                            {{ $tipo->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="fecha_necesidad">Fecha necesidad a partir de la <strong
+                                        style="color: red;">orden de compra *</strong></label>
+                                <input type="date" class="form-control" id="fecha_necesidad" name="fecha_necesidad"
+                                    value="{{ \Carbon\Carbon::now()->addWeeks(3)->format('Y-m-d') }}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="forma_pago_id">Forma de Pago<strong style="color: red;">*</strong></label>
+                                <select class="form-control" id="forma_pago_id" name="forma_pago_id" required>
+                                    <option value="">Seleccione forma de pago</option>
+                                    @foreach ($formasPago as $formaPago)
+                                        <option value="{{ $formaPago->id }}">{{ $formaPago->nombre }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="diferencia">Diferencia (%)</label>
+                                <input type="number" step="0.01" class="form-control" id="diferencia"
+                                    name="diferencia" value="{{ old('diferencia', $pedido->diferencia ?? 0) }}">
+                                <small class="text-muted">Este campo solo se aplica a productos de tipo Implemento u 
+                                    opcional.</small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="bonificacion">Descuento (%)<strong style="color: red;">*</strong></label>
+                                <input type="number" step="0.01" min="0" max="100" class="form-control"
+                                    id="bonificacion" name="bonificacion" value="0" required>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+
+
+                    <div class="row">
+
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="moneda_id" class="form-label">Moneda del Pedido</label>
+                                <select name="moneda_id" class="form-select" required>
+                                    <option value="">Seleccione una moneda</option>
+                                    @foreach ($monedas as $moneda)
+                                        <option value="{{ $moneda->id }}"
+                                            {{ old('moneda_id', 1) == $moneda->id ? 'selected' : '' }}>
+                                            {{ $moneda->moneda }}
+                                        </option>
+                                    @endforeach
+
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="forma_entrega">Forma de Entrega<strong style="color: red;">*</strong></label>
+                                <input type="text" class="form-control" id="forma_entrega" name="forma_entrega"
+                                    value="Ex-works (EXW) - Retiro desde planta" required>
+                            </div>
+                        </div>
+                        
+
+
+
+
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="flete_id">Flete</label>
+                                <select class="form-control" id="flete_id" name="flete_id">
+                                    <option value="">Seleccione flete</option>
+                                    @foreach ($fletes as $flete)
+                                        <option value="{{ $flete->id }}"{{ $flete->id == 1 ? 'selected' : '' }}>
+                                            {{ $flete->nombre }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="observacion">Observaciones</label>
+                        <textarea class="form-control" id="observacion" name="observacion" rows="2"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="imagen">Imagen Principal</label>
+                                <input type="file" class="form-control" id="imagen" name="imagen"
+                                    accept="image/*">
+                                <small class="form-text text-muted">Formatos aceptados: jpeg, png, jpg, gif. Tamaño máximo:
+                                    2MB</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="imagen_2">Imagen Secundaria</label>
+                                <input type="file" class="form-control" id="imagen_2" name="imagen_2"
+                                    accept="image/*">
+                                <small class="form-text text-muted">Formatos aceptados: jpeg, png, jpg, gif. Tamaño máximo:
+                                    2MB</small>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <h2><strong>Implemento</strong></h2>
+            <!-- Sección de Productos Implementos -->
+            <div class="card mb-4">
+                <div class="card-header">Productos</div>
+                <div class="card-body">
+                    <div class="row mb-4 familias-container" data-seccion="implementos">
+                        @foreach ($familias->whereBetween('id', [1, 6]) as $familia)
+                            @if ($familia->imagen_principal)
+                                <div class="col-md-2 mb-3 familia-item" data-familia-id="{{ $familia->id }}"
+                                    style="cursor: pointer;">
+                                    <img src="{{ asset('storage/' . $familia->imagen_principal) }}"
+                                        alt="{{ $familia->nombre }}" class="img-fluid img-thumbnail">
+                                    <p class="text-center mt-2">{{ $familia->nombre }}</p>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+
+                    <div id="productos-implementos-container" class="productos-container" style="display: none;">
+                        <div class="productos-familia-container"></div>
+                        <button type="button" class="btn btn-secondary mt-3 agregar-producto"
+                            data-seccion="implementos">
+                            <i class="fas fa-plus"></i> Agregar Producto
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fin Sección de Productos Implementos -->
+            <h2><strong>Opcionales</strong></h2>
+            <!-- Sección de Neumáticos y Ruedas -->
+            <div class="card mb-4">
+                <div class="card-header">Camisas, Diferencias de ruedas, extenciones, etc...</div>
+                <div class="card-body">
+                    <div class="row mb-4 familias-container" data-seccion="neumaticos">
+                        @foreach ($familias->whereBetween('id', [7]) as $familia)
+                            @if ($familia->imagen_principal)
+                                <div class="col-md-2 mb-3 familia-item" data-familia-id="{{ $familia->id }}"
+                                    style="cursor: pointer;">
+                                    <img src="{{ asset('storage/' . $familia->imagen_principal) }}"
+                                        alt="{{ $familia->nombre }}" class="img-fluid img-thumbnail">
+                                    <p class="text-center mt-2">{{ $familia->nombre }}</p>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+
+                    <div id="productos-neumaticos-container" class="productos-container" style="display: none;">
+                        <div class="productos-familia-container"></div>
+                        <button type="button" class="btn btn-secondary mt-3 agregar-producto" data-seccion="neumaticos">
+                            <i class="fas fa-plus"></i> Agregar Producto
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!--Fin Sección de Neumáticos Ruedas -->
+
+
+            <!-- Sección de Balanza, cámaras y otros -->
+            <div class="card mb-4">
+                <h2><strong>Accesorios</strong></h2>
+                <div class="card-header">Neumaticos, Ruedas y Accesorios</div>
+                <div class="card-body">
+                    <div class="row mb-4 familias-container" data-seccion="balanza">
+                        @foreach ($familias->whereBetween('id', [8]) as $familia)
+                            @if ($familia->imagen_principal)
+                                <div class="col-md-2 mb-3 familia-item" data-familia-id="{{ $familia->id }}"
+                                    style="cursor: pointer;">
+                                    <img src="{{ asset('storage/' . $familia->imagen_principal) }}"
+                                        alt="{{ $familia->nombre }}" class="img-fluid img-thumbnail">
+                                    <p class="text-center mt-2">{{ $familia->nombre }}</p>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+
+                    <div id="productos-balanza-container" class="productos-container" style="display: none;">
+                        <div class="productos-familia-container"></div>
+                        <button type="button" class="btn btn-secondary mt-3 agregar-producto" data-seccion="balanza">
+                            <i class="fas fa-plus"></i> Agregar Producto
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+                <div id="resumen-totales" class="mt-4 card p-3 border">
+    <h5 class="mb-2">Totales Generales</h5>
+    <p><strong>Cantidad total de productos:</strong> <span id="total-cantidad">0</span></p>
+    <p><strong>Subtotal:</strong> $<span id="total-subtotal">0.00</span></p>
+    <p><strong>Importe IVA:</strong> $<span id="total-iva">0.00</span></p>
+    <p><strong>Total:</strong> $<span id="total-general">0.00</span></p>
+</div>
+    
+
+            <!-- Fin Sección de Balanza, cámaras y otros -->
+
+            <!-- Botones de acción -->
+            <div class="form-group mb-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Guardar Cotización
+                </button>
+
+
+
+                <a href="{{ route('pedidos.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </form>
+
+        <!-- Spinner grande centrado en toda la pantalla -->
+        <div id="spinner"
+            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+background-color: rgba(255, 255, 255, 0.8); z-index: 9999; flex-direction: column;
+justify-content: center; align-items: center;">
+            <div class="spinner-border text-primary" role="status" style="width: 5rem; height: 5rem;">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="mt-3 fs-4">Enviando pedido, por favor espere...</p>
+        </div>
+
+    </div>
+
+    <!-- Template único para productos (oculto) -->
+    <template id="producto-template">
+    <div class="producto-item mb-3 p-3 border rounded position-relative">
+        <button type="button" class="btn btn-danger btn-sm mb-2 btn-eliminar-producto position-absolute top-0 end-0 m-2">
+            <i class="fas fa-trash"></i>
+        </button>
+
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label>Producto*</label>
+                <select class="form-select producto-select" name="productos[TEMPLATE_INDEX][producto_id]" required>
+                    <option value="">Seleccione un producto</option>
+                    @foreach ($productos as $producto)
+                        <option value="{{ $producto->id }}"
+                            data-precio="{{ $producto->precio ?? 0 }}"
+                            data-moneda="{{ $producto->moneda_id }}"
+                            data-familia="{{ $producto->familia_id }}">
+                            {{ $producto->nombre }} ({{ $producto->codigo }})
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <label>Color</label>
+                <select class="form-select color-select" name="productos[TEMPLATE_INDEX][color_id]">
+                    <option value="">Seleccione</option>
+                    @foreach ($colores as $color)
+                        <option value="{{ $color->id }}">{{ $color->nombre }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <label>Moneda*</label>
+                <select class="form-select moneda-select" name="productos[TEMPLATE_INDEX][moneda_id]" required>
+                    <option value="">Seleccione</option>
+                    @foreach ($monedas as $moneda)
+                        <option value="{{ $moneda->id }}">{{ $moneda->moneda }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <label>Cantidad*</label>
+                <input type="number" min="1" class="form-control cantidad-input"
+                    name="productos[TEMPLATE_INDEX][cantidad]" value="1" required>
+            </div>
+
+            <div class="col-md-2">
+                <label>Precio*</label>
+                <input type="number" step="0.01" min="0" class="form-control precio-input"
+                    name="productos[TEMPLATE_INDEX][precio]" value="0.00" required>
+            </div>
+            
+                </div>
+
+<div class="row g-3">
+    
+                <div class="col-md-4">
+                <label>Diferencia (%)+/-</label>
+                <input type="number" step="0.01" class="form-control diferencia-pago-input"
+                    name="productos[TEMPLATE_INDEX][diferencia]" value="0.00">
+            </div>
+
+            <div class="col-md-2">
+                <label>Desc. 1 (%)</label>
+                <input type="number" step="0.01" class="form-control descuento-porcentaje"
+                    name="productos[TEMPLATE_INDEX][descuento]" value="0.00">
+            </div>
+
+            <div class="col-md-2">
+                <label>Desc. 2 (%)</label>
+                <input type="number" step="0.01" class="form-control descuento-2-input"
+                    name="productos[TEMPLATE_INDEX][descuento_2]" value="0.00">
+            </div>
+
+            <div class="col-md-2">
+                <label>Desc. 3 (%)</label>
+                <input type="number" step="0.01" class="form-control descuento-3-input"
+                    name="productos[TEMPLATE_INDEX][descuento_3]" value="0.00">
+            </div>
+
+            <div class="col-md-2">
+                <label>Desc. 4 (%)</label>
+                <input type="number" step="0.01" class="form-control descuento-4-input"
+                    name="productos[TEMPLATE_INDEX][descuento_4]" value="0.00">
+            </div>
+            
+                 </div>
+     
+ <div class="row g-3">
+
+            <div class="col-md-3">
+                <label>Subtotal</label>
+                <input type="text" class="form-control subtotal-input" readonly>
+            </div>
+
+
+            <div class="col-md-3">
+                <label>IVA (%) *</label>
+                <input type="number" step="0.01" min="0" max="100" class="form-control iva-input"
+                    name="productos[TEMPLATE_INDEX][iva]" value="10.50" required>
+            </div>
+
+
+            <div class="col-md-3">
+                <label>Importe IVA</label>
+                <input type="text" class="form-control iva-monto-input" readonly>
+            </div>
+
+            <div class="col-md-3">
+                <label>Total</label>
+                <input type="text" class="form-control total-input" readonly>
+            </div>
+            
+                 </div>
+
+<div class="row g-3">
+    
+                <div class="col-md-6">
+                <label>Forma de Pago</label>
+                <select class="form-select" name="productos[TEMPLATE_INDEX][forma_pago_id]">
+                    <option value="">Seleccione</option>
+                    @foreach ($formasPago as $formaPago)
+                        <option value="{{ $formaPago->id }}">{{ $formaPago->nombre }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label>Detalle</label>
+                <input type="text" class="form-control" name="productos[TEMPLATE_INDEX][detalle]" maxlength="255">
+            </div>
+            
+
+
+        </div>
+    </div>
+</template>
+
+
+
+    
+@endsection
+
+@section('scripts')
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+   <script>
+    $(document).ready(function () {
+        let productoCounters = {
+            implementos: 0,
+            neumaticos: 0,
+            balanza: 0
+        };
+
+        const familiasSinColor = [7, 8];
+        const familiasAccesorios = [8];
+
+        const familiaPorProducto = {
+            @foreach ($productos as $producto)
+                {{ $producto->id }}: {{ $producto->familia_id }},
+            @endforeach
+        };
+
+        let familiasSeleccionadas = {
+            implementos: null,
+            neumaticos: null,
+            balanza: null
+        };
+
+        let productosPorFamilia = {
+            implementos: [],
+            neumaticos: [],
+            balanza: []
+        };
+
+        function calcularSubtotal(productoItem) {
+            const selectProducto = $(productoItem).find('.producto-select');
+            const productoId = parseInt(selectProducto.val());
+            if (!productoId) return;
+
+            const familiaId = familiaPorProducto[productoId];
+            const esAccesorio = familiasAccesorios.includes(familiaId);
+
+            const precio = parseFloat($(productoItem).find('.precio-input').val()) || 0;
+            const cantidad = parseInt($(productoItem).find('.cantidad-input').val()) || 0;
+            const iva = parseFloat($(productoItem).find('.iva-input').val()) || 0;
+
+            const bonificacionGlobal = parseFloat($('#bonificacion').val()) || 0;
+            const diferenciaGlobal = parseFloat($('#diferencia').val()) || 0;
+
+            const d1Input = $(productoItem).find('.descuento-porcentaje');
+            const d2Input = $(productoItem).find('.descuento-2-input');
+            const d3Input = $(productoItem).find('.descuento-3-input');
+            const d4Input = $(productoItem).find('.descuento-4-input');
+            const difInput = $(productoItem).find('.diferencia-pago-input');
+
+            let d1 = esAccesorio ? 0 : parseFloat(d1Input.val()) || 0;
+            let d2 = esAccesorio ? 0 : parseFloat(d2Input.val()) || 0;
+            let d3 = esAccesorio ? 0 : parseFloat(d3Input.val()) || 0;
+            let d4 = esAccesorio ? 0 : parseFloat(d4Input.val()) || 0;
+            let diferencia = esAccesorio ? 0 : parseFloat(difInput.val()) || 0;
+
+            if (!esAccesorio) {
+                if (!d1Input.val() || parseFloat(d1Input.val()) === 0) {
+                    d1 = bonificacionGlobal;
+                    d1Input.val(d1.toFixed(2));
+                }
+                if (!difInput.val() || parseFloat(difInput.val()) === 0) {
+                    diferencia = diferenciaGlobal;
+                    difInput.val(diferencia.toFixed(2));
+                }
+            }
+
+            let neto = precio * (1 + diferencia / 100);
+            [d1, d2, d3, d4].forEach(desc => neto *= (1 - desc / 100));
+
+            const subtotal = cantidad * neto;
+            const ivaMonto = subtotal * (iva / 100);
+            const total = subtotal + ivaMonto;
+
+            $(productoItem).find('.subtotal-input').val(subtotal.toFixed(2));
+            $(productoItem).find('.iva-monto-input').val(ivaMonto.toFixed(2));
+            $(productoItem).find('.total-input').val(total.toFixed(2));
+
+            calcularTotalesGenerales();
+        }
+
+        function agregarProducto(seccion) {
+            const contenedor = $(`#productos-${seccion}-container .productos-familia-container`);
+            const familiaId = familiasSeleccionadas[seccion];
+
+            if (!familiaId) {
+                alert('Primero seleccione una familia haciendo clic en una imagen de familia');
+                return;
+            }
+
+            const productos = productosPorFamilia[seccion];
+            if (!productos || productos.length === 0) {
+                alert('No hay productos disponibles para esta familia');
+                return;
+            }
+
+            const template = $('#producto-template').html();
+            const html = template.replace(/TEMPLATE_INDEX/g, `${seccion}_${productoCounters[seccion]}`);
+            const $newProduct = $(html);
+
+            const formaPagoPedido = $('#forma_pago_id').val();
+            $newProduct.find('select[name*="[forma_pago_id]"]').val(formaPagoPedido);
+
+            const $select = $newProduct.find('.producto-select');
+            $select.empty().append('<option value="">Seleccione un producto</option>');
+            productos.forEach(producto => {
+                $select.append(`<option value="${producto.id}">${producto.nombre} (${producto.codigo})</option>`);
+            });
+
+            contenedor.append($newProduct);
+            productoCounters[seccion]++;
+            calcularSubtotal($newProduct);
+        }
+
+        $(document).on('click', '.familia-item', function () {
+            const familiaId = $(this).data('familia-id');
+            const seccion = $(this).closest('.familias-container').data('seccion');
+
+            $(this).closest('.familias-container').find('.familia-item').removeClass('border-primary');
+            $(this).addClass('border border-primary');
+
+            if (familiasSeleccionadas[seccion] === familiaId) return;
+
+            familiasSeleccionadas[seccion] = familiaId;
+            $(`#productos-${seccion}-container`).show().find('.productos-familia-container').empty();
+            productoCounters[seccion] = 0;
+
+            $.get('/productos-por-familia/' + familiaId)
+                .done(function (productos) {
+                    productosPorFamilia[seccion] = productos;
+                    agregarProducto(seccion);
+                })
+                .fail(function (error) {
+                    console.error('Error al cargar productos:', error);
+                    alert('Error al cargar productos. Por favor intente nuevamente.');
+                });
+        });
+
+        $(document).on('click', '.agregar-producto', function () {
+            const seccion = $(this).data('seccion');
+            agregarProducto(seccion);
+        });
+
+        $(document).on('change', '.producto-select', function () {
+            const productoId = $(this).val();
+            const productoItem = $(this).closest('.producto-item');
+
+            productoItem.find('.precio-input').val(0);
+            productoItem.find('.moneda-select').val('');
+
+            if (productoId) {
+                $.get(`/pedidos/last-price/${productoId}`)
+                    .done(function (data) {
+                        if (data.precio) productoItem.find('.precio-input').val(data.precio);
+                        if (data.moneda_id) productoItem.find('.moneda-select').val(data.moneda_id);
+                        calcularSubtotal(productoItem);
+                    })
+                    .fail(function () {
+                        console.log('No se encontró precio histórico para este producto');
+                        calcularSubtotal(productoItem);
+                    });
+            } else {
+                calcularSubtotal(productoItem);
+            }
+        });
+
+        $(document).on('input change',
+            '.producto-select, .precio-input, .cantidad-input, .iva-input, .moneda-select, ' +
+            '.descuento-porcentaje, .descuento-2-input, .descuento-3-input, .descuento-4-input, .diferencia-pago-input',
+            function () {
+                calcularSubtotal($(this).closest('.producto-item'));
+            }
+        );
+
+        $('#bonificacion').on('change', function () {
+            $('.producto-item').each(function () {
+                calcularSubtotal($(this));
+            });
+        });
+
+        $('#forma_pago_id').on('change', function () {
+            const formaPagoId = $(this).val();
+            if (formaPagoId) {
+                $.get(`/forma-pago/${formaPagoId}/diferencia`, function (data) {
+                    if (data.diferencia !== undefined) {
+                        $('#diferencia').val(data.diferencia).trigger('input');
+                    }
+                });
+
+                $('.producto-item').each(function () {
+                    const select = $(this).find('select[name*="[forma_pago_id]"]');
+                    if (!select.val()) {
+                        select.val(formaPagoId);
+                    }
+                });
+            }
+        });
+
+        function calcularTotalesGenerales() {
+            let totalCantidad = 0;
+            let totalSubtotal = 0;
+            let totalIva = 0;
+            let totalGeneral = 0;
+
+            document.querySelectorAll('.producto-item').forEach(item => {
+                const cantidad = parseFloat(item.querySelector('.cantidad-input')?.value || 0);
+                const subtotal = parseFloat(item.querySelector('.subtotal-input')?.value || 0);
+                const iva = parseFloat(item.querySelector('.iva-monto-input')?.value || 0);
+                const total = parseFloat(item.querySelector('.total-input')?.value || 0);
+
+                totalCantidad += cantidad;
+                totalSubtotal += subtotal;
+                totalIva += iva;
+                totalGeneral += total;
+            });
+
+            document.getElementById('total-cantidad').textContent = totalCantidad;
+            document.getElementById('total-subtotal').textContent = totalSubtotal.toFixed(2);
+            document.getElementById('total-iva').textContent = totalIva.toFixed(2);
+            document.getElementById('total-general').textContent = totalGeneral.toFixed(2);
+        }
+    });
+</script>
+
+
+    <!-- Modal para ver datos del formulario -->
+    <div class="modal fade" id="debugModal" tabindex="-1" aria-labelledby="debugModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg"> <!-- Cambiado de modal-xl a modal-lg para que no sea tan ancho -->
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="debugModalLabel">
+                        <i class="fas fa-check-circle me-2"></i>Confirmación de Pedido
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- UNA SOLA COLUMNA -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Datos Principales</h6>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-sm table-striped mb-0" id="debugFormTable">
+                                    <!-- Los datos se insertarán aquí via JS -->
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0"><i class="fas fa-boxes me-2"></i>Productos Seleccionados</h6>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-sm mb-0" id="debugProductsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Color</th>
+                                            <th>Moneda</th>
+                                            <th>Cantidad</th>
+                                            <th>Precio</th>
+                                            <th>Descuento (%)</th>
+                                            <th>Diferencia de Pago (%)</th>
+                                            <th>Subtotal</th>
+                                            <th>IVA (%)</th>
+                                            <th>Importe IVA</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Los datos se insertarán aquí via JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </button>
+                    <button type="button" class="btn btn-primary" id="confirmSubmit">
+                        <i class="fas fa-check me-2"></i>Confirmar Pedido
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection

@@ -67,4 +67,25 @@ class SubCotizacionController extends Controller
         return redirect()->route('cotizaciones.show', $cotizacion)
             ->with('success', 'Producto eliminado de la cotización exitosamente.');
     }
+    
+    public function actualizarDesdeIndex(Request $request, $id)
+{
+    $sub = SubCotizacion::findOrFail($id);
+
+    $request->validate([
+        'precio' => 'required|numeric|min:0',
+        'precio_bonificado' => 'required|numeric|min:0',
+        'detalle' => 'nullable|max:255',
+    ]);
+
+    $sub->update([
+        'precio' => $request->precio,
+        'precio_bonificado' => $request->precio_bonificado,
+        'detalle' => $request->detalle,
+    ]);
+
+    return back()->with('success', 'Producto actualizado correctamente.');
+}
+
+
 }

@@ -10,14 +10,27 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="mb-0"><i class="bi bi-cart me-2"></i>Listado de Cotizaciones / Pedidos</h1>
-            <a href="{{ route('pedidos.create') }}" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> Nuevo Cotizacion
-            </a>
-        </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0"><i class="bi bi-cart me-2"></i>Listado de Cotizaciones / Pedidos</h1>
+    <div class="d-flex gap-2">
+        <a href="{{ route('cotizaciones.buscar_producto') }}" class="btn btn-info">
+            <i class="bi bi-search"></i> Buscar Producto
+        </a>
+        
+        
+                            <a href="{{ route('pedidos.create') }}" class="btn btn-success">
+                                <i class="bi bi-plus-circle"></i> Nuevas Cotizaciones
+                            </a>
+
+    </div>
+</div>
+
 
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show">
@@ -38,10 +51,18 @@
                                     <button class="btn btn-outline-secondary" type="submit">
                                         <i class="bi bi-search"></i>
                                     </button>
+                                    
+
+
                                 </div>
                             </form>
                         </div>
                     </div>
+                    
+
+
+
+
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
@@ -73,31 +94,34 @@
                                         @endif
                                     </td>
                                     <td>{{ $pedido->user->name ?? 'Sin asignar' }}</td>
-                                    <td>
-                                        <!-- ... tus botones de acciones ... -->
-                                        <div class="d-flex justify-content-end gap-2">
-                                            <a href="{{ route('pedidos.show', $pedido->id) }}"
-                                                class="btn btn-sm btn-primary" title="Ver detalles">
-                                                Ver
-                                            </a>
+<td>
+    <div class="d-flex justify-content-end gap-2">
+        <a href="{{ route('pedidos.show', $pedido->id) }}"
+            class="btn btn-sm btn-primary" title="Ver detalles">
+            <i class="fas fa-eye me-1"></i> Ver
+        </a>
 
-                                            <a href="{{ route('pedidos.edit', $pedido) }}" class="btn btn-sm btn-warning"
-                                                title="Editar">
-                                                Editar
-                                            </a>
+        <a href="{{ route('pedidos.pdf', $pedido->id) }}"
+            class="btn btn-sm btn-danger" title="Exportar PDF">
+            <i class="fas fa-file-pdf me-1"></i> PDF
+        </a>
 
+        <a href="{{ route('pedidos.edit', $pedido) }}"
+            class="btn btn-sm btn-warning" title="Editar">
+            <i class="fas fa-edit me-1"></i> Editar
+        </a>
 
-                                            <form action="{{ route('pedidos.destroy', $pedido) }}" method="POST"
-                                                onsubmit="return confirm('¿Estás seguro de eliminar el registro?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger" title="Eliminar">
-                                                    Eliminar
-                                                    </buttn>
-                                            </form>
-                                        </div>
+        <form action="{{ route('pedidos.destroy', $pedido) }}" method="POST"
+            onsubmit="return confirm('¿Estás seguro de eliminar el registro?')" style="display:inline;">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-sm btn-danger" title="Eliminar">
+                <i class="fas fa-trash-alt me-1"></i> Eliminar
+            </button>
+        </form>
+    </div>
+</td>
 
-                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -109,6 +133,9 @@
             </div>
         </div>
     </div>
+    
+   
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

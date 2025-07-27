@@ -5,18 +5,50 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="mb-0"><i class="bi bi-file-earmark-text me-2"></i>Listado de Cotizaciones</h1>
-            <a href="{{ route('cotizaciones.create') }}" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> Nueva Cotización
-            </a>
-        </div>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0"><i class="bi bi-file-earmark-text me-2"></i>Listado de Cotizaciones</h1>
+    <div class="d-flex gap-2">
+        <a href="{{ route('cotizaciones.buscar_producto') }}" class="btn btn-info">
+            <i class="bi bi-search"></i> Buscar Producto
+        </a>
+        <a href="{{ route('cotizaciones.duplicar.seleccionar') }}" class="btn btn-outline-primary me-2">
+            <i class="fas fa-copy"></i> Aumento Lista (%)
+        </a>
+        <a href="{{ route('cotizaciones.create') }}" class="btn btn-success">
+            <i class="fas fa-plus"></i> Nueva Cotización
+        </a>
+        
+        <a href="{{ route('cotizaciones.editar_precios') }}" class="btn btn-warning">
+    <i class="bi bi-pencil-square"></i> Modificar Costo del Producto
+</a>
 
+        
+    <a href="{{ route('cotizaciones.importar.form') }}" class="btn btn-warning">
+    <i class="bi bi-upload"></i> Importar
+    </a>
+    
+ 
+
+        
+    </div>
+</div>
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show">
                 {{ session('success') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+            
+@if (session('errores_importacion') && is_array(session('errores_importacion')))
+    <div class="alert alert-warning">
+        <h5 class="mb-2">⚠️ Se importó la cotización pero hubo errores en algunas filas:</h5>
+        <ul class="mb-0">
+            @foreach (session('errores_importacion') as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+    
         @endif
 
         <div class="card card-dashboard">
@@ -70,9 +102,9 @@
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-sm btn-danger" title="Eliminar">
                                                         Eliminar
-                                                        </buttn>
+                                                       </button>
 
-
+ </form>
                                             </div>
                                     </td>
                                 </tr>
@@ -80,9 +112,30 @@
                         </tbody>
                     </table>
                 </div>
+                
+                <div class="card-footer">
+    {{ $cotizaciones->links('pagination::bootstrap-5') }}
+</div>
+
+
+                
             </div>
         </div>
     </div>
+    
+
+
+    
+    <script>
+    function consultarProducto() {
+        const id = document.getElementById('producto_id').value;
+        if (id) {
+            window.location.href = `/cotizaciones/producto/${id}`;
+        } else {
+            alert("Ingresá un ID de producto");
+        }
+    }
+</script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
