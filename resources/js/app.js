@@ -1,6 +1,7 @@
+import './bootstrap';
 
-import 'bootstrap';
+import Alpine from 'alpinejs';
 
-import '../sass/app.scss'; // Si tu estructura es resources/js/app.js y resources/sass/app.scss
-// O si necesitas subir un nivel más:
-import './../sass/app.scss';
+window.Alpine = Alpine;
+
+Alpine.start();

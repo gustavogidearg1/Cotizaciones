@@ -15,7 +15,7 @@
 
         <!-- Styles / Scripts -->
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-            @vite(['resources/css/app.css', 'resources/js/app.js'])
+            @vite(['resources/sass/app.scss', 'resources/js/app.js'])
             @else
             <link href="{{ asset('css/styles.css') }}" rel="stylesheet">
             @endif
@@ -34,7 +34,7 @@
                             Si ya tienes un usuario y contraseña, por favor
                             <a href="{{ route('login') }}" class="text-blue-600 hover:underline">accede aquí</a>.
                             Si no tienes acceso, solicítalo a
-                            <a href="mailto:industrial@comofrasrl.com.ar" class="text-blue-600 hover:underline">industrial@comofrasrl.com.ar</a>.
+                            <a href="mailto:administracionventas@comofrasrl.com.ar" class="text-blue-600 hover:underline">administracionventas@comofrasrl.com.ar</a>.
                             ¡Gracias!
                         </p>
                     </div>

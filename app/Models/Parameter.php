@@ -2,22 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Parameter extends Model
 {
     use HasFactory;
 
+    use HasFactory;
+
     protected $fillable = [
-        'key',
-        'value',
+        'key', 'value'
     ];
 
-    public static function getValue($key, $default = null)
-    {
-
-        return self::where('key', $key)->value( 'value')?? $default;
+    public static function getValue($key, $default = null){
+        return self::where('key',$key)->value('value') ?? $default;
     }
-
 }

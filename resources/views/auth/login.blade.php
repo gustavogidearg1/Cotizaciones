@@ -1,73 +1,142 @@
 @extends('layouts.app')
 
+@section('title', 'Ingresar')
+
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Login') }}</div>
+<style>
+    .auth-bg {
+        min-height: 70vh;
+        display: grid;
+        place-items: center;
+    }
+    .auth-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,.08);
+        overflow: hidden;
+    }
+    .auth-card .card-header {
+        background: #FF9900; /* tu naranja #fafafa*/
+        color: #fff;
+    }
+    .form-floating > label { color: #6c757d; }
+    .input-icon {
+        position: absolute; left: .75rem; top: 50%; transform: translateY(-50%);
+        pointer-events: none; opacity: .6;
+    }
+    .ps-icon { padding-left: 2.2rem !important; }
+</style>
 
-                <div class="card-body">
-                    <form method="POST" action="{{ route('login') }}">
-                        @csrf
+<div class="auth-bg">
+    <div class="col-11 col-sm-9 col-md-7 col-lg-5">
+        <div class="card auth-card">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                    <img src="{{ asset('images/Isologotipo_con_anclaje_lateral_Negativo_RGB.png') }}" alt="Logo" height="36">
 
-                        <div class="row mb-3">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
-
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
-
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6 offset-md-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-
-                                    <label class="form-check-label" for="remember">
-                                        {{ __('Remember Me') }}
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-0">
-                            <div class="col-md-8 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Login') }}
-                                </button>
-
-                                @if (Route::has('password.request'))
-                                    <a class="btn btn-link" href="{{ route('password.request') }}">
-                                        {{ __('Forgot Your Password?') }}
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                    </form>
                 </div>
+
+                                <div class="d-flex align-items-center gap-2">
+
+                    <span class="fw-semibold">Bienvenido</span>
+                </div>
+
+
+            </div>
+
+            <div class="card-body p-4">
+
+                {{-- Mensaje de estado de sesión (por ejemplo, link de reset enviado) --}}
+                @if (session('status'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('status') }}
+                    </div>
+                @endif
+
+                <form method="POST" action="{{ route('login') }}" id="loginForm" novalidate>
+                    @csrf
+
+                    {{-- Email --}}
+                    <div class="mb-3 position-relative">
+                        <i class="bi bi-envelope input-icon"></i>
+                        <div class="form-floating">
+                            <input id="email" type="email"
+                                   class="form-control ps-icon @error('email') is-invalid @enderror"
+                                   name="email" value="{{ old('email') }}" required autocomplete="email" autofocus
+                                   placeholder="nombre@empresa.com">
+                            <label for="email">Email</label>
+                            @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    {{-- Password --}}
+                    <div class="mb-3 position-relative">
+                        <i class="bi bi-lock input-icon"></i>
+                        <div class="form-floating">
+                            <input id="password" type="password"
+                                   class="form-control ps-icon @error('password') is-invalid @enderror"
+                                   name="password" required autocomplete="current-password"
+                                   placeholder="••••••••">
+                            <label for="password">Contraseña</label>
+                            @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <button type="button" class="btn btn-sm btn-outline-secondary mt-2" id="togglePassword">
+                            <i class="bi bi-eye"></i> Mostrar
+                        </button>
+                    </div>
+
+                    {{-- Remember + Forgot --}}
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="remember" id="remember"
+                                   {{ old('remember') ? 'checked' : '' }}>
+                            <label class="form-check-label" for="remember">Recordarme</label>
+                        </div>
+
+                        @if (Route::has('password.request'))
+                            <a class="link-primary" href="{{ route('password.request') }}">
+                                ¿Olvidaste tu contraseña?
+                            </a>
+                        @endif
+                    </div>
+
+                    {{-- Submit --}}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary" id="btnSubmit">
+                            <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+                            Ingresar
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+            <div class="card-footer text-center small text-muted">
+                © {{ date('Y') }} {{ config('app.name', 'Cotizador') }}
+                <img src="{{ asset('images/ImgLogoCircular-SF.png') }}" alt="Logo" width="30" height="30">
             </div>
         </div>
     </div>
 </div>
+
+{{-- JS: toggle contraseña + spinner al enviar --}}
+<script>
+document.getElementById('togglePassword').addEventListener('click', function () {
+    const pwd = document.getElementById('password');
+    const icon = this.querySelector('i');
+    const isText = pwd.type === 'text';
+    pwd.type = isText ? 'password' : 'text';
+    this.innerHTML = (isText ? '<i class="bi bi-eye"></i> Mostrar' : '<i class="bi bi-eye-slash"></i> Ocultar');
+});
+
+document.getElementById('loginForm').addEventListener('submit', function () {
+    const btn = document.getElementById('btnSubmit');
+    btn.disabled = true;
+    btn.querySelector('.spinner-border').classList.remove('d-none');
+});
+</script>
 @endsection

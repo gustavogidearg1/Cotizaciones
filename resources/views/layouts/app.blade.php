@@ -206,16 +206,42 @@
                                             </a>
                                         </li>
 
+                                                                                <li>
+                                            <a class="dropdown-item" href="{{ route('logs.index') }}">
+                                                <i class="bi bi-geo-alt"></i> Logs
+                                            </a>
+                                        </li>
+
+                                       <li>
+                                            <a class="dropdown-item" href="{{ route('chats.index') }}">
+                                                <i class="bi bi-chat-dots me-2"></i> Chats
+                                            </a>
+                                        </li>
+
+
 
                                     </ul>
                                 </li>
 
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('productos.index') }}">
-                                        <i class="bi bi-box-seam"></i> Productos
-                                    </a>
-                                </li>
-
+<!-- Menú desplegable Producto -->
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="navbarProducto" role="button"
+        data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-box-seam"></i> Producto
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="navbarProducto">
+        <li>
+            <a class="dropdown-item" href="{{ route('productos.index') }}">
+                <i class="bi bi-box-seam"></i> Productos
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="{{ route('tipos.index') }}">
+                <i class="bi bi-tags"></i> Tipos de Producto
+            </a>
+        </li>
+    </ul>
+</li>
 
 
                                 <li class="nav-item">

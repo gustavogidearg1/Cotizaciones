@@ -19,7 +19,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
-        @can('admin')
+      {{-- @can('admin') --}}
             <!-- Contenido solo para administradores -->
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
@@ -81,7 +81,7 @@
                     </tbody>
                 </table>
             </div>
-        @endcan
+       {{-- @endcan --}}
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

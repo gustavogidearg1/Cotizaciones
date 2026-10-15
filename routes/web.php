@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Pedido;
 
+use App\Http\Controllers\WhatsAppWebhookController;
+
 use App\Http\Controllers\{
     CategoriaController,
     ClienteController,
@@ -22,24 +24,40 @@ use App\Http\Controllers\{
     TipoController,
     UnidadController,
     UserController,
-    MonedaController
+    MonedaController,
+    ChatMessageController,
+    ChatController,
+    ParameterController,
+    LogController
 };
 
-// P��gina de bienvenida
-Route::get('/', fn() => view('welcome'));
+// Pagina de bienvenida
+//Route::get('/', fn() => view('welcome'));
+
+Route::get('/', function () {
+    return Auth::check()
+        ? redirect()->route('home')
+        : redirect()->route('login');
+});
 
 // Autenticaci��n
 Auth::routes();
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 
-// �7�3 RUTAS P�0�3BLICAS
+// RUTAS Publicas
 Route::get('cotizaciones/consulta-productos', [CotizacionController::class, 'buscarProducto'])->name('cotizaciones.buscar_producto');
 Route::get('cotizaciones/producto/{id}', [CotizacionController::class, 'consultaProducto'])->name('cotizaciones.consulta_producto');
 
 
 // �7�3 RUTAS PROTEGIDAS POR LOGIN
 Route::middleware(['auth'])->group(function () {
+Route::resource('logs', LogController::class);
+Route::get('/logs/create', [LogController::class, 'create'])->name('logs.create');
+Route::post('/logs', [LogController::class, 'store'])->name('logs.store');
+
+Route::get('/chats', [ChatController::class, 'index'])->name('chats.index');
+Route::get('/chats/{chat}', [ChatController::class, 'show'])->name('chats.show');
 
     // Usuarios
     Route::resource('users', UserController::class)->except(['show']);
@@ -142,3 +160,17 @@ Route::get('/test-vista-email/{id}', function ($id) {
 
     return view('emails.pedido_creado', compact('pedido'));
 });
+
+//Route::apiResource('chats', ChatController::class);
+Route::post('messages', [ChatMessageController::class, 'store']);
+Route::delete('messages/{chatMessage}', [ChatMessageController::class, 'destroy']);
+
+Route::apiResource('parameters', ParameterController::class)->except(['create', 'edit']);
+
+Route::post('/chat/ask', [ChatController::class, 'ask'])->name('chat.ask');
+
+Route::get('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'verify'])
+    ->name('whatsapp.verify');      // Meta verifica con GET
+
+Route::post('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'receive'])
+    ->name('whatsapp.receive');     // Meta envía eventos con POST

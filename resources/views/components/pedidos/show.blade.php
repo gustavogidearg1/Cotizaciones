@@ -29,7 +29,7 @@
             max-width: 100%;
             height: auto;
         }
-        
+
         @media print {
         body {
             margin: 0;
@@ -87,7 +87,7 @@
             <div class="card-header bg-orange text-white d-flex justify-content-between align-items-center">
                 <img src="{{ asset('images/Isologotipo con anclaje. Negro CMYK.png') }}" alt="Logo" height="50">
                 <h2 class="mb-0">{{ $pedido->tipoPedido->nombre }} # {{ $pedido->id }} / {{ $pedido->user->nom_corto ?? '' }}</h2>
-                
+
             </div>
             <div class="card-body">
                 <div class="row mb-2">
@@ -101,15 +101,18 @@
                     <div class="col-md-3"><strong>Localidad:</strong> {{ $pedido->localidad->nombre }}</div>
                     <div class="col-md-3"><strong>Provincia:</strong> {{ $pedido->provincia->provincia }}</div>
                     <div class="col-md-3"><strong>País:</strong> {{ $pedido->pais->pais }}</div>
-                    <div class="col-md-3"><strong>Flete:</strong> {{ $pedido->flete->nombre ?? 'Sin flete' }}</div>
+                    <div class="col-md-3"><strong>Fecha:</strong> {{ \Carbon\Carbon::parse($pedido->fecha)->format('d/m/Y') }}</div>
                 </div>
 
                 <div class="row mb-2">
-                    <div class="col-md-6"><strong>Forma de Pago:</strong> {{ $pedido->formaPago->nombre }}</div>
-                    <div class="col-md-6"><strong>Forma de Entrega:</strong> {{ $pedido->forma_entrega }}</div>
+
+                     <div class="col-md-3"><strong>Flete:</strong> {{ $pedido->flete->nombre ?? 'Sin flete' }}</div>
+                    <div class="col-md-3"><strong>Forma de Pago:</strong> {{ $pedido->formaPago->nombre }}</div>
+                    <div class="col-md-3"><strong>Forma de Entrega:</strong> {{ $pedido->forma_entrega }}</div>
+                    <div class="col-md-3"></div>
                 </div>
 
-<!-- 
+<!--
                 <div class="row mb-2">
                     <div class="col-md-6"><strong>Fecha de Necesidad:</strong>
                         {{ \Carbon\Carbon::parse($pedido->fecha_necesidad)->format('d/m/Y') }}</div>
@@ -161,6 +164,7 @@
         <div class="card bg-orange text-white">
             <div class="card-body">
                 <h4 class="mb-0">Productos del Pedido</h4>
+
             </div>
         </div>
 
@@ -206,7 +210,7 @@
 
         // Fila 1
         echo '<div class="row mb-2">';
-        echo '<div class="col-md-4"><strong>Producto:</strong> ' . $producto->nombre . '</div>';
+        echo '<div class="col-md-4"><strong>Producto:</strong> ' . $producto->nombre . " - (".$producto->codigo .")" . '</div>';
         echo '<div class="col-md-2"><strong>Color:</strong> ' . ($sp->color->nombre ?? '-') . '</div>';
         echo '<div class="col-md-2"><strong>Moneda:</strong> ' . ($sp->moneda->moneda ?? '-') . '</div>';
         echo '<div class="col-md-2"><strong>Cantidad:</strong> ' . $sp->cantidad . '</div>';
@@ -250,20 +254,20 @@
         // Obtener productos únicos por ID
         $productosUnicos = $grupoImplemento->pluck('producto')->unique('id');
     @endphp
-    
-    
 
-           
+
+
+
 
     <div class="row mt-3">
         @foreach ($productosUnicos as $producto)
             @if ($producto->img || $producto->img_1 || $producto->img_2 || $producto->img_3)
                 @if ($loop->first)
-                   
+
                 @endif
                 @if ($producto->img)
                     <div class="col-md-3 mb-3">
-                        
+
                         <img src="{{ asset($producto->img) }}" alt="Imagen principal"
                             class="img-thumbnail w-100 zoom-hover"
                             onclick="showImageModal('{{ asset($producto->img) }}')">
@@ -272,7 +276,7 @@
 
                 @if ($producto->img_1)
                     <div class="col-md-3 mb-3">
-                       
+
                         <img src="{{ asset($producto->img_1) }}" alt="Imagen 2"
                             class="img-thumbnail w-100 zoom-hover"
                             onclick="showImageModal('{{ asset($producto->img_1) }}')">
@@ -281,7 +285,7 @@
 
                 @if ($producto->img_2)
                     <div class="col-md-3 mb-3">
-                        
+
                         <img src="{{ asset($producto->img_2) }}" alt="Imagen 3"
                             class="img-thumbnail w-100 zoom-hover"
                             onclick="showImageModal('{{ asset($producto->img_2) }}')">
@@ -290,7 +294,7 @@
 
                 @if ($producto->img_3)
                     <div class="col-md-3 mb-3">
-                       
+
                         <img src="{{ asset($producto->img_3) }}" alt="Imagen 4"
                             class="img-thumbnail w-100 zoom-hover"
                             onclick="showImageModal('{{ asset($producto->img_3) }}')">
@@ -309,16 +313,16 @@
 
 
 
-   
+
 
         @if ($grupoComponente->count())
-            
+
             @php renderGrupoProductosDiv($grupoComponente, 'Componentes', $totalCantidad, $subtotal, $ivaTotal, $totalGeneral); @endphp
 
         @endif
 
         @if ($grupoAccesorio->count())
-            
+
             @php renderGrupoProductosDiv($grupoAccesorio, 'Accesorios', $totalCantidad, $subtotal, $ivaTotal, $totalGeneral); @endphp
 
         @endif
@@ -350,11 +354,17 @@
     </p>
 @endif
     </div>
+
+
 </div>
 
-        
+        <div class="card card-body text-end bg-orange text-white d-flex ">
+
+                <p class="mb-0">{{ \Carbon\Carbon::parse($pedido->fecha)->format('d/m/Y') }}</p>
+            </div>
+
          </div>
-        
+
                 <div class="mt-4">
             <a href="{{ route('pedidos.edit', $pedido->id) }}" class="btn btn-warning">
                 <i class="fas fa-edit"></i> Editar
@@ -382,7 +392,7 @@
         </div>
 
     </div>
-    
+
     <script>
         function printPedido() {
             const header = document.querySelector('header');
@@ -405,10 +415,10 @@
             }, 1000);
         }
     </script>
-    
+
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
         function showImageModal(src) {
             document.getElementById('modalImage').src = src;

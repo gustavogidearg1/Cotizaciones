@@ -1,0 +1,14 @@
+
+
+composer require laravel/breeze --dev
+
+https://www.udemy.com/course/whatsapp-api-con-laravel-y-chatgpt-mensajeria-automatica-ia/learn/lecture/49028471#overview
+
+php artisan breeze:install
+
+Comando para instalar OpenAI PHP SDK
+bash
+Copiar
+Editar
+composer require openai-php/client
+

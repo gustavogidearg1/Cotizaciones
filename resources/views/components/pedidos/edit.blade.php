@@ -197,6 +197,15 @@
                                         </select>
                                     </div>
                                 </div>
+                                
+<div class="col-md-4">
+    <div class="form-group mb-3">
+        <label for="fecha">Fecha del Pedido</label>
+<input type="datetime-local" class="form-control" id="fecha" name="fecha"
+       value="{{ \Carbon\Carbon::parse($pedido->fecha)->format('Y-m-d\TH:i') }}"
+    </div>
+</div>
+
 
                                 <div class="col d-none">
                                     <div class="form-group">

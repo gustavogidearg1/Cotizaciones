@@ -1,4 +1,8 @@
+
+text/x-generic show.blade.php ( HTML document, UTF-8 Unicode text, with CRLF line terminators )
 @extends('layouts.app')
+
+@section('title','Cotizacion' . ' ' . $cotizacion->cotizacion)
 
 @section('content')
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -12,8 +16,8 @@
         .imagen-logo {
             height: 40px;
         }
-        
-   
+
+
 
     body {
         margin: 0;
@@ -27,10 +31,29 @@
     .table td, .table th {
         padding: 4px !important;
     }
+
+.product-thumb{
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,.15);
+  cursor: pointer;
+  transition: transform .2s ease;
+}
+.product-thumb:hover{
+  transform: scale(1.05);
+}
+.modal-img{
+  max-width: 100%;
+  height: auto;
+}
+
+
     </style>
 
     <div class="container">
-        <div class="card mb-4">
+        <div class="card">
             <div class="card-header bg-orange text-white">
                 <div class="row align-items-center">
                     <div class="col-6">
@@ -49,6 +72,7 @@
         <p>EQUIPOS: +IVA 10,5%</p>
         <p>EQUIPOS CON OPCIONALES: +IVA 10,5%</p>
         <p>OPCIONALES SUELTOS: +IVA 21%</p>
+
     </div>
     <div class="col-md-6 text-end">
         <p><strong>FECHA VIGENCIA:</strong>
@@ -56,8 +80,8 @@
         </p>
 
         <p><strong>MONEDA:</strong>
-            <strong style="color: red">"DOLARES"</strong>
-        </p>
+    <strong style="color: red">{{ strtoupper($cotizacion->moneda->moneda ?? 'N/A') }}</strong>
+</p>
 
         <p>
             <img src="{{ asset('images/logo-iram-iso.jpg') }}" alt="Logo" height="100">
@@ -72,57 +96,114 @@
 
         @if ($cotizacion->subCotizaciones && $cotizacion->subCotizaciones->count() > 0)
             <div class="table-responsive mt-3">
-                @php
-                    $agrupados = $cotizacion->subCotizaciones
-                        ->filter(fn($item) => $item->producto)
-                        ->sortBy(fn($item) => $item->producto->nombre)
-                        ->groupBy(fn($item) => $item->producto->familia->nombre ?? 'Sin familia')
-                        ->map(function ($grupoFamilia) {
-                            return $grupoFamilia->groupBy(fn($item) => $item->producto->tipo->nombre ?? 'Sin tipo');
-                        });
-                @endphp
+@php
+  $items = $cotizacion->subCotizaciones
+    ->filter(fn($item) => $item->producto);
 
+  // Orden global:
+  // 1) Tipo por ID
+  // 2) Familia por nombre
+  // 3) Producto por nombre
+  $items = $items->sort(function($a, $b) {
+      $ta = (int)($a->producto->tipo->id ?? 0);
+      $tb = (int)($b->producto->tipo->id ?? 0);
+      if ($ta !== $tb) return $ta <=> $tb;
 
-                @foreach ($agrupados as $nombreFamilia => $tipos)
-                    <div class="card mt-4">
-                        <div class="card-header bg-orange text-white">
-                            <h2 class="mb-0">{{ $nombreFamilia }}</h2>
-                        </div>
+      $fa = (string)($a->producto->familia->nombre ?? 'Sin familia');
+      $fb = (string)($b->producto->familia->nombre ?? 'Sin familia');
+      $c1 = strcasecmp($fa, $fb);
+      if ($c1 !== 0) return $c1;
 
-                        @foreach ($tipos as $nombreTipo => $subCotizaciones)
-                            <div class="card-header bg-white border-bottom">
-                                <h3><strong>{{ $nombreTipo }}</strong></h3>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-striped mb-0">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Código</th>
-                                            <th>Producto</th>
-                                            <th>Moneda</th>
-                                            <th>Precio</th>
-                                            <th>Precio Bonif.</th>
-                                            
-                                            </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($subCotizaciones as $subCotizacion)
-                                            <tr>
-                                                <td>{{ $subCotizacion->producto->codigo ?? 'N/A' }}</td>
-                                                <td><strong>{{ $subCotizacion->producto->nombre ?? 'N/A' }}</strong></td>
-                                                <td>{{ $subCotizacion->moneda->moneda ?? 'N/A' }}</td>
-                                                <td>${{ number_format($subCotizacion->precio, 2, ',', '.') }}</td>
-                                                <td>${{ number_format($subCotizacion->precio_bonificado, 2, ',', '.') }}
-              
-                                            </tr>
+      $pa = (string)($a->producto->nombre ?? '');
+      $pb = (string)($b->producto->nombre ?? '');
+      return strcasecmp($pa, $pb);
+  });
 
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @endforeach
-                    </div>
-                @endforeach
+  // Agrupar por Tipo ID (para poder ordenar por id sin depender del nombre)
+  $agrupados = $items
+    ->groupBy(fn($i) => (int)($i->producto->tipo->id ?? 0))
+    ->sortKeys() // ordena por tipo_id asc
+    ->map(function($grupoTipo){
+        return $grupoTipo->groupBy(fn($i) => $i->producto->familia->nombre ?? 'Sin familia');
+    });
+@endphp
+
+@foreach ($agrupados as $tipoId => $familias)
+  @php
+    // Nombre del tipo desde el primer item del grupo
+    $nombreTipo = optional($familias->first()?->first()?->producto?->tipo)->nombre ?? 'Sin tipo';
+  @endphp
+
+  <div class="card mt-4">
+    <div class="card-header bg-orange text-white">
+      <h2 class="mb-0">{{ $nombreTipo }}</h2>
+    </div>
+
+    {{-- Familias por ABC --}}
+    @foreach ($familias->sortKeysUsing(fn($a,$b) => strcasecmp($a,$b)) as $nombreFamilia => $subCotizaciones)
+      <div class="card-header bg-white border-bottom">
+        <h3 class="mb-0"><strong>{{ $nombreFamilia }}</strong></h3>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped mb-0">
+          <thead class="table-light">
+            <tr>
+              <th style="width:60px;">Img</th>
+              <th style="width:110px;">Código</th>
+              <th>Producto</th>
+              <th style="width:90px;">Moneda</th>
+              <th style="width:140px;">Precio</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{-- Productos por ABC dentro de la familia --}}
+            @foreach ($subCotizaciones->sortBy(fn($i) => strtolower($i->producto->nombre ?? '')) as $subCotizacion)
+              @php
+                $p = $subCotizacion->producto;
+
+                // Tomamos la primera imagen disponible como en productos.show
+                $imgPath = $p->img ?? $p->img_1 ?? $p->img_2 ?? $p->img_3 ?? null;
+                $imgUrl = $imgPath ? asset($imgPath) : null;
+              @endphp
+
+              <tr>
+                <td class="text-center">
+                  @if($imgUrl)
+                    <img
+  src="{{ $imgUrl }}"
+  alt="img"
+  class="product-thumb"
+  onclick="showImageModal('{{ $imgUrl }}')"
+/>
+                  @else
+                    <span class="text-muted">-</span>
+                  @endif
+                </td>
+
+                <td>{{ $p->codigo ?? 'N/A' }}</td>
+
+                <td>
+                  <strong>{{ $p->nombre ?? 'N/A' }}</strong>
+
+                  {{-- opcional: mostrar detalle de subcotizacion abajo si existe --}}
+                  @if(!empty($subCotizacion->detalle))
+                    <div class="text-muted small">{{ $subCotizacion->detalle }}</div>
+                  @endif
+                </td>
+
+                <td>{{ $subCotizacion->moneda->moneda ?? 'N/A' }}</td>
+
+                <td>${{ number_format((float)$subCotizacion->precio, 2, ',', '.') }}</td>
+              </tr>
+            @endforeach
+          </tbody>
+        </table>
+      </div>
+    @endforeach
+  </div>
+@endforeach
+
 
             <div class="row m-2">
 
@@ -179,7 +260,29 @@
                 buttons.forEach(btn => btn.style.display = '');
             }, 1000);
         }
+
+          function showImageModal(src) {
+    const img = document.getElementById('modalImage');
+    img.src = src;
+
+    const modalEl = document.getElementById('imageModal');
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+  }
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Modal para mostrar imagen ampliada -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <img id="modalImage" src="" class="modal-img" alt="Vista ampliada">
+      </div>
+    </div>
+  </div>
+</div>
+
+
 @endsection

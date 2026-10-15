@@ -296,6 +296,16 @@
                                 </select>
                             </div>
                         </div>
+                        
+                        <div class="col-md-4">
+    <div class="form-group mb-3">
+        <label for="fecha">Fecha del Pedido</label>
+        <input type="datetime-local" class="form-control" id="fecha" name="fecha"
+            value="{{ old('fecha', now()->format('Y-m-d\TH:i')) }}"
+            required>
+    </div>
+</div>
+
 
                         <div class="col-md-6 d-none">
                             <div class="form-group mb-3">
@@ -807,17 +817,33 @@ $(document).ready(function() {
         });
     });
 
-    function aplicarFiltroModal() {
-        const texto = $('#inputBuscarProducto').val().toLowerCase();
-        $('#tablaBusquedaProducto tbody tr').each(function() {
+  function aplicarFiltroModal() {
+        const textoGeneral = ($('#inputBuscarProducto').val() || '').toLowerCase();
+        const textoTipo = ($('#inputBuscarTipo').val() || '').toLowerCase();
+
+        $('#tablaBusquedaProducto tbody tr').each(function () {
             const codigo = ($(this).data('codigo') || '').toString().toLowerCase();
             const nombre = ($(this).data('nombre') || '').toString().toLowerCase();
-            const familiaNombre = ($(this).data('familia-nombre') || '').toString().toLowerCase();
-            const coincide = codigo.includes(texto) || nombre.includes(texto) || familiaNombre.includes(texto);
-            $(this).toggle(coincide);
+            const familia = ($(this).data('familia-nombre') || '').toString().toLowerCase();
+            const tipo = ($(this).data('tipo-nombre') || '').toString().toLowerCase();
+
+            const coincideGeneral =
+                codigo.includes(textoGeneral) ||
+                nombre.includes(textoGeneral) ||
+                familia.includes(textoGeneral);
+
+            const coincideTipo = tipo.includes(textoTipo);
+
+            $(this).toggle(coincideGeneral && coincideTipo);
         });
     }
-    $('#inputBuscarProducto').on('keyup', aplicarFiltroModal);
+
+    $(document).ready(function () {
+        $('#inputBuscarProducto, #inputBuscarTipo').on('keyup', aplicarFiltroModal);
+    });
+
+
+ $('#inputBuscarProducto, #inputBuscarTipo').on('keyup', aplicarFiltroModal);
 
     $(document).on('click', '.seleccionar-producto-btn', function() {
         const id = $(this).data('id');
@@ -995,7 +1021,9 @@ $(document).on('click', '.seleccionar-localidad-btn', function () {
 </script>
 
 
-<!-- Modal de Búsqueda de Producto -->
+
+
+<!-- Modal de Busqueda de Producto -->
 <div class="modal fade" id="modalBuscarProducto" tabindex="-1" aria-labelledby="modalBuscarProductoLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -1004,7 +1032,16 @@ $(document).on('click', '.seleccionar-localidad-btn', function () {
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
-                <input type="text" id="inputBuscarProducto" class="form-control mb-3" placeholder="Escriba nombre o código...">
+                <!-- Inputs de búsqueda -->
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <input type="text" id="inputBuscarProducto" class="form-control" placeholder="Buscar por nombre, código o familia...">
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" id="inputBuscarTipo" class="form-control" placeholder="Filtrar por tipo...">
+                    </div>
+                </div>
+
                 <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
                     <table class="table table-bordered table-hover" id="tablaBusquedaProducto">
                         <thead>
@@ -1012,39 +1049,44 @@ $(document).on('click', '.seleccionar-localidad-btn', function () {
                                 <th>Código</th>
                                 <th>Nombre</th>
                                 <th>Familia</th>
+                                <th>Tipo</th>
                                 <th></th>
                             </tr>
                         </thead>
-
-
-                        @foreach ($productos as $producto)
-                        <tr class="producto-row"
-                            data-id="{{ $producto->id }}"
-                            data-nombre="{{ $producto->nombre }}"
-                            data-codigo="{{ $producto->codigo }}"
-                            data-familia-nombre="{{ $producto->familia->nombre }}">
-                            <td>{{ $producto->codigo }}</td>
-                            <td>{{ $producto->nombre }}</td>
-                            <td>{{ $producto->familia->nombre }}</td>
-                            <td>
-                                <button class="btn btn-sm btn-success seleccionar-producto-btn"
+                        <tbody>
+                            @foreach ($productos as $producto)
+                                <tr class="producto-row"
                                     data-id="{{ $producto->id }}"
                                     data-nombre="{{ $producto->nombre }}"
-                                    data-precio="{{ $producto->precio ?? 0 }}"
-                                    data-moneda="{{ $producto->moneda_id }}"
-                                    data-index="">
-                                    Seleccionar
-                                </button>
-                            </td>
-                        </tr>
-                        @endforeach
-
+                                    data-codigo="{{ $producto->codigo }}"
+                                    data-familia-nombre="{{ $producto->familia->nombre }}"
+                                    data-tipo-nombre="{{ $producto->tipo->nombre ?? '' }}">
+                                    <td>{{ $producto->codigo }}</td>
+                                    <td>{{ $producto->nombre }}</td>
+                                    <td>{{ $producto->familia->nombre }}</td>
+                                    <td>{{ $producto->tipo->nombre ?? '-' }}</td>
+                                    <td>
+                                        <button type="button"
+                                            class="btn btn-sm btn-success seleccionar-producto-btn"
+                                            data-id="{{ $producto->id }}"
+                                            data-nombre="{{ $producto->nombre }}"
+                                            data-precio="{{ $producto->precio ?? 0 }}"
+                                            data-moneda="{{ $producto->moneda_id }}"
+                                            data-index="">
+                                            Seleccionar
+                                        </button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
 
 
 @endsection

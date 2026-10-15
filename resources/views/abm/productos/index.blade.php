@@ -22,8 +22,8 @@
         <div class="card card-dashboard">
             <div class="card-body p-0">
                 <div class="table-responsive">
-
-                    <div class="row mb-4">
+                    
+                                        <div class="row mb-4">
                         <div class="col-md-6">
                             <form action="{{ route('productos.index') }}" method="GET">
                                 <div class="input-group">
@@ -36,7 +36,7 @@
                             </form>
                         </div>
                     </div>
-
+                    
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
@@ -99,10 +99,12 @@
                             @endforeach
                         </tbody>
                     </table>
-                    <div class="card-footer">
-    {{ $productos->withQueryString()->links('pagination::bootstrap-5') }}
-</div>
+                    
+                                        <div class="card-footer">
+                        {{ $productos->withQueryString()->links('pagination::bootstrap-5') }}
+                    </div>
 
+                    
                 </div>
             </div>
         </div>

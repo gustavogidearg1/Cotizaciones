@@ -111,7 +111,7 @@ $porMes = DB::table('sub_pedidos')
     {
         //$clientes = Cliente::all();
         $formasPago = FormaPago::all();
-$productos = Producto::with('familia')
+$productos = Producto::with('familia', 'tipo')
     ->where('activo', 1)
     ->orderBy('nombre')
     ->orderBy('codigo')
@@ -158,6 +158,7 @@ $productos = Producto::with('familia')
         'categoria_id' => 'sometimes|exists:categoria,id',
         'tipo_pedido_id' => 'required|exists:tipo_pedidos,id',
         'fecha_necesidad' => 'required|date',
+        'fecha' => 'nullable|date', 
         'forma_pago_id' => 'required|exists:forma_pagos,id',
         'forma_entrega' => 'required|string|max:255',
         'observacion' => 'nullable|string',
@@ -184,9 +185,9 @@ $productos = Producto::with('familia')
         $pedido->fill($request->only([
             'tipo_pedido_id', 'fecha_necesidad', 'forma_pago_id', 'forma_entrega', 'observacion',
             'flete_id', 'cliente', 'direccion', 'localidad_id', 'provincia_id',
-            'pais_id', 'telefono', 'email', 'contacto', 'moneda_id', 'categoria_id', 'cuit'
+            'pais_id', 'telefono', 'email', 'contacto', 'moneda_id', 'categoria_id', 'cuit','fecha'
         ]));
-        $pedido->fecha = now();
+        $pedido->fecha = $request->input('fecha') ?? now();
         $pedido->user_id = Auth::id();
         $pedido->token = Str::uuid();
         $pedido->bonificacion = 0;
@@ -204,7 +205,7 @@ $productos = Producto::with('familia')
                 File::copy($source, $dest);
             }
         }
-
+        
         $pedido->cotizacion = $request->cotizacion ?? (
             Moneda::find($request->moneda_id)->tipo_cambio ?? 0
         );
@@ -249,7 +250,7 @@ $productos = Producto::with('familia')
 
         try {
             Mail::to($pedido->email)
-                ->cc([Auth::user()->email, 'grgodoy1984@gmail.com'])
+                ->cc([Auth::user()->email, 'administracionventas@comofrasrl.com.ar', 'ventas@comofrasrl.com.ar'])
                 ->bcc(['industrial@comofrasrl.com.ar'])
                 ->send(new PedidoCreado($pedido));
         } catch (\Exception $ex) {
@@ -360,10 +361,10 @@ $request->validate([
     // Actualizar datos generales del pedido
     $pedido->fill($request->only([
         'tipo_pedido_id', 'cliente', 'direccion', 'localidad_id', 'telefono', 'email',
-        'forma_entrega', 'cuit', 'fecha_necesidad', 'forma_pago_id', 'moneda_id',
+        'forma_entrega', 'cuit', 'fecha_necesidad', 'forma_pago_id', 'moneda_id', 'fecha',
         'flete_id', 'observacion'
     ]));
-
+    
     $pedido->bonificacion = 0;
     $pedido->diferencia = 0;
 
@@ -390,11 +391,11 @@ $request->validate([
             $pedido->$field = null;
         }
     }
-
+    
         $pedido->cotizacion = $request->cotizacion ?? (
          Moneda::find($request->moneda_id)->tipo_cambio ?? 0
         );
-
+        
     $pedido->save();
 
     // Obtener todos los IDs existentes enviados
