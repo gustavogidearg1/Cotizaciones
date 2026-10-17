@@ -11,32 +11,75 @@
         @csrf
         @method('PUT')
 
-        <div class="row">
-            <div class="col-md-4">
-                <div class="form-group mb-4">
-                    <label for="codigo">Código</label>
-                    <input type="number" class="form-control" id="codigo" name="codigo" value="{{ $producto->codigo }}" required>
-                </div>
+<div class="row">
 
-            </div>
-            <div class="col-md-4">
-                <div class="form-group mb-4">
-                    <label for="nombre">Nombre</label>
-                    <input type="text" class="form-control" id="nombre" name="nombre" value="{{ $producto->nombre }}" maxlength="255" required>
-                </div>
+    <div class="col-md-2">
+        <div class="form-group mb-4">
+            <label for="codigo">Código</label>
+            <input
+                type="number"
+                class="form-control"
+                id="codigo"
+                name="codigo"
+                value="{{ old('codigo', $producto->codigo) }}"
+                required
+            >
+        </div>
+    </div>
 
-            </div>
-            <div class="col-md-4">
+    <div class="col-md-6">
+        <div class="form-group mb-4">
+            <label for="nombre">Nombre</label>
+            <input
+                type="text"
+                class="form-control"
+                id="nombre"
+                name="nombre"
+                value="{{ old('nombre', $producto->nombre) }}"
+                maxlength="255"
+                required
+            >
+        </div>
+    </div>
 
-                <div class="form-group mb-4">
-                    <label for="um_id">Unidad de Medida</label>
-                    <select class="form-control" id="um_id" name="um_id" required>
-                        @foreach($unidades as $unidad)
-                            <option value="{{ $unidad->id }}" {{ $producto->um_id == $unidad->id ? 'selected' : '' }}>{{ $unidad->nombre }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
+    <div class="col-md-2">
+        <div class="form-group mb-4">
+            <label for="um_id">Unidad de Medida</label>
+            <select
+                class="form-control"
+                id="um_id"
+                name="um_id"
+                required
+            >
+                @foreach($unidades as $unidad)
+                    <option
+                        value="{{ $unidad->id }}"
+                        {{ $producto->um_id == $unidad->id ? 'selected' : '' }}
+                    >
+                        {{ $unidad->nombre }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="form-group mb-4">
+            <label for="ue_produccion">UE de producción</label>
+            <input
+                type="number"
+                class="form-control"
+                id="ue_produccion"
+                name="ue_produccion"
+                value="{{ old('ue_produccion', $producto->ue_produccion) }}"
+                min="0"
+                step="0.01"
+            >
+        </div>
+    </div>
+
+</div>
+
 
                    <div class="form-group mb-3">
                     <label for="detalle">Detalle</label>

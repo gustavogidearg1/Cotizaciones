@@ -22,8 +22,8 @@
         <div class="card card-dashboard">
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    
-                                        <div class="row mb-4">
+
+                    <div class="row mb-4">
                         <div class="col-md-6">
                             <form action="{{ route('productos.index') }}" method="GET">
                                 <div class="input-group">
@@ -36,7 +36,7 @@
                             </form>
                         </div>
                     </div>
-                    
+
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
@@ -44,6 +44,7 @@
                                 <th class="text-nowrap">Código</th>
                                 <th class="text-nowrap">Nombre</th>
                                 <th class="text-nowrap">Unidad</th>
+                                <th class="text-nowrap">UE</th>
                                 <th class="text-nowrap">Familia</th>
                                 <th class="text-nowrap">Tipo</th>
                                 <th>Activo</th>
@@ -67,6 +68,13 @@
                                     <td>{{ $producto->codigo }}</td>
                                     <td class="fw-semibold">{{ $producto->nombre }}</td>
                                     <td>{{ $producto->unidad->nombre }}</td>
+                                    <td>
+                                        @if (!is_null($producto->ue_produccion))
+                                            {{ number_format((float) $producto->ue_produccion, 2, ',', '.') }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
                                     <td>{{ $producto->familia->nombre }}</td>
                                     <td>{{ $producto->tipo->nombre }}</td>
                                     <td>{{ $producto->activo ? 'Sí' : 'No' }}</td>
@@ -99,12 +107,12 @@
                             @endforeach
                         </tbody>
                     </table>
-                    
-                                        <div class="card-footer">
+
+                    <div class="card-footer">
                         {{ $productos->withQueryString()->links('pagination::bootstrap-5') }}
                     </div>
 
-                    
+
                 </div>
             </div>
         </div>

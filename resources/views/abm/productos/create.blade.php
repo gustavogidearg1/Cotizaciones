@@ -10,30 +10,70 @@
     <form action="{{ route('productos.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 <div class="row">
-<div class="col-md-2">
-        <div class="form-group">
-            <label for="codigo">Código</label>
-            <input type="number" class="form-control" id="codigo" name="codigo" required>
-        </div>
- </div>
- <div class="col-md-8">
-        <div class="form-group">
-            <label for="nombre">Nombre</label>
-            <input type="text" class="form-control" id="nombre" name="nombre" maxlength="255" required>
-        </div>
- </div>
 
- <div class="col-md-2">
-        <div class="form-group">
+    <div class="col-md-2">
+        <div class="form-group mb-4">
+            <label for="codigo">Código</label>
+            <input
+                type="number"
+                class="form-control"
+                id="codigo"
+                name="codigo"
+                value="{{ old('codigo') }}"
+                required
+            >
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group mb-4">
+            <label for="nombre">Nombre</label>
+            <input
+                type="text"
+                class="form-control"
+                id="nombre"
+                name="nombre"
+                value="{{ old('nombre') }}"
+                maxlength="255"
+                required
+            >
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="form-group mb-4">
             <label for="um_id">Unidad de Medida</label>
-            <select class="form-control" id="um_id" name="um_id" required>
+            <select
+                class="form-control"
+                id="um_id"
+                name="um_id"
+                required
+            >
                 @foreach($unidades as $unidad)
-                    <option value="{{ $unidad->id }}">{{ $unidad->nombre }}</option>
+                    <option value="{{ $unidad->id }}">
+                        {{ $unidad->nombre }}
+                    </option>
                 @endforeach
             </select>
         </div>
- </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="form-group mb-4">
+            <label for="ue_produccion">UE de producción</label>
+            <input
+                type="number"
+                class="form-control"
+                id="ue_produccion"
+                name="ue_produccion"
+                value="{{ old('ue_produccion') }}"
+                min="0"
+                step="0.01"
+            >
         </div>
+    </div>
+
+</div>
 
 
 
