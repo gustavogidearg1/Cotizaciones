@@ -10,7 +10,7 @@ class Producto extends Model
     use HasFactory;
 
     protected $fillable = [
-    'codigo', 'nombre', 'um_id', 'detalle',
+    'codigo', 'nombre', 'um_id', 'ue_produccion', 'detalle',
     'img', 'img_1', 'img_2', 'img_3',
     'familia_id', 'activo', 'tipo_id', 'user_id',
     'links', 'volumen_carga_m3', 'potencia_requerida_hp', 'toma_potencia_tom',
@@ -18,6 +18,10 @@ class Producto extends Model
     'altura_maxima_mm', 'altura_carga_mm', 'longitud_total_mm',
     'peso_vacio_kg', 'de_serie', 'opcional', 'colores'
     ];
+
+    protected $casts = [
+    'ue_produccion' => 'decimal:2',
+];
 
     public function unidad()
     {
