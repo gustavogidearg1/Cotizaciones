@@ -4,19 +4,37 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 <div class="container">
-    <h1>Consulta de Producto</h1>
+    <h3>Consulta de Producto</h3>
 
     <div class="card mb-4">
         <div class="card-body">
             <h5 class="card-title">{{ $producto->nombre }}</h5>
-            <p><strong>Código:</strong> {{ $producto->codigo }}</p>
-            <p><strong>Unidad:</strong> {{ $producto->unidad->nombre }}</p>
-            <p><strong>Familia:</strong> {{ $producto->familia->nombre }}</p>
-            <p><strong>Tipo:</strong> {{ $producto->tipo->nombre }}</p>
-            <p><strong>Creado por:</strong> {{ $producto->user?->name ?? 'Sin asignar' }}</p>
+
+            <div class="row">
+                <div class="col-md-3"><p><strong>Código:</strong> {{ $producto->codigo }}</p></div>
+                <div class="col-md-3"><p><strong>Familia:</strong> {{ $producto->familia->nombre }}</p></div>
+                <div class="col-md-3"><p><strong>Tipo:</strong> {{ $producto->tipo->nombre }}</p></div>
+                <div class="col-md-3"><p><strong>Creado por:</strong> {{ $producto->user?->name ?? 'Sin asignar' }}</p></div>
+            </div>
             <p><strong>Detalle:</strong> {{ $producto->detalle }}</p>
         </div>
-        
+
+         @if ($ultimoPrecio)
+        <div class="card">
+            <div class="card-header bg-light">Última Cotización</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3"><p><strong>Cotización:</strong> {{ $ultimoPrecio->cotizacion->cotizacion }}</p></div>
+                    <div class="col-md-3"><p><strong>Precio:</strong> ${{ number_format($ultimoPrecio->precio_bonificado, 2) }}</p></div>
+                    <div class="col-md-3"><p><strong>Moneda:</strong> {{ $ultimoPrecio->moneda->moneda ?? 'Sin moneda' }}</p></div>
+                    <div class="col-md-3"><p><strong>Fecha:</strong> {{ \Carbon\Carbon::parse($ultimoPrecio->cotizacion->created_at)->format('d/m/Y') }}</p></div>
+                </div>
+            </div>
+        </div>
+    @else
+        <div class="alert alert-info">Este producto aún no tiene precios registrados en cotizaciones.</div>
+    @endif
+
          <!-- Sección de imágenes -->
         <div class="row mt-4">
             <div class="col-md-3">
@@ -84,27 +102,15 @@
                 </div>
             </div>
         </div>
-        
+
     </div>
 
-    @if ($ultimoPrecio)
-        <div class="card">
-            <div class="card-header bg-light">Última Cotización</div>
-            <div class="card-body">
-                <p><strong>Cotización:</strong> {{ $ultimoPrecio->cotizacion->cotizacion }}</p>
-                <p><strong>Precio:</strong> ${{ number_format($ultimoPrecio->precio_bonificado, 2) }}</p>
-                <p><strong>Moneda:</strong> {{ $ultimoPrecio->moneda->moneda ?? 'Sin moneda' }}</p>
-                <p><strong>Fecha:</strong> {{ \Carbon\Carbon::parse($ultimoPrecio->cotizacion->created_at)->format('d/m/Y') }}</p>
-            </div>
-        </div>
-    @else
-        <div class="alert alert-info">Este producto aún no tiene precios registrados en cotizaciones.</div>
-    @endif
+
 
     <a href="{{ route('home') }}" class="btn btn-secondary mt-3">Volver al inicio</a>
 </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
+
 @endsection
